@@ -948,9 +948,8 @@ void WhiskerMenu::Window::apply_target_size()
 void WhiskerMenu::Window::resize_start()
 {
 	m_resizing = true;
-	// policy ALWAYS از ابتدا ست شده (view_created) و تغییر نمی‌کند: جای
-	// scrollbar همیشه رزرو است (صفر جهش عرض) و دیده‌شدنش با opacity کنترل
-	// می‌شود — فقط وقتی ستون دوم هم پر شده باشد
+	// policy favorites در view_created ست شده و دیگر دست نمی‌خورد:
+	// اسکرول‌بار overlay است — جا نمی‌گیرد پس هیچ جهش عرضی در درگ نیست
 	// حداقل ارتفاعِ محتوای واقعی — از ویجت محتوا؛ خود پنجره را نگیر چون
 	// set_size_request ما minimum آن را override کرده و همیشه = ارتفاع فعلی می‌شود
 	gint min_h = 0;
@@ -985,7 +984,6 @@ void WhiskerMenu::Window::resize_end()
 	// یک بازچینش نهایی با تخصیص قطعی (فقط اصلاح وضعیت، نه کار جبرانی —
 	// کار اصلی حین درگ انجام شده)
 	m_favorites->on_height_changed();
-	// policy دست نمی‌خورد؛ نمایان‌بودن scrollbar را هوک opacity تعیین می‌کند
 }
 
 //-----------------------------------------------------------------------------
@@ -1405,15 +1403,6 @@ bool WhiskerMenu::Window::set_size(int width, int height)
 			// تخصیص جاری که فضای مردهٔ پنجره را هم شامل می‌شود و حلقهٔ
 			// بازخوردی می‌ساخت که فضا را همیشه نگه می‌داشت
 			gtk_widget_get_preferred_width(v, &lav_mn, &lav_nt);
-			// overlay خاموش: عرض scrollbar همیشه رزرو — ثابت و بدون جهش؛
-			// overlay روشن: شناور روی محتوا، عرضی نمی‌گیرد
-			if (!wm_settings->favorites_scrollbar_overlay)
-			{
-				GtkWidget* sb = gtk_scrolled_window_get_vscrollbar(GTK_SCROLLED_WINDOW(m_favorites->get_widget()));
-				gint sb_mn = 0, sb_nt = 0;
-				gtk_widget_get_preferred_width(sb, &sb_mn, &sb_nt);
-				lav_nt += std::max(sb_mn, sb_nt);
-			}
 		}
 		else
 		{
