@@ -75,6 +75,10 @@ WhiskerMenu::Window::Window(Plugin* plugin) :
 	gtk_window_set_decorated(m_window, false);
 	gtk_window_set_skip_taskbar_hint(m_window, true);
 	gtk_window_set_skip_pager_hint(m_window, true);
+	// gravity جنوب‌غرب: X خودش هنگام تغییر ارتفاع، y را طوری تنظیم می‌کند که
+	// لبهٔ پایین ثابت بماند — اتمیک و در همان درخواست resize. پیرپیر پایین
+	// (دو فریم move/resize جدا) از بین می‌رود چون y اصلاً از ما نمی‌آید
+	gtk_window_set_gravity(m_window, GDK_GRAVITY_SOUTH_WEST);
 	gtk_window_set_type_hint(m_window, GDK_WINDOW_TYPE_HINT_MENU);
 	gtk_window_stick(m_window);
 	gtk_widget_add_events(GTK_WIDGET(m_window), GDK_FOCUS_CHANGE_MASK | GDK_STRUCTURE_MASK);
@@ -1372,7 +1376,13 @@ void WhiskerMenu::Window::move_window()
 		// merged با هر چهار مقدار؛ state داخلی GTK هم از ConfigureNotify
 		// بعدی همگرا می‌شود
 		GdkWindow* win = gtk_widget_get_window(GTK_WIDGET(m_window));
-		if (win)
+		if (m_resizing && win)
+		{
+			// حین درگ: فقط resize — gravity جنوب‌غرب y را در همان درخواست
+			// تنظیم می‌کند و لبهٔ پایین پیکسل‌به‌پیکسل ثابت می‌ماند
+			gdk_window_resize(win, m_geometry.width, m_geometry.height);
+		}
+		else if (win)
 		{
 			gdk_window_move_resize(win, m_geometry.x, m_geometry.y,
 					m_geometry.width, m_geometry.height);
