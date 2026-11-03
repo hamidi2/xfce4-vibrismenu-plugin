@@ -592,16 +592,22 @@ void FavoritesPage::view_created()
 	connect(get_view()->get_widget(), "size-allocate",
 		[this](GtkWidget*, GdkRectangle*) -> gboolean
 		{
-			if (get_window()->is_resizing())
+			// نمایان‌بودن scrollbar overlay را همین‌جا و از هندسهٔ خواسته
+			// تعیین کن (نه از adjustment عقب‌مانده): تا بازچینشِ ظرفیت مخفی
+			// می‌ماند و با سرریز واقعی ظاهر می‌شود — حتی یک فریم فلش ندارد.
+			// opacity اثر چیدمانی ندارد (overlay جا نمی‌گیرد)
+			GtkTreeModel* model = gtk_icon_view_get_model(GTK_ICON_VIEW(get_view()->get_widget()));
+			const int n = model ? gtk_tree_model_iter_n_children(model, nullptr) : 0;
+			const int cols = (wm_settings->favorites_columns > 0) ? wm_settings->favorites_columns : 2;
+			const int cap = get_window()->favorites_capacity_rows();
+			const bool overflow = n > cols * cap;
+			GtkWidget* vsb = gtk_scrolled_window_get_vscrollbar(GTK_SCROLLED_WINDOW(get_widget()));
+			gtk_widget_set_opacity(vsb, overflow ? 1.0 : 0.0);
+			if (get_window()->is_resizing() && cap != m_built_capacity)
 			{
 				// بازچینش فقط با تغییر واقعی ظرفیت — نه هر فریمِ درگ. rebuildِ
-				// بی‌دلیل مدل را خالی-پر می‌کرد = چشمک آیتم‌ها (پیرپیر آیتم‌ها).
-				// اسکرول‌بار overlay است و هیچ دخالتی لازم ندارد
-				const int cap = get_window()->favorites_capacity_rows();
-				if (cap != m_built_capacity)
-				{
-					schedule_resync();
-				}
+				// بی‌دلیل مدل را خالی-پر می‌کرد = چشمک آیتم‌ها (پیرپیر آیتم‌ها)
+				schedule_resync();
 			}
 			return FALSE;
 		});

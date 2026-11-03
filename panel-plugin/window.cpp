@@ -873,7 +873,10 @@ void WhiskerMenu::Window::resize(int delta_x, int delta_y, int delta_width, int 
 	}
 	if (target_h < m_min_h)
 	{
-		target_h = m_min_h; // GTK کوچک‌تر را نمی‌پذیرد — y باید خودش تنظیم شود
+		// کف ارتفاع: ارتفاع روی حداقل می‌ماند — y هم باید سر جای خودش بماند
+		// (وگرنه کل پنجره سر می‌خورد و لبهٔ پایین جابه‌جا می‌شود = پیرپیر)
+		target_h = m_min_h;
+		target_y = m_geometry.y;
 	}
 	if ((m_max_bottom > 0) && (target_y + target_h > m_max_bottom))
 	{
@@ -1362,13 +1365,23 @@ void WhiskerMenu::Window::move_window()
 	else
 #endif
 	{
-		// حتماً از APIهای GTK: gtk_window_move/resize فقط state داخلی را
-		// به‌روز می‌کنند و GTK خودش در idle بعدی «یک» ConfigureRequest واحد
-		// (move+resize) می‌فرستد. اگر مستقیم gdk_window_move_resize بزنیم،
-		// GTK از هندسهٔ جدید بی‌خبر می‌ماند و در idle خودش با position/size
-		// کهنه override می‌کند = همان پیرپیر (پایین می‌پرید و برمی‌گشت).
-		gtk_window_resize(m_window, m_geometry.width, m_geometry.height);
-		gtk_window_move(m_window, m_geometry.x, m_geometry.y);
+		// ادلهٔ xtrace: gtk_window_move و gtk_window_resize هر کدام به‌محض
+		// mapped بودن، XMoveWindow و XResizeWindow «جداگانه» می‌فرستند —
+		// نتیجه: اول کل پنجره جابه‌جا دیده می‌شود، بعد resize می‌رسد و لبهٔ
+		// پایین می‌پرد و برمی‌گردد (همان پیرپیر پایین). راه‌حل: یک درخواست
+		// merged با هر چهار مقدار؛ state داخلی GTK هم از ConfigureNotify
+		// بعدی همگرا می‌شود
+		GdkWindow* win = gtk_widget_get_window(GTK_WIDGET(m_window));
+		if (win)
+		{
+			gdk_window_move_resize(win, m_geometry.x, m_geometry.y,
+					m_geometry.width, m_geometry.height);
+		}
+		else
+		{
+			gtk_window_resize(m_window, m_geometry.width, m_geometry.height);
+			gtk_window_move(m_window, m_geometry.x, m_geometry.y);
+		}
 	}
 }
 
