@@ -579,8 +579,11 @@ void FavoritesPage::view_created()
 	// scrollbar شناور (overlay) — تصمیم نهایی: اسکرول‌بار هیچ‌وقت از چیدمان
 	// جا نمی‌گیرد، پس نه فلش ۱۲px در درگ هست و نه گودال زائد. فقط با سرریز
 	// واقعی (ستون دوم هم پر) ظاهر می‌شود، شناور روی لبهٔ محتوا
-	g_object_set(sw, "overlay-scrolling", TRUE, nullptr);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+	// بدون compositor، GTK اسکرول‌بار را سنتی مپ می‌کند (حتی با overlay=TRUE)
+	// و مپ/دمپِ آن در گپِ درگ = جنگ عرض ۹۶۱/۹۷۸ (اثبات: xtrace روی :0).
+	// پس policy NEVER همیشه: sb هرگز مپ نمی‌شود؛ عرض ۱۷px فقط وقتی سرریز
+	// واقعی است در set_size اضافه می‌شود (تصمیم از هندسهٔ خواسته — بدون تأخیر)
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_NEVER);
 	gtk_scrolled_window_set_min_content_height(GTK_SCROLLED_WINDOW(sw), 1);
 
 	// بازچینش زنده حین درگ (خواستهٔ کاربر: با هر درگ، نه فقط رها کردن):
@@ -592,22 +595,15 @@ void FavoritesPage::view_created()
 	connect(get_view()->get_widget(), "size-allocate",
 		[this](GtkWidget*, GdkRectangle*) -> gboolean
 		{
-			// نمایان‌بودن scrollbar overlay را همین‌جا و از هندسهٔ خواسته
-			// تعیین کن (نه از adjustment عقب‌مانده): تا بازچینشِ ظرفیت مخفی
-			// می‌ماند و با سرریز واقعی ظاهر می‌شود — حتی یک فریم فلش ندارد.
-			// opacity اثر چیدمانی ندارد (overlay جا نمی‌گیرد)
-			GtkTreeModel* model = gtk_icon_view_get_model(GTK_ICON_VIEW(get_view()->get_widget()));
-			const int n = model ? gtk_tree_model_iter_n_children(model, nullptr) : 0;
-			const int cols = (wm_settings->favorites_columns > 0) ? wm_settings->favorites_columns : 2;
-			const int cap = get_window()->favorites_capacity_rows();
-			const bool overflow = n > cols * cap;
-			GtkWidget* vsb = gtk_scrolled_window_get_vscrollbar(GTK_SCROLLED_WINDOW(get_widget()));
-			gtk_widget_set_opacity(vsb, overflow ? 1.0 : 0.0);
-			if (get_window()->is_resizing() && cap != m_built_capacity)
+			if (get_window()->is_resizing())
 			{
 				// بازچینش فقط با تغییر واقعی ظرفیت — نه هر فریمِ درگ. rebuildِ
 				// بی‌دلیل مدل را خالی-پر می‌کرد = چشمک آیتم‌ها (پیرپیر آیتم‌ها)
-				schedule_resync();
+				const int cap = get_window()->favorites_capacity_rows();
+				if (cap != m_built_capacity)
+				{
+					schedule_resync();
+				}
 			}
 			return FALSE;
 		});

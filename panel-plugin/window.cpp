@@ -948,6 +948,24 @@ void WhiskerMenu::Window::apply_target_size()
 		check_scrollbar_needed();
 	}
 	move_window();
+	// همگام‌سازی با واقعیت: WM ممکن است درخواست را کلمپ کند (مثلاً منو زیر
+	// پنل نرود) — بدون این، m_geometry از واقعیت عقب می‌ماند و هر فریم بعدی
+	// از مقدار کهنه حساب می‌شود = پرش ۹۷px (اثبات: xtrace روی :0،
+	// درخواست bottom=2160 که WM به ۲۰۶۳ اصلاح کرد)
+	GdkWindow* win = gtk_widget_get_window(GTK_WIDGET(m_window));
+	if (win)
+	{
+		gint ax = 0, ay = 0;
+		gdk_window_get_position(win, &ax, &ay);
+		if (ax > -9000 && ay > -9000)
+		{
+			if (m_geometry.x != ax || m_geometry.y != ay)
+			{
+				m_geometry.x = ax;
+				m_geometry.y = ay;
+			}
+		}
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -1421,11 +1439,21 @@ bool WhiskerMenu::Window::set_size(int width, int height)
 			// حین درگ اصلاً اینجا نمی‌آییم (m_resizing) → عرض ثابت می‌ماند و
 			// بعد از رها کردن با ستون‌های نهایی sync می‌شود.
 			GtkWidget* v = m_favorites->get_view()->get_widget();
-			// عرض = natural واقعی ویجت‌ها (GTK خودش همین را رندر می‌کند) —
-			// نه فرمول با item_width کهنه (۱۲px اختلاف = لرزش عرض)، و نه
-			// تخصیص جاری که فضای مردهٔ پنجره را هم شامل می‌شود و حلقهٔ
-			// بازخوردی می‌ساخت که فضا را همیشه نگه می‌داشت
+			// عرض = natural واقعی ویجت‌ها (sb با policy NEVER هرگز در
+			// requisition نیست — جنگ ۹۶۱/۹۷۸ تمام)
 			gtk_widget_get_preferred_width(v, &lav_mn, &lav_nt);
+			// سرریز واقعی (ستون دوم هم پر): ۱۷px اسکرول‌بار به عرض اضافه —
+			// تصمیم از هندسهٔ خواسته، بدون تأخیر، به‌صورت وضعیت پایدار
+			GtkTreeModel* model = gtk_icon_view_get_model(GTK_ICON_VIEW(v));
+			const int n = model ? gtk_tree_model_iter_n_children(model, nullptr) : 0;
+			const int cols = (wm_settings->favorites_columns > 0) ? wm_settings->favorites_columns : 2;
+			if (n > cols * favorites_capacity_rows())
+			{
+				GtkWidget* sb = gtk_scrolled_window_get_vscrollbar(GTK_SCROLLED_WINDOW(m_favorites->get_widget()));
+				gint sb_mn = 0, sb_nt = 0;
+				gtk_widget_get_preferred_width(sb, &sb_mn, &sb_nt);
+				lav_nt += std::max(sb_mn, sb_nt);
+			}
 		}
 		else
 		{

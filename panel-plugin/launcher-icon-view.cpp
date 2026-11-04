@@ -305,8 +305,23 @@ void LauncherIconView::update_item_width(bool measure)
 		// ساختار سلول GtkIconView (سورس GTK3): cell_area عرضش = item_width؛
 		// داخل آن icon cell چسبیده به چپ، text cell چسبیده به راست (pack_end)
 		// — فاصلهٔ آزاد بین‌شان = item_width − (icon+text). برای گپ 6:
-		// item_width = 2×item-padding + icon + 6 + text
-		s_item_width = 2 * item_pad + icon + 6 + text_w;
+		// measure دقیق: عرض واقعی رندررهای درون icon view (همان که GTK رسم می‌کند)
+		int cells_w = 0;
+		GtkCellArea* area = gtk_cell_layout_get_area(GTK_CELL_LAYOUT(m_view));
+		if (area)
+		{
+			GList* cells = gtk_cell_layout_get_cells(GTK_CELL_LAYOUT(m_view));
+			for (GList* l = cells; l; l = l->next)
+			{
+				gint mn = 0, nt = 0;
+				gtk_cell_renderer_get_preferred_width(GTK_CELL_RENDERER(l->data), GTK_WIDGET(m_view), &mn, &nt);
+				cells_w += nt;
+			}
+			g_list_free(cells);
+		}
+		// cell_area عرضش = item_width؛ icon cell چپ‌چین و text cell راست‌چین
+		// (pack_end) — گپ آزاد بین‌شان: item_width − cells_w. برای گپ 6:
+		s_item_width = 2 * item_pad + cells_w + 6;
 		if (s_item_width < 60)
 		{
 			s_item_width = 60;
