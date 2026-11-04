@@ -22,6 +22,7 @@
 #include "settings.h"
 #include "slot.h"
 #include <gdk/gdkkeysyms.h>
+#include <stdio.h>
 
 using namespace WhiskerMenu;
 
@@ -305,26 +306,47 @@ void LauncherIconView::update_item_width(bool measure)
 		// ساختار سلول GtkIconView (سورس GTK3): cell_area عرضش = item_width؛
 		// داخل آن icon cell چسبیده به چپ، text cell چسبیده به راست (pack_end)
 		// — فاصلهٔ آزاد بین‌شان = item_width − (icon+text). برای گپ 6:
-		// measure دقیق: عرض واقعی رندررهای درون icon view (همان که GTK رسم می‌کند)
-		int cells_w = 0;
+		// measure: فقط عرض آیکون از رندررها گرفته می‌شود. عرض سلول متن
+		// «غیرقابل‌اعتماد» است: GtkIconView حین layout روی سلول متن
+		// wrap-width = item_width می‌نویسد و GtkCellRendererText با
+		// wrap-width=W دقیقاً W را به‌عنوان min/nat گزارش می‌دهد →
+		// s_item_width = item_width + 54 در هر بازچینش = حلقهٔ واگرایی
+		// (+۵۴؛ اثبات: wm-width.log دیروز iw=35433 و امروز 48015، منشأ
+		// خرابی menu_width در xfconf). عرض متن = text_w واقعی (بالا، Pango
+		// با فونت تم) + xpad خود رندرر — عددی مستقل از item_width قبلی
+		int icon_w = 0, text_xpad = 0;
 		GtkCellArea* area = gtk_cell_layout_get_area(GTK_CELL_LAYOUT(m_view));
 		if (area)
 		{
 			GList* cells = gtk_cell_layout_get_cells(GTK_CELL_LAYOUT(m_view));
 			for (GList* l = cells; l; l = l->next)
 			{
-				gint mn = 0, nt = 0;
-				gtk_cell_renderer_get_preferred_width(GTK_CELL_RENDERER(l->data), GTK_WIDGET(m_view), &mn, &nt);
-				cells_w += nt;
+				GtkCellRenderer* cell = GTK_CELL_RENDERER(l->data);
+				if (GTK_IS_CELL_RENDERER_TEXT(cell))
+				{
+					g_object_get(G_OBJECT(cell), "xpad", &text_xpad, nullptr);
+				}
+				else
+				{
+					gint mn = 0, nt = 0;
+					gtk_cell_renderer_get_preferred_width(cell, GTK_WIDGET(m_view), &mn, &nt);
+					icon_w = nt;
+				}
 			}
 			g_list_free(cells);
 		}
-		// cell_area عرضش = item_width؛ icon cell چپ‌چین و text cell راست‌چین
-		// (pack_end) — گپ آزاد بین‌شان: item_width − cells_w. برای گپ 6:
-		s_item_width = 2 * item_pad + cells_w + 6;
+		// cell_area عرضش = item_width؛ گپ آیکون-متن = spacing = 6
+		s_item_width = 2 * item_pad + icon_w + 6 + 2 * text_xpad + text_w;
 		if (s_item_width < 60)
 		{
 			s_item_width = 60;
+		}
+		// پروب موقت (تا تأیید نهایی؛ بعداً حذف)
+		if (FILE* df = fopen("/tmp/wm-width.log", "a"))
+		{
+			fprintf(df, "item-width: text=%d icon=%d xpad=%d pad=%d -> iw=%d\n",
+					text_w, icon_w, text_xpad, item_pad, s_item_width);
+			fclose(df);
 		}
 	}
 	if (s_item_width > 0)
