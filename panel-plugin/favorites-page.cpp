@@ -681,10 +681,6 @@ bool FavoritesPage::scrollbar_overlay_effective()
 	// gtk-overlay-scrolling setting, and GTK_OVERLAY_SCROLLING != "0".
 	// If GTK will not overlay, we must reserve the space ourselves —
 	// otherwise the scrollbar takes layout width when it appears.
-	if (!wm_settings->favorites_scrollbar_overlay)
-	{
-		return false;
-	}
 	gboolean setting = TRUE;
 	g_object_get(gtk_settings_get_default(), "gtk-overlay-scrolling", &setting, nullptr);
 	return setting && (g_strcmp0(g_getenv("GTK_OVERLAY_SCROLLING"), "0") != 0);

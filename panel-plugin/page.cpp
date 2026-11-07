@@ -22,7 +22,6 @@
 #include "image-menu-item.h"
 #include "launcher.h"
 #include "launcher-icon-view.h"
-#include "launcher-tree-view.h"
 #include "recent-page.h"
 #include "settings.h"
 #include "slot.h"
@@ -113,8 +112,7 @@ void Page::select_first()
 
 void Page::update_view()
 {
-	if ( ((wm_settings->view_mode == Settings::ViewAsIcons) && dynamic_cast<LauncherIconView*>(m_view))
-			|| ((wm_settings->view_mode != Settings::ViewAsIcons) && dynamic_cast<LauncherTreeView*>(m_view)) )
+	if (dynamic_cast<LauncherIconView*>(m_view))
 	{
 		return;
 	}
@@ -173,24 +171,12 @@ void Page::set_reorderable(bool reorderable)
 
 void Page::create_view()
 {
-	if (wm_settings->view_mode == Settings::ViewAsIcons)
-	{
-		m_view = new LauncherIconView();
-		connect(m_view->get_widget(), "item-activated",
-			[this](GtkIconView*, GtkTreePath* path)
-			{
-				launcher_activated(path);
-			});
-	}
-	else
-	{
-		m_view = new LauncherTreeView();
-		connect(m_view->get_widget(), "row-activated",
-			[this](GtkTreeView*, GtkTreePath* path, GtkTreeViewColumn*)
-			{
-				launcher_activated(path);
-			});
-	}
+	m_view = new LauncherIconView();
+	connect(m_view->get_widget(), "item-activated",
+		[this](GtkIconView*, GtkTreePath* path)
+		{
+			launcher_activated(path);
+		});
 
 	connect(m_view->get_widget(), "button-press-event",
 		[this](GtkWidget*, GdkEvent* event) -> gboolean

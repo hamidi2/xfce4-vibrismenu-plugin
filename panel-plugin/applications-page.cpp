@@ -265,7 +265,7 @@ void ApplicationsPage::load_garcon_menu()
 			invalidate();
 		});
 
-	load_menu(m_garcon_menu, nullptr, wm_settings->view_mode == Settings::ViewAsTree);
+	load_menu(m_garcon_menu, nullptr, false);
 
 	// Create settings menu
 	gchar* path = xfce_resource_lookup(XFCE_RESOURCE_CONFIG, "menus/xfce-settings-manager.menu");
@@ -290,12 +290,9 @@ void ApplicationsPage::load_garcon_menu()
 	}
 
 	// Sort items and categories
-	if (wm_settings->view_mode != Settings::ViewAsTree)
+	for (auto category : m_categories)
 	{
-		for (auto category : m_categories)
-		{
-			category->sort();
-		}
+		category->sort();
 	}
 	if (wm_settings->sort_categories)
 	{

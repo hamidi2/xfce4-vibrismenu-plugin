@@ -313,14 +313,6 @@ public:
 	Boolean sort_categories;
 	IconSize category_icon_size;
 
-	enum ViewMode
-	{
-		ViewAsIcons = 0,
-		ViewAsList,
-		ViewAsTree
-	};
-	Integer view_mode;
-
 	enum DefaultCategory
 	{
 		CategoryFavorites = 0,
@@ -333,7 +325,6 @@ public:
 	Boolean favorites_in_recent;
 	Integer favorites_columns;
 	Boolean favorites_horizontal;
-	Boolean favorites_scrollbar_overlay;
 
 	Boolean position_profile_alternate;
 	Boolean position_search_alternate;

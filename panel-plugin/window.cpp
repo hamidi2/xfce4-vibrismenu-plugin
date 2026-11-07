@@ -689,6 +689,23 @@ void WhiskerMenu::Window::show(const Position position)
 		sync_width();
 	}
 
+	// Without a profile, the title area holds only the command buttons;
+	// drop it entirely when none of them is shown
+	if ((m_profile_shape == Settings::ProfileHidden) && !m_layout_categories_alternate)
+	{
+		bool any_command = false;
+		for (int i = 0; i < 9; ++i)
+		{
+			any_command |= wm_settings->command[i]->get_shown();
+		}
+		const bool visible = any_command && !m_layout_commands_alternate;
+		if (visible != gtk_widget_get_visible(GTK_WIDGET(m_title_box)))
+		{
+			gtk_widget_set_visible(GTK_WIDGET(m_title_box), visible);
+			sync_width();
+		}
+	}
+
 	// Show window — اما نه قبل از اینکه چیدمان در اندازهٔ نهایی برسد:
 	// realize در حالت مخفی تا چرخهٔ size-allocate قبل از دیده‌شدن کامل شود،
 	// بعد پمپ رویداد؛ منو یک‌پارچه و با اندازهٔ نهایی map می‌شود

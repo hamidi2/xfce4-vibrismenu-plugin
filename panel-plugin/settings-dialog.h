@@ -65,12 +65,8 @@ private:
 	GtkWidget* m_window;
 
 	// Appearance
-	GtkWidget* m_show_as_icons;
-	GtkWidget* m_show_as_list;
-	GtkWidget* m_show_as_tree;
 	GtkWidget* m_show_generic_names;
 	GtkWidget* m_show_category_names;
-	GtkWidget* m_show_descriptions;
 	GtkWidget* m_show_tooltips;
 	GtkWidget* m_category_icon_size;
 	GtkWidget* m_item_icon_size;

@@ -322,119 +322,6 @@ GtkWidget* SettingsDialog::init_general_tab()
 	gtk_grid_set_row_spacing(page, 6);
 
 
-	// Create box to display view layout
-	GtkButtonBox* display_box = GTK_BUTTON_BOX(gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL));
-	gtk_widget_set_halign(GTK_WIDGET(display_box), GTK_ALIGN_CENTER);
-	gtk_widget_set_hexpand(GTK_WIDGET(display_box), false);
-	gtk_button_box_set_layout(display_box, GTK_BUTTONBOX_EXPAND);
-	gtk_grid_attach(page, GTK_WIDGET(display_box), 0, 0, 2, 1);
-
-	// Add option to show as icons
-	m_show_as_icons = gtk_radio_button_new_with_mnemonic(nullptr, _("Show as _icons"));
-	{
-		const gchar* icons[] = {
-			"view-list-icons",
-			"view-grid",
-			nullptr
-		};
-		GIcon* gicon = g_themed_icon_new_from_names(const_cast<gchar**>(icons), -1);
-		gtk_button_set_image(GTK_BUTTON(m_show_as_icons), gtk_image_new_from_gicon(gicon, GTK_ICON_SIZE_DND));
-		g_object_unref(gicon);
-	}
-	gtk_button_set_image_position(GTK_BUTTON(m_show_as_icons), GTK_POS_TOP);
-	gtk_button_set_always_show_image(GTK_BUTTON(m_show_as_icons), true);
-	gtk_toggle_button_set_mode(GTK_TOGGLE_BUTTON(m_show_as_icons), false);
-	gtk_box_pack_start(GTK_BOX(display_box), m_show_as_icons, true, true, 0);
-
-	// Add option to show as list
-	m_show_as_list = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(m_show_as_icons), _("Show as lis_t"));
-	{
-		const gchar* icons[] = {
-			"view-list-compact",
-			"view-list-details",
-			"view-list",
-			nullptr
-		};
-		GIcon* gicon = g_themed_icon_new_from_names(const_cast<gchar**>(icons), -1);
-		gtk_button_set_image(GTK_BUTTON(m_show_as_list), gtk_image_new_from_gicon(gicon, GTK_ICON_SIZE_DND));
-		g_object_unref(gicon);
-	}
-	gtk_button_set_image_position(GTK_BUTTON(m_show_as_list), GTK_POS_TOP);
-	gtk_button_set_always_show_image(GTK_BUTTON(m_show_as_list), true);
-	gtk_toggle_button_set_mode(GTK_TOGGLE_BUTTON(m_show_as_list), false);
-	gtk_box_pack_start(GTK_BOX(display_box), m_show_as_list, true, true, 0);
-
-	// Add option to show as tree
-	m_show_as_tree = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(m_show_as_list), _("Show as t_ree"));
-	{
-		const gchar* icons[] = {
-			"view-list-tree",
-			"view-list-details",
-			"pan-end",
-			nullptr
-		};
-		GIcon* gicon = g_themed_icon_new_from_names(const_cast<gchar**>(icons), -1);
-		gtk_button_set_image(GTK_BUTTON(m_show_as_tree), gtk_image_new_from_gicon(gicon, GTK_ICON_SIZE_DND));
-		g_object_unref(gicon);
-	}
-	gtk_button_set_image_position(GTK_BUTTON(m_show_as_tree), GTK_POS_TOP);
-	gtk_button_set_always_show_image(GTK_BUTTON(m_show_as_tree), true);
-	gtk_toggle_button_set_mode(GTK_TOGGLE_BUTTON(m_show_as_tree), false);
-	gtk_box_pack_start(GTK_BOX(display_box), m_show_as_tree, true, true, 0);
-
-	if (wm_settings->view_mode == Settings::ViewAsIcons)
-	{
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(m_show_as_icons), true);
-	}
-	else if (wm_settings->view_mode == Settings::ViewAsTree)
-	{
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(m_show_as_tree), true);
-	}
-	else
-	{
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(m_show_as_list), true);
-	}
-
-	connect(m_show_as_icons, "toggled",
-		[this](GtkToggleButton* button)
-		{
-			if (gtk_toggle_button_get_active(button))
-			{
-				wm_settings->view_mode = Settings::ViewAsIcons;
-				m_plugin->reload_menu();
-
-				gtk_widget_set_sensitive(m_show_descriptions, false);
-			}
-		});
-
-	connect(m_show_as_list, "toggled",
-		[this](GtkToggleButton* button)
-		{
-			if (gtk_toggle_button_get_active(button))
-			{
-				wm_settings->view_mode = Settings::ViewAsList;
-				m_plugin->reload_menu();
-
-				gtk_widget_set_sensitive(m_show_descriptions, true);
-			}
-		});
-
-	connect(m_show_as_tree, "toggled",
-		[this](GtkToggleButton* button)
-		{
-			if (gtk_toggle_button_get_active(button))
-			{
-				wm_settings->view_mode = Settings::ViewAsTree;
-				m_plugin->reload_menu();
-
-				gtk_widget_set_sensitive(m_show_descriptions, true);
-			}
-		});
-
-	// Add space beneath options
-	gtk_widget_set_margin_bottom(GTK_WIDGET(display_box), 12);
-
-
 	// Add option to use generic names
 	m_show_generic_names = gtk_check_button_new_with_mnemonic(_("Show generic application _names"));
 	gtk_grid_attach(page, m_show_generic_names, 0, 1, 2, 1);
@@ -470,21 +357,8 @@ GtkWidget* SettingsDialog::init_general_tab()
 			wm_settings->launcher_show_tooltip = gtk_toggle_button_get_active(button);
 		});
 
-	// Add option to hide descriptions
-	m_show_descriptions = gtk_check_button_new_with_mnemonic(_("Show application _descriptions"));
-	gtk_grid_attach(page, m_show_descriptions, 0, 4, 2, 1);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(m_show_descriptions), wm_settings->launcher_show_description);
-	gtk_widget_set_sensitive(m_show_descriptions, wm_settings->view_mode != Settings::ViewAsIcons);
-
-	connect(m_show_descriptions, "toggled",
-		[this](GtkToggleButton* button)
-		{
-			wm_settings->launcher_show_description = gtk_toggle_button_get_active(button);
-			m_plugin->reload_menu();
-		});
-
 	// Add space beneath options
-	gtk_widget_set_margin_bottom(m_show_descriptions, 12);
+	gtk_widget_set_margin_bottom(m_show_tooltips, 12);
 
 
 	// Add item icon size selector
@@ -990,20 +864,6 @@ GtkWidget* SettingsDialog::init_behavior_tab()
 			wm_settings->favorites_horizontal = gtk_toggle_button_get_active(button);
 			m_plugin->reload_menu();
 		});
-
-	// Add option to overlay the vertical scrollbar (no reserved width) or
-	// reserve its width after the last column
-	GtkWidget* scrollbar_overlay = gtk_check_button_new_with_mnemonic(_("_Overlay scrollbar"));
-	gtk_grid_attach(favorites_table, scrollbar_overlay, 0, 2, 2, 1);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(scrollbar_overlay), wm_settings->favorites_scrollbar_overlay);
-
-	connect(scrollbar_overlay, "toggled",
-		[this](GtkToggleButton* button)
-		{
-			wm_settings->favorites_scrollbar_overlay = gtk_toggle_button_get_active(button);
-			m_plugin->reload_menu();
-		});
-
 
 	// Create command buttons section
 	GtkBox* command_vbox = GTK_BOX(gtk_box_new(GTK_ORIENTATION_VERTICAL, 6));

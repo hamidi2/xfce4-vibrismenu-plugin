@@ -66,7 +66,6 @@ Settings::Settings(Plugin* plugin) :
 	sort_categories("/sort-categories", true),
 	category_icon_size("/category-icon-size", IconSize::Smaller),
 
-	view_mode("/view-mode", ViewAsList, ViewAsIcons, ViewAsTree),
 
 	default_category("/default-category", CategoryFavorites, CategoryFavorites, CategoryAll),
 
@@ -74,7 +73,6 @@ Settings::Settings(Plugin* plugin) :
 	favorites_in_recent("/favorites-in-recent", false),
 	favorites_columns("/favorites-columns", 0, 0, 4),
 	favorites_horizontal("/favorites-horizontal", false),
-	favorites_scrollbar_overlay("/favorites-scrollbar-overlay", true),
 
 	position_profile_alternate("/position-profile-alternate", false),
 	position_search_alternate("/position-search-alternate", false),
@@ -232,22 +230,6 @@ void Settings::load(const gchar* file, bool is_default)
 	category_show_name.load(rc, is_default);
 	category_icon_size.load(rc, is_default);
 
-	if (!xfce_rc_has_entry(rc, "view-mode"))
-	{
-		if (xfce_rc_read_bool_entry(rc, "load-hierarchy", view_mode == ViewAsTree))
-		{
-			view_mode = ViewAsTree;
-			if (!xfce_rc_has_entry(rc, "sort-categories"))
-			{
-				sort_categories = false;
-			}
-		}
-		else if (xfce_rc_read_bool_entry(rc, "view-as-icons", view_mode == ViewAsIcons))
-		{
-			view_mode = ViewAsIcons;
-		}
-	}
-	view_mode.load(rc, is_default);
 	sort_categories.load(rc, is_default);
 
 	if (xfce_rc_has_entry(rc, "display-recent-default"))
@@ -260,7 +242,6 @@ void Settings::load(const gchar* file, bool is_default)
 	favorites_in_recent.load(rc, is_default);
 	favorites_columns.load(rc, is_default);
 	favorites_horizontal.load(rc, is_default);
-	favorites_scrollbar_overlay.load(rc, is_default);
 
 	position_profile_alternate.load(rc, is_default);
 	position_search_alternate.load(rc, is_default);
@@ -382,8 +363,7 @@ void Settings::property_changed(const gchar* property, const GValue* value)
 			|| recent.load(property, value, reload)
 			|| launcher_show_name.load(property, value)
 			|| launcher_show_description.load(property, value)
-			|| sort_categories.load(property, value)
-			|| view_mode.load(property, value))
+			|| sort_categories.load(property, value))
 	{
 		if (reload)
 		{
@@ -411,7 +391,6 @@ void Settings::property_changed(const gchar* property, const GValue* value)
 			|| favorites_in_recent.load(property, value)
 			|| favorites_columns.load(property, value)
 			|| favorites_horizontal.load(property, value)
-			|| favorites_scrollbar_overlay.load(property, value)
 			|| position_profile_alternate.load(property, value)
 			|| position_search_alternate.load(property, value)
 			|| position_commands_alternate.load(property, value)
@@ -429,7 +408,6 @@ void Settings::property_changed(const gchar* property, const GValue* value)
 		// → بازچینش زندهٔ منو (ارتفاع = ظرفیت ردیف‌های هر ستون)
 		if ((g_strcmp0(property, "/favorites-columns") == 0)
 				|| (g_strcmp0(property, "/favorites-horizontal") == 0)
-				|| (g_strcmp0(property, "/favorites-scrollbar-overlay") == 0)
 				|| (g_strcmp0(property, "/menu-height") == 0))
 		{
 			m_plugin->reload_menu();

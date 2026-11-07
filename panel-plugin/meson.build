@@ -11,7 +11,6 @@ plugin_sources = [
   'image-menu-item.h',
   'launcher.cpp',
   'launcher-icon-view.cpp',
-  'launcher-tree-view.cpp',
   'page.cpp',
   'plugin.cpp',
   'profile.cpp',
