@@ -314,10 +314,11 @@ WhiskerMenu::Window::Window(Plugin* plugin) :
 	gtk_box_pack_start(m_title_box, GTK_WIDGET(m_commands_box), false, false, 0);
 	gtk_widget_set_margin_start(m_profile->get_picture(), 6);
 	gtk_widget_set_margin_end(m_profile->get_picture(), 6);
-	// Both margins: in an RTL session margin_start flips sides;
-	// with both set, the gap at each edge is 6px regardless of direction
-	gtk_widget_set_margin_start(GTK_WIDGET(m_commands_box), 6);
-	gtk_widget_set_margin_end(GTK_WIDGET(m_commands_box), 6);
+	// Both margins: in an RTL session margin_start flips sides. The icon
+	// glyphs carry their own transparent border inside the button, so the
+	// margin is smaller than 6 for the visible gap to the edge to be 6px
+	gtk_widget_set_margin_start(GTK_WIDGET(m_commands_box), 1);
+	gtk_widget_set_margin_end(GTK_WIDGET(m_commands_box), 1);
 
 	// Add search to layout
 	m_search_box = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 6));
