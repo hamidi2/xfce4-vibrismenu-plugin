@@ -40,6 +40,8 @@ else
 endif
 libxfce4util = dependency('libxfce4util-1.0', version: dependency_versions['xfce4'])
 xfconf = dependency('libxfconf-0', version: dependency_versions['xfce4'])
+# Xlib calls in window.cpp (window gravity / background, see pin_fixed_edge)
+x11 = dependency('x11', required: false)
 accountsservice = dependency('accountsservice', version: dependency_versions['accountsservice'], required: get_option('accountsservice'))
 gtk_layer_shell = dependency('gtk-layer-shell-0', version: dependency_versions['gtk-layer-shell'], required: get_option('gtk-layer-shell'))
 

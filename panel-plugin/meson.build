@@ -54,6 +54,7 @@ plugin_lib = shared_module(
     libxfce4ui,
     libxfce4util,
     xfconf,
+    x11,
   ],
   install: true,
   install_dir: get_option('prefix') / get_option('libdir') / plugin_install_subdir,

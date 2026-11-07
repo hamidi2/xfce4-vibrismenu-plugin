@@ -78,6 +78,7 @@ void FavoritesPage::add(Launcher* launcher)
 
 	// ترتیب نهایی را sort_favorites() در بازچینش تعیین می‌کند
 	wm_settings->favorites.push_back(launcher->get_desktop_id());
+	m_content_dirty = true;
 	rebuild();
 }
 
@@ -99,6 +100,7 @@ void FavoritesPage::remove(Launcher* launcher)
 			fav.erase(i);
 		}
 	}
+	m_content_dirty = true;
 	rebuild();
 }
 
@@ -120,7 +122,11 @@ void FavoritesPage::set_menu_items()
 	m_columns = std::min(m_columns, std::max(1, n));
 
 	// ظرفیت ردیف‌های هر ستون (فقط برای حالت ستونی؛ از ارتفاع واقعی/منو)
-	const int capacity = (m_columns > 1) ? get_window()->favorites_capacity_rows() : n;
+	// Real capacity even with one column: it decides whether the scrollbar is
+	// needed, and size-allocate compares it with m_built_capacity — using n
+	// here made every drag frame look like a capacity change (needless
+	// rebuild = blinking items) in single-column mode.
+	const int capacity = get_window()->favorites_capacity_rows();
 
 	m_model_slots.clear();
 	m_overflow = false;
@@ -228,45 +234,14 @@ void FavoritesPage::set_menu_items()
 	// layout فقط با ستون‌های دارای آیتم — ستون خالی وجود ندارد که نه دیده شود
 	// و نه با arrow-right بشود داخلش رفت (خواستهٔ کاربر)
 	gtk_icon_view_set_columns(GTK_ICON_VIEW(get_view()->get_widget()), m_used_cols);
-	// انتخاب overlay بودن scrollbar عمودی (تغییر از تنظیمات هم زنده اعمال شود)
-	g_object_set(get_widget(), "overlay-scrolling",
-			wm_settings->favorites_scrollbar_overlay ? TRUE : FALSE, nullptr);
+	apply_scrollbar_mode();
 	get_view()->set_model(model);
-	// سلول‌های خالی (placeholder) قابل انتخاب/هاور نباشند — hover یا arrow-right
-	// نباید آبی‌شان کند (خواستهٔ کاربر). هر انتخابی روی ردیفِ placeholder
-	// فوراً خالی می‌شود؛ این برای hover-selection و کیبورد هر دو کار می‌کند
-	g_signal_connect(get_view()->get_widget(), "selection-changed",
-		G_CALLBACK(+[](GtkIconView* view, gpointer) -> void
-		{
-			GList* sel = gtk_icon_view_get_selected_items(view);
-			if (!sel)
-			{
-				return;
-			}
-			GtkTreeModel* m = gtk_icon_view_get_model(view);
-			gboolean any_real = FALSE;
-			for (GList* l = sel; l; l = l->next)
-			{
-				GtkTreeIter it;
-				if (gtk_tree_model_get_iter(m, &it, static_cast<GtkTreePath*>(l->data)))
-				{
-					WhiskerMenu::Element* e = nullptr;
-					gtk_tree_model_get(m, &it, LauncherView::COLUMN_LAUNCHER, &e, -1);
-					if (e)
-					{
-						any_real = TRUE;
-					}
-				}
-			}
-			g_list_free_full(sel, reinterpret_cast<GDestroyNotify>(&gtk_tree_path_free));
-			if (!any_real)
-			{
-				gtk_icon_view_unselect_all(view);
-			}
-		}),
-		nullptr);
 	get_view()->set_width_authority();
-	get_view()->update_item_width(true);
+	// Item width is measured ONLY when the favorites content changed
+	// (add / remove / rename / reload). Capacity relayouts — every drag
+	// step, every height change — reuse the stored value.
+	get_view()->update_item_width(m_content_dirty);
+	m_content_dirty = false;
 
 	connect(model, "row-changed",
 		[this](GtkTreeModel* tree_model, GtkTreePath* path, GtkTreeIter* iter)
@@ -293,6 +268,8 @@ void FavoritesPage::set_menu_items()
 
 void FavoritesPage::unset_menu_items()
 {
+	// the next set_menu_items() comes with a (possibly) different item list
+	m_content_dirty = true;
 	// Clear treeview
 	get_view()->unset_model();
 }
@@ -316,7 +293,6 @@ bool FavoritesPage::remember_launcher(Launcher* launcher)
 
 void FavoritesPage::on_row_changed(GtkTreeModel* model, GtkTreePath* path, GtkTreeIter* iter)
 {
-	get_view()->update_item_width(true);
 
 	// ردیفی که بعداً پر شده (مثل درگ از صفحهٔ اپ‌ها) به فهرست اضافه شود
 	Element* element = nullptr;
@@ -334,7 +310,6 @@ void FavoritesPage::on_row_changed(GtkTreeModel* model, GtkTreePath* path, GtkTr
 
 void FavoritesPage::on_row_inserted(GtkTreeModel* model, GtkTreePath* path, GtkTreeIter* iter)
 {
-	get_view()->update_item_width(true);
 
 	Element* element = nullptr;
 	gtk_tree_model_get(model, iter, LauncherView::COLUMN_LAUNCHER, &element, -1);
@@ -351,7 +326,6 @@ void FavoritesPage::on_row_inserted(GtkTreeModel* model, GtkTreePath* path, GtkT
 
 void FavoritesPage::on_row_deleted(GtkTreePath* path)
 {
-	get_view()->update_item_width(true);
 
 	// جای مدل را با نگاشت چیدمان به جای منطقی favorites برگردان
 	const int pos = gtk_tree_path_get_indices(path)[0];
@@ -480,17 +454,9 @@ void FavoritesPage::schedule_resync()
 
 void FavoritesPage::sync_capacity()
 {
-	// بعد از pump در show: ویجت realize شده و فونت/CSS تم اعمال شده —
-	// حالا عرض آیتم را با حقیقت رندر measure می‌کنیم (measure زودهنگامِ
-	// قبل از realize فونت درست نداشت و عرض هر آیتم چند ده پیکسل بیش از
-	// واقع می‌شد؛ مثلاً «Double Commander»). اگر عرض عوض شد، pitch هم
-	// تازه و در صورت نیاز بازچینش — همه هنوز مخفی و نامرئی
-	get_view()->update_item_width(true);
-	// بعد از pump در show (تخصیص‌ها نهایی، هنوز مخفی): pitch واقعی را از خود
-	// سلول اول می‌خوانیم (تخمین فرمولی ممکن است با رندر واقعی یکی دو باشد —
-	// همین اختلاف ظرفیت را یکی جابه‌جا می‌کرد). اگر ظرفیت واقعی با آخرین
-	// بازچینش فرق دارد، همین‌جا (نامرئی) بازچینش می‌شود. pitch اندازه‌گیری‌شده
-	// در static می‌ماند و تخمین showهای بعدی را دقیق می‌کند.
+	// Runs on every show(): only the real row pitch is read here (needs a
+	// realized view). The item width is NOT re-measured on show — it was
+	// measured when the favorites content last changed.
 	GtkAllocation a;
 	gtk_widget_get_allocation(get_view()->get_widget(), &a);
 	if (a.height <= 1)
@@ -542,12 +508,14 @@ void FavoritesPage::resync_now()
 		// ترتیب نهایی را sort_favorites() در بازچینش تعیین می‌کند
 		wm_settings->favorites.push_back(m_pending_add->get_desktop_id());
 		m_pending_add = nullptr;
+		m_content_dirty = true;
 	}
 	if (m_pending_remove >= 0)
 	{
 		if (m_pending_remove < wm_settings->favorites.size())
 		{
 			wm_settings->favorites.erase(m_pending_remove);
+			m_content_dirty = true;
 		}
 		m_pending_remove = -1;
 	}
@@ -574,17 +542,48 @@ void FavoritesPage::view_created()
 			FavoritesPage::drag_in_progress = false;
 		}), nullptr);
 
-	// هیچ scroll افقی‌ای مجاز نیست: عرض منو همیشه برابر عرض محتواست
+	// No horizontal scrolling ever: the menu is always as wide as its content.
+	// Vertical: AUTOMATIC (overlay) or ALWAYS (reserved) — see
+	// apply_scrollbar_mode(). f456d07 had set it to NEVER, which makes the
+	// scrolled window's minimum height = full content height: that is what
+	// made dragging the top edge down "stiff" and removed the scrollbar.
 	GtkWidget* sw = get_widget();
-	// scrollbar شناور (overlay) — تصمیم نهایی: اسکرول‌بار هیچ‌وقت از چیدمان
-	// جا نمی‌گیرد، پس نه فلش ۱۲px در درگ هست و نه گودال زائد. فقط با سرریز
-	// واقعی (ستون دوم هم پر) ظاهر می‌شود، شناور روی لبهٔ محتوا
-	// بدون compositor، GTK اسکرول‌بار را سنتی مپ می‌کند (حتی با overlay=TRUE)
-	// و مپ/دمپِ آن در گپِ درگ = جنگ عرض ۹۶۱/۹۷۸ (اثبات: xtrace روی :0).
-	// پس policy NEVER همیشه: sb هرگز مپ نمی‌شود؛ عرض ۱۷px فقط وقتی سرریز
-	// واقعی است در set_size اضافه می‌شود (تصمیم از هندسهٔ خواسته — بدون تأخیر)
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_NEVER);
+	apply_scrollbar_mode();
 	gtk_scrolled_window_set_min_content_height(GTK_SCROLLED_WINDOW(sw), 1);
+
+	// Empty column slots (placeholders) must never look selected — neither by
+	// hover nor by arrow keys. Connected ONCE here; it used to be connected in
+	// every set_menu_items(), i.e. one more handler on every drag step.
+	g_signal_connect(get_view()->get_widget(), "selection-changed",
+		G_CALLBACK(+[](GtkIconView* view, gpointer) -> void
+		{
+			GList* sel = gtk_icon_view_get_selected_items(view);
+			if (!sel)
+			{
+				return;
+			}
+			GtkTreeModel* m = gtk_icon_view_get_model(view);
+			gboolean any_real = FALSE;
+			for (GList* l = sel; l; l = l->next)
+			{
+				GtkTreeIter it;
+				if (m && gtk_tree_model_get_iter(m, &it, static_cast<GtkTreePath*>(l->data)))
+				{
+					WhiskerMenu::Element* e = nullptr;
+					gtk_tree_model_get(m, &it, LauncherView::COLUMN_LAUNCHER, &e, -1);
+					if (e)
+					{
+						any_real = TRUE;
+					}
+				}
+			}
+			g_list_free_full(sel, reinterpret_cast<GDestroyNotify>(&gtk_tree_path_free));
+			if (!any_real)
+			{
+				gtk_icon_view_unselect_all(view);
+			}
+		}),
+		nullptr);
 
 	// بازچینش زنده حین درگ (خواستهٔ کاربر: با هر درگ، نه فقط رها کردن):
 	// تغییر تخصیص ارتفاع حین درگ = تغییر ظرفیت → schedule_resync که حین درگ
@@ -595,6 +594,14 @@ void FavoritesPage::view_created()
 	connect(get_view()->get_widget(), "size-allocate",
 		[this](GtkWidget*, GdkRectangle*) -> gboolean
 		{
+			// Scrollbar visible only on real overflow (every column full),
+			// decided from the requested geometry, not the lagging adjustment:
+			// while items are still being moved to the next column it stays
+			// hidden. Opacity has no layout effect, so no width flash.
+			GtkWidget* vsb = gtk_scrolled_window_get_vscrollbar(GTK_SCROLLED_WINDOW(get_widget()));
+			const bool overflow = has_overflow();
+			gtk_widget_set_opacity(vsb, overflow ? 1.0 : 0.0);
+			gtk_widget_set_sensitive(vsb, overflow);
 			if (get_window()->is_resizing())
 			{
 				// بازچینش فقط با تغییر واقعی ظرفیت — نه هر فریمِ درگ. rebuildِ
@@ -610,3 +617,68 @@ void FavoritesPage::view_created()
 }
 //-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
+
+bool FavoritesPage::scrollbar_overlay_effective()
+{
+	// GtkScrolledWindow uses overlay indicators only when all three agree
+	// (gtkscrolledwindow.c, update_use_indicators): our widget property, the
+	// gtk-overlay-scrolling setting, and GTK_OVERLAY_SCROLLING != "0".
+	// If GTK will not overlay, we must reserve the space ourselves —
+	// otherwise the scrollbar takes layout width when it appears.
+	if (!wm_settings->favorites_scrollbar_overlay)
+	{
+		return false;
+	}
+	gboolean setting = TRUE;
+	g_object_get(gtk_settings_get_default(), "gtk-overlay-scrolling", &setting, nullptr);
+	return setting && (g_strcmp0(g_getenv("GTK_OVERLAY_SCROLLING"), "0") != 0);
+}
+
+//-----------------------------------------------------------------------------
+
+void FavoritesPage::apply_scrollbar_mode()
+{
+	GtkScrolledWindow* sw = GTK_SCROLLED_WINDOW(get_widget());
+	if (scrollbar_overlay_effective())
+	{
+		// floats over the content, takes no width
+		g_object_set(sw, "overlay-scrolling", TRUE, nullptr);
+		gtk_scrolled_window_set_policy(sw, GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+	}
+	else
+	{
+		// space always reserved after the last column (constant width, so
+		// it never "fattens" the menu); shown only on real overflow
+		g_object_set(sw, "overlay-scrolling", FALSE, nullptr);
+		gtk_scrolled_window_set_policy(sw, GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
+	}
+}
+
+//-----------------------------------------------------------------------------
+
+int FavoritesPage::get_scrollbar_reserve()
+{
+	if (scrollbar_overlay_effective())
+	{
+		return 0;
+	}
+	GtkWidget* vsb = gtk_scrolled_window_get_vscrollbar(GTK_SCROLLED_WINDOW(get_widget()));
+	gint minimum = 0, natural = 0;
+	gtk_widget_get_preferred_width(vsb, &minimum, &natural);
+	return std::max(minimum, natural);
+}
+
+//-----------------------------------------------------------------------------
+
+bool FavoritesPage::has_overflow() const
+{
+	GtkTreeModel* model = gtk_icon_view_get_model(GTK_ICON_VIEW(get_view()->get_widget()));
+	if (!model)
+	{
+		return false;
+	}
+	const int n = wm_settings->favorites.size();
+	const int cols = std::max(1, m_columns);
+	return n > cols * get_window()->favorites_capacity_rows();
+}

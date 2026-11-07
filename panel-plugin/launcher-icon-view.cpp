@@ -22,6 +22,8 @@
 #include "settings.h"
 #include "slot.h"
 #include <gdk/gdkkeysyms.h>
+
+#include <algorithm>
 #include <stdio.h>
 
 using namespace WhiskerMenu;
@@ -30,6 +32,7 @@ using namespace WhiskerMenu;
 
 LauncherIconView::LauncherIconView() :
 	m_icon_renderer(nullptr),
+	m_text_renderer(nullptr),
 	m_icon_size(-1),
 	m_authority(false),
 	m_width_pending(false)
@@ -47,7 +50,25 @@ LauncherIconView::LauncherIconView() :
 	gtk_cell_layout_pack_start(cell_layout, m_icon_renderer, false);
 	gtk_cell_layout_set_attributes(cell_layout, m_icon_renderer, "gicon", COLUMN_ICON, "launcher", COLUMN_LAUNCHER, nullptr);
 
-	gtk_icon_view_set_markup_column(m_view, COLUMN_TEXT);
+	// Own text renderer instead of gtk_icon_view_set_markup_column().
+	// Reason (GTK 3.24 gtkiconview.c, adjust_wrap_width): with the built-in
+	// text cell and an explicit item-width, GtkIconView forces the text cell's
+	// fixed width to MAX(2 * (item_width - icon_width - 4*item_padding), 50) —
+	// it DOUBLES the text column. The real item width then becomes
+	// icon + spacing + 2*(item_width - icon), always wider than the widest
+	// label (the "extra space after Double Commander"), and any formula that
+	// feeds a measured width back into item-width diverges. With our own
+	// renderer GtkIconView has no text_cell, never touches wrap-width/width,
+	// and the cell area reports the label's true single-line width.
+	m_text_renderer = gtk_cell_renderer_text_new();
+	g_object_set(m_text_renderer,
+			"xalign", 0.0,
+			"yalign", 0.5,
+			"wrap-width", -1,
+			"ellipsize", PANGO_ELLIPSIZE_NONE,
+			nullptr);
+	gtk_cell_layout_pack_start(cell_layout, m_text_renderer, true);
+	gtk_cell_layout_set_attributes(cell_layout, m_text_renderer, "markup", COLUMN_TEXT, nullptr);
 	// لیست دوستونه: آیکون کنار متن (افقی) به‌جای زیرِ آن
 	gtk_icon_view_set_item_orientation(m_view, GTK_ORIENTATION_HORIZONTAL);
 	gtk_icon_view_set_columns(m_view, 2);
@@ -68,6 +89,29 @@ LauncherIconView::LauncherIconView() :
 		G_CALLBACK(+[](GtkWidget*, GdkEventKey* event, gpointer user_data) -> gboolean
 		{
 			return static_cast<LauncherIconView*>(user_data)->wrap_navigation(event);
+		}),
+	this);
+
+	// Theme / font / CSS changed: the stored favorites width is stale, so this
+	// also counts as "content changed". The next show() picks it up in set_size.
+	g_signal_connect(m_view, "style-updated",
+		G_CALLBACK(+[](GtkWidget*, gpointer user_data)
+		{
+			// style-updated also fires for focus/backdrop state changes on
+			// every show/hide — re-measure only if the font really changed
+			auto view = static_cast<LauncherIconView*>(user_data);
+			if (!view->m_authority)
+			{
+				return;
+			}
+			PangoContext* pc = gtk_widget_get_pango_context(GTK_WIDGET(view->m_view));
+			gchar* key = pango_font_description_to_string(pango_context_get_font_description(pc));
+			if (view->m_font_key != key)
+			{
+				view->m_font_key = key;
+				view->update_item_width(true);
+			}
+			g_free(key);
 		}),
 	this);
 
@@ -221,7 +265,8 @@ void LauncherIconView::set_model(GtkTreeModel* model)
 {
 	m_model = model;
 	gtk_icon_view_set_model(m_view, model);
-	update_item_width(m_authority);
+	// apply the cached width only; the owner decides when to re-measure
+	update_item_width(false);
 }
 
 //-----------------------------------------------------------------------------
@@ -259,100 +304,64 @@ int LauncherIconView::s_item_width = 0;
 
 void LauncherIconView::update_item_width(bool measure)
 {
-	if (measure)
+	// Measure only when asked (favorites content changed: add / remove /
+	// rename / icon size / theme font). Capacity relayouts during a drag and
+	// every show() just re-apply the cached value.
+	if (measure && m_authority)
 	{
-		// فرمول خالص (بدون draw، بدون حدس): عرض سلول = پد سلول + آیکون +
-		// فاصلهٔ آیکون-متن + متن عریض‌ترین آیتم. همهٔ اجزا معلوم‌اند:
-		// item-padding خودمان 0 ست شده، spacing=6 دو طرف آیکون، گاپ آیکون-متن
-		// هم همان spacing رندرر است. measure با context واقعی ویجت (pango
-		// layoutِ ویجت = فونت/اسکیل قطعی که منو با آن کشیده می‌شود)
-		GtkTreeModel* model = gtk_icon_view_get_model(m_view);
-		int text_w = 0;
-		if (model)
-		{
-			// measure با فونت واقعی تم (CSS)، نه فونت پیش‌فرض context —
-			// اختلاف این دو، item_width را بزرگ‌تر از رندر واقعی می‌کرد
-			// و منجر به فضای مردهٔ سمت راست پنجره می‌شد
-			PangoLayout* layout = gtk_widget_create_pango_layout(GTK_WIDGET(m_view), nullptr);
-			GtkStyleContext* style = gtk_widget_get_style_context(GTK_WIDGET(m_view));
-			const PangoFontDescription* theme_font = gtk_style_context_get_font(style, GTK_STATE_FLAG_NORMAL);
-			pango_layout_set_font_description(layout, theme_font);
-			gtk_style_context_add_class(style, "launchers");
-			GtkTreeIter iter;
-			if (gtk_tree_model_get_iter_first(model, &iter))
-			{
-				do
-				{
-					gchar* text = nullptr;
-					gtk_tree_model_get(model, &iter, COLUMN_TEXT, &text, -1);
-					if (text)
-					{
-						pango_layout_set_markup(layout, text, -1);
-						int w = 0;
-						pango_layout_get_pixel_size(layout, &w, nullptr);
-						if (w > text_w)
-						{
-							text_w = w;
-						}
-						g_free(text);
-					}
-				} while (gtk_tree_model_iter_next(model, &iter));
-			}
-			g_object_unref(layout);
-		}
-		gint item_pad = 0;
-		g_object_get(G_OBJECT(m_view), "item-padding", &item_pad, nullptr);
-		const int icon = (m_icon_size > 1) ? m_icon_size : 0;
-		// ساختار سلول GtkIconView (سورس GTK3): cell_area عرضش = item_width؛
-		// داخل آن icon cell چسبیده به چپ، text cell چسبیده به راست (pack_end)
-		// — فاصلهٔ آزاد بین‌شان = item_width − (icon+text). برای گپ 6:
-		// measure: فقط عرض آیکون از رندررها گرفته می‌شود. عرض سلول متن
-		// «غیرقابل‌اعتماد» است: GtkIconView حین layout روی سلول متن
-		// wrap-width = item_width می‌نویسد و GtkCellRendererText با
-		// wrap-width=W دقیقاً W را به‌عنوان min/nat گزارش می‌دهد →
-		// s_item_width = item_width + 54 در هر بازچینش = حلقهٔ واگرایی
-		// (+۵۴؛ اثبات: wm-width.log دیروز iw=35433 و امروز 48015، منشأ
-		// خرابی menu_width در xfconf). عرض متن = text_w واقعی (بالا، Pango
-		// با فونت تم) + xpad خود رندرر — عددی مستقل از item_width قبلی
-		int icon_w = 0, text_xpad = 0;
-		GtkCellArea* area = gtk_cell_layout_get_area(GTK_CELL_LAYOUT(m_view));
-		if (area)
-		{
-			GList* cells = gtk_cell_layout_get_cells(GTK_CELL_LAYOUT(m_view));
-			for (GList* l = cells; l; l = l->next)
-			{
-				GtkCellRenderer* cell = GTK_CELL_RENDERER(l->data);
-				if (GTK_IS_CELL_RENDERER_TEXT(cell))
-				{
-					g_object_get(G_OBJECT(cell), "xpad", &text_xpad, nullptr);
-				}
-				else
-				{
-					gint mn = 0, nt = 0;
-					gtk_cell_renderer_get_preferred_width(cell, GTK_WIDGET(m_view), &mn, &nt);
-					icon_w = nt;
-				}
-			}
-			g_list_free(cells);
-		}
-		// cell_area عرضش = item_width؛ گپ آیکون-متن = spacing = 6
-		s_item_width = 2 * item_pad + icon_w + 6 + 2 * text_xpad + text_w;
-		if (s_item_width < 60)
-		{
-			s_item_width = 60;
-		}
-		// پروب موقت (تا تأیید نهایی؛ بعداً حذف)
-		if (FILE* df = fopen("/tmp/wm-width.log", "a"))
-		{
-			fprintf(df, "item-width: text=%d icon=%d xpad=%d pad=%d -> iw=%d\n",
-					text_w, icon_w, text_xpad, item_pad, s_item_width);
-			fclose(df);
-		}
+		s_item_width = measure_item_width();
 	}
 	if (s_item_width > 0)
 	{
 		gtk_icon_view_set_item_width(m_view, s_item_width);
 	}
+}
+
+//-----------------------------------------------------------------------------
+
+int LauncherIconView::measure_item_width() const
+{
+	// Exact by construction: run every row through the very same GtkCellArea
+	// that GtkIconView renders with (same renderers, same widget font/CSS,
+	// same cell spacing) and take the accumulated minimum width. GtkIconView
+	// sizes an item as MAX(cell-area minimum, item-width), so setting
+	// item-width to this value makes the rendered item exactly as wide as the
+	// widest label + icon + spacing — no guessing, no feedback loop.
+	GtkTreeModel* model = gtk_icon_view_get_model(m_view);
+	GtkCellArea* area = gtk_cell_layout_get_area(GTK_CELL_LAYOUT(m_view));
+	if (!model || !area)
+	{
+		return s_item_width;
+	}
+
+	GtkCellAreaContext* context = gtk_cell_area_create_context(area);
+	GtkTreeIter iter;
+	bool any = false;
+	if (gtk_tree_model_get_iter_first(model, &iter))
+	{
+		do
+		{
+			Element* element = nullptr;
+			gtk_tree_model_get(model, &iter, COLUMN_LAUNCHER, &element, -1);
+			if (!element)
+			{
+				continue; // empty column slot
+			}
+			gtk_cell_area_apply_attributes(area, model, &iter, false, false);
+			gtk_cell_area_get_preferred_width(area, context, GTK_WIDGET(m_view), nullptr, nullptr);
+			any = true;
+		} while (gtk_tree_model_iter_next(model, &iter));
+	}
+
+	int width = s_item_width;
+	if (any)
+	{
+		gint minimum = 0, natural = 0;
+		gtk_cell_area_context_get_preferred_width(context, &minimum, &natural);
+		width = std::max(1, static_cast<int>(minimum));
+	}
+	g_object_unref(context);
+	return width;
 }
 
 //-----------------------------------------------------------------------------

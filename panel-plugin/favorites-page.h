@@ -50,6 +50,10 @@ public:
 	{
 		return m_used_cols;
 	}
+	// width the vertical scrollbar permanently occupies (0 when it overlays)
+	int get_scrollbar_reserve();
+	// every column full: the only state in which the scrollbar is shown
+	bool has_overflow() const;
 
 private:
 	static int placeholder_guard;
@@ -67,6 +71,8 @@ private:
 	void schedule_resync();
 	void resync_now();
 	void view_created() override;
+	static bool scrollbar_overlay_effective();
+	void apply_scrollbar_mode();
 
 	guint m_resync_source = 0;
 	Launcher* m_pending_add = nullptr;
@@ -76,6 +82,8 @@ private:
 	int m_built_capacity = 0;
 	// سرریز از ظرفیت کل ستون‌ها = scrollbar عمودی واقعی (نه گذرا)
 	bool m_overflow = false;
+	// favorites list content changed since the last width measurement
+	bool m_content_dirty = true;
 	// نگاشت سلول‌های مدل (سطری) به ایندکس منطقی favorites؛ -1 = خانهٔ خالی
 	std::vector<int> m_model_slots;
 };

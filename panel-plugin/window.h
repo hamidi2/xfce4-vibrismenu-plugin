@@ -105,6 +105,7 @@ private:
 	GtkWidget* get_active_category_button();
 	gboolean on_key_press_event(GtkWidget* widget, GdkEventKey* key_event);
 	gboolean on_key_press_event_after(GtkWidget* widget, GdkEventKey* key_event);
+	void pin_fixed_edge();
 	gboolean on_map_event();
 	void on_state_flags_changed(GtkWidget* widget);
 	void on_screen_changed(GtkWidget* widget);

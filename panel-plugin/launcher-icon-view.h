@@ -20,6 +20,8 @@
 
 #include "launcher-view.h"
 
+#include <string>
+
 namespace WhiskerMenu
 {
 
@@ -65,6 +67,7 @@ public:
 	gboolean wrap_navigation(GdkEventKey* event);
 	void set_width_authority() override;
 	void schedule_width_update();
+	int measure_item_width() const;
 
 public:
 	static int s_item_width;
@@ -78,6 +81,8 @@ private:
 private:
 	GtkIconView* m_view;
 	GtkCellRenderer* m_icon_renderer;
+	GtkCellRenderer* m_text_renderer;
+	std::string m_font_key;
 	int m_icon_size;
 };
 

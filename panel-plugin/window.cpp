@@ -33,6 +33,9 @@
 
 #include <libxfce4ui/libxfce4ui.h>
 #include <gdk/gdkkeysyms.h>
+#ifdef GDK_WINDOWING_X11
+#include <gdk/gdkx.h>
+#endif
 
 #ifdef HAVE_GTK_LAYER_SHELL
 #include <gtk-layer-shell.h>
@@ -780,9 +783,9 @@ int WhiskerMenu::Window::favorites_capacity_rows() const
 	GtkWidget* v = m_favorites->get_view()->get_widget();
 	const gint icon = wm_settings->launcher_icon_size.get_size();
 
-	// ارتفاع متنِ عریض‌ترین آیتم (همان measure عرض در update_item_width + h)
+	// text height is only needed for the pre-first-show estimate
 	int text_h = 0;
-	GtkTreeModel* model = gtk_icon_view_get_model(GTK_ICON_VIEW(v));
+	GtkTreeModel* model = (FavoritesPage::s_measured_pitch > 0) ? nullptr : gtk_icon_view_get_model(GTK_ICON_VIEW(v));
 	if (model)
 	{
 		PangoLayout* layout = gtk_widget_create_pango_layout(v, nullptr);
@@ -973,6 +976,7 @@ void WhiskerMenu::Window::apply_target_size()
 void WhiskerMenu::Window::resize_start()
 {
 	m_resizing = true;
+	pin_fixed_edge();
 	// policy favorites در view_created ست شده و دیگر دست نمی‌خورد:
 	// اسکرول‌بار overlay است — جا نمی‌گیرد پس هیچ جهش عرضی در درگ نیست
 	// حداقل ارتفاعِ محتوای واقعی — از ویجت محتوا؛ خود پنجره را نگیر چون
@@ -1242,7 +1246,60 @@ gboolean WhiskerMenu::Window::on_map_event()
 {
 	gtk_window_set_keep_above(m_window, true);
 
+	// after mapping, i.e. after the window manager has reparented us
+	pin_fixed_edge();
+
 	return GDK_EVENT_PROPAGATE;
+}
+
+//-----------------------------------------------------------------------------
+
+void WhiskerMenu::Window::pin_fixed_edge()
+{
+	// Root cause of the bottom-edge jitter while dragging the top edge.
+	//
+	// gtk_window_set_gravity() only sets the WM_NORMAL_HINTS win_gravity hint
+	// (where the WM places the frame). The X *server* attributes were left at
+	// GDK's defaults (gdkwindow-x11.c, create_window_impl):
+	//   bit_gravity = NorthWest  -> on resize the server keeps the old pixels
+	//                               glued to the TOP-left: when the window
+	//                               grows upward the old bottom part is
+	//                               shown shifted up until GTK repaints;
+	//   win_gravity = NorthWest  -> when xfwm4 resizes its frame (our parent)
+	//                               the client stays glued to the frame's top:
+	//                               frame grows upward, client moves up with it,
+	//                               a gap opens above the panel, then the client
+	//                               resize arrives and closes it;
+	//   background  = black      -> newly exposed area is painted black first.
+	// None of that can be fixed by ordering GTK calls. The fix is to tell the
+	// server which edge is fixed, and to not paint a background at all:
+	// exposed pixels stay as they were until GTK draws the real content.
+	// Result: the fixed edge never moves on screen; only the dragged edge
+	// changes.
+#ifdef GDK_WINDOWING_X11
+	GdkWindow* win = gtk_widget_get_window(GTK_WIDGET(m_window));
+	if (!win || !GDK_IS_X11_WINDOW(win))
+	{
+		return;
+	}
+
+	// menu above a bottom panel -> bottom edge fixed; below a top panel -> top
+	const int centre_y = m_geometry.y + (m_geometry.height / 2);
+	const bool bottom_fixed = centre_y >= (m_monitor.y + (m_monitor.height / 2));
+	const int gravity = bottom_fixed ? SouthWestGravity : NorthWestGravity;
+
+	XSetWindowAttributes attributes;
+	attributes.bit_gravity = gravity;
+	attributes.win_gravity = gravity;
+	XChangeWindowAttributes(GDK_WINDOW_XDISPLAY(win), GDK_WINDOW_XID(win),
+			CWBitGravity | CWWinGravity, &attributes);
+
+	// NULL pattern = X background None; GDK keeps it that way when it
+	// temporarily unsets/resets backgrounds (tmp_reset_bg)
+	G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+	gdk_window_set_background_pattern(win, nullptr);
+	G_GNUC_END_IGNORE_DEPRECATIONS
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -1438,22 +1495,25 @@ bool WhiskerMenu::Window::set_size(int width, int height)
 			// محتوا محاسبه و در s_item_width ذخیره می‌شود.
 			// حین درگ اصلاً اینجا نمی‌آییم (m_resizing) → عرض ثابت می‌ماند و
 			// بعد از رها کردن با ستون‌های نهایی sync می‌شود.
+			// Exactly what GtkIconView lays out (gtk_icon_view_layout):
+			//   2*margin + cols*(item_width + 2*item_padding) + (cols-1)*column_spacing
+			// item_width is the stored measurement (taken only when the
+			// favorites content changed); cols = columns that hold items.
+			// Plus the scrollbar's reserved width when it does not overlay.
 			GtkWidget* v = m_favorites->get_view()->get_widget();
-			// عرض = natural واقعی ویجت‌ها (sb با policy NEVER هرگز در
-			// requisition نیست — جنگ ۹۶۱/۹۷۸ تمام)
-			gtk_widget_get_preferred_width(v, &lav_mn, &lav_nt);
-			// سرریز واقعی (ستون دوم هم پر): ۱۷px اسکرول‌بار به عرض اضافه —
-			// تصمیم از هندسهٔ خواسته، بدون تأخیر، به‌صورت وضعیت پایدار
-			GtkTreeModel* model = gtk_icon_view_get_model(GTK_ICON_VIEW(v));
-			const int n = model ? gtk_tree_model_iter_n_children(model, nullptr) : 0;
-			const int cols = (wm_settings->favorites_columns > 0) ? wm_settings->favorites_columns : 2;
-			if (n > cols * favorites_capacity_rows())
+			const int iw = LauncherIconView::s_item_width;
+			if (iw > 0)
 			{
-				GtkWidget* sb = gtk_scrolled_window_get_vscrollbar(GTK_SCROLLED_WINDOW(m_favorites->get_widget()));
-				gint sb_mn = 0, sb_nt = 0;
-				gtk_widget_get_preferred_width(sb, &sb_mn, &sb_nt);
-				lav_nt += std::max(sb_mn, sb_nt);
+				gint margin = 0, pad = 0, col_sp = 0;
+				g_object_get(G_OBJECT(v), "margin", &margin, "item-padding", &pad, "column-spacing", &col_sp, nullptr);
+				const int used = std::max(1, m_favorites->get_used_columns());
+				lav_nt = 2 * margin + used * (iw + 2 * pad) + (used - 1) * col_sp;
 			}
+			else
+			{
+				gtk_widget_get_preferred_width(v, &lav_mn, &lav_nt);
+			}
+			lav_nt += m_favorites->get_scrollbar_reserve();
 		}
 		else
 		{
