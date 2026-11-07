@@ -283,9 +283,6 @@ WhiskerMenu::Window::Window(Plugin* plugin) :
 	// Create box for packing children
 	m_vbox = GTK_BOX(gtk_box_new(GTK_ORIENTATION_VERTICAL, 6));
 	gtk_container_set_border_width(GTK_CONTAINER(m_vbox), 0);
-	// side gap equal to the top resize grip and the inner gaps (6px)
-	gtk_widget_set_margin_start(GTK_WIDGET(m_vbox), 6);
-	gtk_widget_set_margin_end(GTK_WIDGET(m_vbox), 6);
 	gtk_widget_set_margin_bottom(GTK_WIDGET(m_vbox), 6);
 	gtk_grid_attach(grid, GTK_WIDGET(m_vbox), 1, 1, 1, 1);
 
@@ -335,6 +332,13 @@ WhiskerMenu::Window::Window(Plugin* plugin) :
 	gtk_stack_add_named(m_contents_stack, GTK_WIDGET(m_contents_box), "contents");
 	gtk_stack_add_named(m_contents_stack, GTK_WIDGET(search_results), "search");
 	gtk_box_pack_start(m_vbox, GTK_WIDGET(m_contents_stack), true, true, 0);
+	// side gap equal to the top resize grip and the inner gaps (6px); the
+	// title area keeps its own 6px margins, so it is not included here
+	for (GtkWidget* widget : {GTK_WIDGET(m_contents_stack), GTK_WIDGET(m_search_box)})
+	{
+		gtk_widget_set_margin_start(widget, 6);
+		gtk_widget_set_margin_end(widget, 6);
+	}
 
 	// Create box for packing categories horizontally
 	m_categories_box = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0));
