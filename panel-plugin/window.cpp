@@ -175,6 +175,7 @@ WhiskerMenu::Window::Window(Plugin* plugin) :
 	// (خواستهٔ کاربر) — با همان آلفای ظریف تم تیره
 	gtk_style_context_add_class(gtk_widget_get_style_context(frame), "vibris-frame");
 	gtk_container_add(GTK_CONTAINER(m_window), frame);
+	m_frame = frame;
 
 	// Create window contents stack
 	m_window_stack = GTK_STACK(gtk_stack_new());
@@ -951,6 +952,11 @@ void WhiskerMenu::Window::apply_target_size()
 		check_scrollbar_needed();
 	}
 	move_window();
+	if (m_tall)
+	{
+		// the X window does not follow the menu in tall mode — nothing to sync
+		return;
+	}
 	// همگام‌سازی با واقعیت: WM ممکن است درخواست را کلمپ کند (مثلاً منو زیر
 	// پنل نرود) — بدون این، m_geometry از واقعیت عقب می‌ماند و هر فریم بعدی
 	// از مقدار کهنه حساب می‌شود = پرش ۹۷px (اثبات: xtrace روی :0،
@@ -977,6 +983,10 @@ void WhiskerMenu::Window::resize_start()
 {
 	m_resizing = true;
 	pin_fixed_edge();
+	if (tall_supported())
+	{
+		tall_begin();
+	}
 	// policy favorites در view_created ست شده و دیگر دست نمی‌خورد:
 	// اسکرول‌بار overlay است — جا نمی‌گیرد پس هیچ جهش عرضی در درگ نیست
 	// حداقل ارتفاعِ محتوای واقعی — از ویجت محتوا؛ خود پنجره را نگیر چون
@@ -1005,7 +1015,14 @@ void WhiskerMenu::Window::resize_end()
 
 	// بدون جابه‌جایی پنجره: درگِ لبه فقط همان لبه را حرکت داده و y ثابت مانده —
 	// فراخوانی get_menu_position اینجا کل منو را می‌پراند (منشأ پرش پس از رها کردن)
-	move_window();
+	if (m_tall)
+	{
+		tall_end();
+	}
+	else
+	{
+		move_window();
+	}
 
 	// Allow menu to hide
 	m_resizing = false;
@@ -1254,6 +1271,81 @@ gboolean WhiskerMenu::Window::on_map_event()
 
 //-----------------------------------------------------------------------------
 
+bool WhiskerMenu::Window::tall_supported() const
+{
+	if (!m_supports_alpha || !m_frame || g_getenv("VIBRIS_NO_TALL"))
+	{
+		return false;
+	}
+	GdkScreen* screen = gtk_widget_get_screen(GTK_WIDGET(m_window));
+	if (!gdk_screen_is_composited(screen))
+	{
+		return false;
+	}
+	// only for a menu above a bottom panel (the case the drag is built for)
+	const int centre_y = m_geometry.y + (m_geometry.height / 2);
+	return centre_y >= (m_monitor.y + (m_monitor.height / 2));
+}
+
+//-----------------------------------------------------------------------------
+
+void WhiskerMenu::Window::tall_begin()
+{
+	// The X window grows once, upward, to the top of the workarea; the bottom
+	// edge is where it is now. From here until tall_end() the X window is not
+	// resized vertically at all.
+	m_tall = true;
+	m_tall_bottom = m_geometry.y + m_geometry.height;
+	m_tall_top = m_workarea.y;
+	m_tall_w = -1; // force the first tall_apply() to configure the window
+	tall_apply();
+}
+
+//-----------------------------------------------------------------------------
+
+void WhiskerMenu::Window::tall_apply()
+{
+	const int tall_h = m_tall_bottom - m_tall_top;
+	// the menu is drawn in the bottom part; the frame's margin is the
+	// transparent area above it. GTK relayouts + repaints in one frame.
+	gtk_widget_set_margin_top(m_frame, std::max(0, m_geometry.y - m_tall_top));
+	if (m_tall_w != m_geometry.width)
+	{
+		// first frame, or a width change (columns / scrollbar): one real
+		// configure; height and bottom edge stay the same
+		m_tall_w = m_geometry.width;
+		gtk_widget_set_size_request(GTK_WIDGET(m_window), m_geometry.width, tall_h);
+		GdkWindow* win = gtk_widget_get_window(GTK_WIDGET(m_window));
+		if (win)
+		{
+			gdk_window_move_resize(win, m_geometry.x, m_tall_top, m_geometry.width, tall_h);
+		}
+	}
+	gtk_widget_queue_draw(GTK_WIDGET(m_window));
+}
+
+//-----------------------------------------------------------------------------
+
+void WhiskerMenu::Window::tall_end()
+{
+	// Back to a window exactly the size of the menu. bit_gravity SouthWest
+	// keeps the bottom pixels — which are already the final menu — so the
+	// shrink is not visible.
+	m_tall = false;
+	gtk_widget_set_margin_top(m_frame, 0);
+	// No explicit gdk configure here: GTK's WM_NORMAL_HINTS still carry the
+	// tall min height until its next layout pass, so xfwm4 would clamp the
+	// height and only move the window (seen on :97). gtk_window_resize makes
+	// GTK send the shrink itself on that pass, after updating the hints
+	// (without it GTK keeps the remembered tall size); the SouthWest gravity
+	// hint keeps the bottom edge (= m_tall_bottom) in place.
+	gtk_widget_set_size_request(GTK_WIDGET(m_window), m_geometry.width, m_geometry.height);
+	gtk_window_resize(m_window, m_geometry.width, m_geometry.height);
+	gtk_widget_queue_draw(GTK_WIDGET(m_window));
+}
+
+//-----------------------------------------------------------------------------
+
 void WhiskerMenu::Window::pin_fixed_edge()
 {
 	// Root cause of the bottom-edge jitter while dragging the top edge.
@@ -1324,7 +1416,9 @@ void WhiskerMenu::Window::on_screen_changed(GtkWidget* widget)
 {
 	GdkScreen* screen = gtk_widget_get_screen(widget);
 	GdkVisual* visual = gdk_screen_get_rgba_visual(screen);
-	if (!visual || (wm_settings->menu_opacity == 100))
+	// RGBA even at 100% opacity: tall mode needs transparent pixels above the
+	// menu while dragging (on_draw_event paints with alpha 1.0 otherwise)
+	if (!visual)
 	{
 		visual = gdk_screen_get_system_visual(screen);
 		m_supports_alpha = false;
@@ -1352,7 +1446,21 @@ gboolean WhiskerMenu::Window::on_draw_event(GtkWidget* widget, cairo_t* cr)
 	GdkScreen* screen = gtk_widget_get_screen(widget);
 	const bool enabled = gdk_screen_is_composited(screen);
 
-	if (enabled && m_supports_alpha)
+	if (m_tall && enabled && m_supports_alpha)
+	{
+		// transparent above the menu; menu background only in its own rect
+		cairo_save(cr);
+		cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
+		cairo_set_source_rgba(cr, 0.0, 0.0, 0.0, 0.0);
+		cairo_paint(cr);
+		cairo_restore(cr);
+		const double top = gtk_widget_get_margin_top(m_frame);
+		cairo_push_group(cr);
+		gtk_render_background(context, cr, 0.0, top, width, height - top);
+		cairo_pop_group_to_source(cr);
+		cairo_paint_with_alpha(cr, wm_settings->menu_opacity / 100.0);
+	}
+	else if (enabled && m_supports_alpha)
 	{
 		cairo_surface_t* background = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, width, height);
 		cairo_t* cr_background = cairo_create(background);
@@ -1456,7 +1564,11 @@ void WhiskerMenu::Window::move_window()
 		// merged با هر چهار مقدار؛ state داخلی GTK هم از ConfigureNotify
 		// بعدی همگرا می‌شود
 		GdkWindow* win = gtk_widget_get_window(GTK_WIDGET(m_window));
-		if (m_resizing && win)
+		if (m_tall)
+		{
+			tall_apply();
+		}
+		else if (m_resizing && win)
 		{
 			// حین درگ: فقط resize — gravity جنوب‌غرب y را در همان درخواست
 			// تنظیم می‌کند و لبهٔ پایین پیکسل‌به‌پیکسل ثابت می‌ماند
@@ -1562,7 +1674,10 @@ bool WhiskerMenu::Window::set_size(int width, int height)
 		// به‌روز نشود، GTK هر gtk_window_resize را به همان حداقلِ کهنه کلمپ می‌کند
 		// و ارتفاع تغییر نمی‌کند در حالی که y حرکت کرده (منشأ «سُرخوردن» کل منو).
 		// GTK همهٔ اینها را در یک ConfigureRequest واحد ادغام می‌کند.
-		gtk_widget_set_size_request(GTK_WIDGET(m_window), m_geometry.width, m_geometry.height);
+		if (!m_tall)
+		{
+			gtk_widget_set_size_request(GTK_WIDGET(m_window), m_geometry.width, m_geometry.height);
+		}
 		resized = true;
 	}
 	return resized;

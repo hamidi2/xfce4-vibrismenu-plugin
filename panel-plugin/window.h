@@ -188,6 +188,20 @@ private:
 	bool m_supports_alpha;
 	bool m_child_has_focus;
 	bool m_resizing;
+
+	// Tall mode (composited + RGBA only): during a top-edge drag the X window
+	// spans from m_tall_top to the fixed bottom edge and is transparent above
+	// the menu; the drag only moves the menu inside it (frame margin-top), so
+	// every frame is one complete GTK paint — no X resize, no torn frames.
+	GtkWidget* m_frame = nullptr;
+	bool m_tall = false;
+	int m_tall_top = 0;
+	int m_tall_bottom = 0;
+	int m_tall_w = 0;
+	bool tall_supported() const;
+	void tall_begin();
+	void tall_end();
+	void tall_apply();
 };
 
 }

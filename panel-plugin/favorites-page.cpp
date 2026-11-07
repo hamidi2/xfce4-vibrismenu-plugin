@@ -128,6 +128,8 @@ void FavoritesPage::set_menu_items()
 	// rebuild = blinking items) in single-column mode.
 	const int capacity = get_window()->favorites_capacity_rows();
 
+	const std::vector<int> old_slots = m_model_slots;
+	const int old_used_cols = m_used_cols;
 	m_model_slots.clear();
 	m_overflow = false;
 
@@ -201,6 +203,62 @@ void FavoritesPage::set_menu_items()
 				gtk_widget_get_allocated_width(GTK_WIDGET(get_window()->get_widget())),
 				(int)get_window()->is_resizing()); fclose(f); }
 	}
+	// Same content, only a capacity change (drag / height change): never
+	// replace the model — a new model makes GtkIconView drop and re-lay-out
+	// every item (the items blinking while dragging). Unchanged layout: do
+	// nothing; changed layout: rewrite only the rows that differ, in place.
+	GtkListStore* current = GTK_IS_LIST_STORE(gtk_icon_view_get_model(GTK_ICON_VIEW(get_view()->get_widget())))
+			? GTK_LIST_STORE(gtk_icon_view_get_model(GTK_ICON_VIEW(get_view()->get_widget()))) : nullptr;
+	if (current && !m_content_dirty)
+	{
+		if ((old_slots != m_model_slots) || (old_used_cols != m_used_cols))
+		{
+			m_inplace = true;
+			GtkTreeModel* tm = GTK_TREE_MODEL(current);
+			const int old_n = gtk_tree_model_iter_n_children(tm, nullptr);
+			const int new_n = m_model_slots.size();
+			for (int i = 0; i < new_n; ++i)
+			{
+				const int slot = m_model_slots[i];
+				if ((i < old_n) && (i < (int)old_slots.size()) && (old_slots[i] == slot))
+				{
+					continue;
+				}
+				Launcher* launcher = slot >= 0 ? get_window()->get_applications()->find(fav[slot]) : nullptr;
+				GtkTreeIter iter;
+				if (i < old_n)
+				{
+					gtk_tree_model_iter_nth_child(tm, &iter, nullptr, i);
+				}
+				else
+				{
+					gtk_list_store_append(current, &iter);
+				}
+				gtk_list_store_set(current, &iter,
+						LauncherView::COLUMN_ICON, launcher ? launcher->get_icon() : nullptr,
+						LauncherView::COLUMN_TEXT, launcher ? launcher->get_text() : "",
+						LauncherView::COLUMN_TOOLTIP, launcher ? launcher->get_tooltip() : nullptr,
+						LauncherView::COLUMN_LAUNCHER, launcher,
+						-1);
+			}
+			for (int i = old_n - 1; i >= new_n; --i)
+			{
+				GtkTreeIter iter;
+				if (gtk_tree_model_iter_nth_child(tm, &iter, nullptr, i))
+				{
+					gtk_list_store_remove(current, &iter);
+				}
+			}
+			if (old_used_cols != m_used_cols)
+			{
+				gtk_icon_view_set_columns(GTK_ICON_VIEW(get_view()->get_widget()), m_used_cols);
+			}
+			m_inplace = false;
+		}
+		apply_scrollbar_mode();
+		return;
+	}
+
 	// ساخت مدل — هر سلول دقیقاً یک ردیف تا m_model_slots با ردیف‌ها هم‌اندیس بماند
 	GtkListStore* store = gtk_list_store_new(
 			LauncherView::N_COLUMNS,
@@ -293,6 +351,10 @@ bool FavoritesPage::remember_launcher(Launcher* launcher)
 
 void FavoritesPage::on_row_changed(GtkTreeModel* model, GtkTreePath* path, GtkTreeIter* iter)
 {
+	if (m_inplace)
+	{
+		return; // our own relayout, not a user drag-and-drop
+	}
 
 	// ردیفی که بعداً پر شده (مثل درگ از صفحهٔ اپ‌ها) به فهرست اضافه شود
 	Element* element = nullptr;
@@ -310,6 +372,10 @@ void FavoritesPage::on_row_changed(GtkTreeModel* model, GtkTreePath* path, GtkTr
 
 void FavoritesPage::on_row_inserted(GtkTreeModel* model, GtkTreePath* path, GtkTreeIter* iter)
 {
+	if (m_inplace)
+	{
+		return; // our own relayout, not a user drag-and-drop
+	}
 
 	Element* element = nullptr;
 	gtk_tree_model_get(model, iter, LauncherView::COLUMN_LAUNCHER, &element, -1);
@@ -326,6 +392,10 @@ void FavoritesPage::on_row_inserted(GtkTreeModel* model, GtkTreePath* path, GtkT
 
 void FavoritesPage::on_row_deleted(GtkTreePath* path)
 {
+	if (m_inplace)
+	{
+		return; // our own relayout, not a user drag-and-drop
+	}
 
 	// جای مدل را با نگاشت چیدمان به جای منطقی favorites برگردان
 	const int pos = gtk_tree_path_get_indices(path)[0];
@@ -604,15 +674,13 @@ void FavoritesPage::view_created()
 			gtk_widget_set_sensitive(vsb, overflow);
 			if (!scrollbar_overlay_effective() && (overflow != m_sb_shown))
 			{
-				// overflow flipped: switch policy and re-measure width outside
-				// the allocation pass
-				g_idle_add(+[](gpointer data) -> gboolean
+				// overflow flipped: show/hide the scrollbar in its reserved
+				// strip (width unchanged) — outside the allocation pass
+				g_idle_add_full(G_PRIORITY_HIGH_IDLE, +[](gpointer data) -> gboolean
 				{
-					auto page = static_cast<FavoritesPage*>(data);
-					page->apply_scrollbar_mode();
-					page->get_window()->sync_width();
+					static_cast<FavoritesPage*>(data)->apply_scrollbar_mode();
 					return G_SOURCE_REMOVE;
-				}, this);
+				}, this, nullptr);
 				m_sb_shown = overflow;
 			}
 			if (get_window()->is_resizing())
@@ -661,10 +729,11 @@ void FavoritesPage::apply_scrollbar_mode()
 	}
 	else
 	{
-		// No overflow: EXTERNAL = no scrollbar and no space for it, while the
-		// content still does not force the minimum height (NEVER would, and
-		// that is what made dragging stiff). Overflow (every column full):
-		// ALWAYS, and get_scrollbar_reserve() widens the menu by its width.
+		// Its width is always reserved (get_scrollbar_reserve), so the
+		// favorites width never changes. No overflow: EXTERNAL = scrollbar
+		// hidden, the reserved strip stays empty, and the content does not
+		// force the minimum height (NEVER would = stiff drag). Overflow
+		// (every column full): ALWAYS — it appears in the reserved strip.
 		g_object_set(sw, "overlay-scrolling", FALSE, nullptr);
 		m_sb_shown = has_overflow();
 		gtk_scrolled_window_set_policy(sw, GTK_POLICY_NEVER,
@@ -676,14 +745,20 @@ void FavoritesPage::apply_scrollbar_mode()
 
 int FavoritesPage::get_scrollbar_reserve()
 {
-	if (scrollbar_overlay_effective() || !has_overflow())
+	if (scrollbar_overlay_effective())
 	{
 		return 0;
 	}
-	GtkWidget* vsb = gtk_scrolled_window_get_vscrollbar(GTK_SCROLLED_WINDOW(get_widget()));
-	gint minimum = 0, natural = 0;
-	gtk_widget_get_preferred_width(vsb, &minimum, &natural);
-	return std::max(minimum, natural);
+	// constant: measured once (the CSS width does not depend on visibility)
+	static int s_reserve = 0;
+	if (s_reserve <= 0)
+	{
+		GtkWidget* vsb = gtk_scrolled_window_get_vscrollbar(GTK_SCROLLED_WINDOW(get_widget()));
+		gint minimum = 0, natural = 0;
+		gtk_widget_get_preferred_width(vsb, &minimum, &natural);
+		s_reserve = std::max(minimum, natural);
+	}
+	return s_reserve;
 }
 
 //-----------------------------------------------------------------------------

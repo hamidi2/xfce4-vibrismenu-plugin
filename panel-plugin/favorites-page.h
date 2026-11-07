@@ -84,6 +84,8 @@ private:
 	bool m_overflow = false;
 	// non-overlay mode: scrollbar currently shown (policy ALWAYS) vs EXTERNAL
 	bool m_sb_shown = false;
+	// set_menu_items() is rewriting rows itself (ignore row signals)
+	bool m_inplace = false;
 	// favorites list content changed since the last width measurement
 	bool m_content_dirty = true;
 	// نگاشت سلول‌های مدل (سطری) به ایندکس منطقی favorites؛ -1 = خانهٔ خالی
