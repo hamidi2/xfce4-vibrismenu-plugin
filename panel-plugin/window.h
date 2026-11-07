@@ -177,6 +177,9 @@ private:
 	GtkScrolledWindow* m_sidebar;
 	GtkBox* m_category_buttons;
 	CategoryButton* m_default_button;
+	// category button that was active when the menu last closed (weak)
+	GtkWidget* m_last_category = nullptr;
+	void remember_category();
 	GtkSizeGroup* m_sidebar_size_group;
 
 	GdkRectangle m_geometry;

@@ -127,6 +127,15 @@ LauncherIconView::LauncherIconView() :
 
 LauncherIconView::~LauncherIconView()
 {
+	disconnect_model();
+	if (m_rebuild_id)
+	{
+		g_source_remove(m_rebuild_id);
+	}
+	if (m_display)
+	{
+		g_object_unref(m_display);
+	}
 	gtk_widget_destroy(GTK_WIDGET(m_view));
 	g_object_unref(m_view);
 }
@@ -137,14 +146,25 @@ GtkTreePath* LauncherIconView::get_cursor() const
 {
 	GtkTreePath* path = nullptr;
 	gtk_icon_view_get_cursor(m_view, &path, nullptr);
-	return path;
+	GtkTreePath* result = model_path(path);
+	if (path)
+	{
+		gtk_tree_path_free(path);
+	}
+	return result;
 }
 
 //-----------------------------------------------------------------------------
 
 GtkTreePath* LauncherIconView::get_path_at_pos(int x, int y) const
 {
-	return gtk_icon_view_get_path_at_pos(m_view, x, y);
+	GtkTreePath* path = gtk_icon_view_get_path_at_pos(m_view, x, y);
+	GtkTreePath* result = model_path(path);
+	if (path)
+	{
+		gtk_tree_path_free(path);
+	}
+	return result;
 }
 
 //-----------------------------------------------------------------------------
@@ -155,7 +175,7 @@ GtkTreePath* LauncherIconView::get_selected_path() const
 	GList* selection = gtk_icon_view_get_selected_items(m_view);
 	if (selection)
 	{
-		path = gtk_tree_path_copy(static_cast<GtkTreePath*>(selection->data));
+		path = model_path(static_cast<GtkTreePath*>(selection->data));
 	}
 	g_list_free_full(selection, reinterpret_cast<GDestroyNotify>(&gtk_tree_path_free));
 	return path;
@@ -165,35 +185,61 @@ GtkTreePath* LauncherIconView::get_selected_path() const
 
 bool LauncherIconView::is_path_selected(GtkTreePath* path) const
 {
-	return gtk_icon_view_path_is_selected(m_view, path);
+	GtkTreePath* vp = view_path(path);
+	const bool selected = vp && gtk_icon_view_path_is_selected(m_view, vp);
+	if (vp)
+	{
+		gtk_tree_path_free(vp);
+	}
+	return selected;
 }
 
 //-----------------------------------------------------------------------------
 
 void LauncherIconView::activate_path(GtkTreePath* path)
 {
-	gtk_icon_view_item_activated(m_view, path);
+	GtkTreePath* vp = view_path(path);
+	if (vp)
+	{
+		gtk_icon_view_item_activated(m_view, vp);
+		gtk_tree_path_free(vp);
+	}
 }
 
 //-----------------------------------------------------------------------------
 
 void LauncherIconView::scroll_to_path(GtkTreePath* path)
 {
-	gtk_icon_view_scroll_to_path(m_view, path, true, 0.5f, 0.5f);
+	GtkTreePath* vp = view_path(path);
+	if (vp)
+	{
+		gtk_icon_view_scroll_to_path(m_view, vp, true, 0.5f, 0.5f);
+		gtk_tree_path_free(vp);
+	}
 }
 
 //-----------------------------------------------------------------------------
 
 void LauncherIconView::select_path(GtkTreePath* path)
 {
-	gtk_icon_view_select_path(m_view, path);
+	GtkTreePath* vp = view_path(path);
+	if (vp)
+	{
+		gtk_icon_view_select_path(m_view, vp);
+		gtk_tree_path_free(vp);
+	}
 }
 
 //-----------------------------------------------------------------------------
 
 void LauncherIconView::set_cursor(GtkTreePath* path)
 {
-	gtk_icon_view_set_cursor(m_view,path, nullptr, false);
+	GtkTreePath* vp = view_path(path);
+	if (vp)
+	{
+		gtk_icon_view_set_cursor(m_view, vp, nullptr, false);
+		gtk_tree_path_free(vp);
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -263,8 +309,16 @@ void LauncherIconView::set_width_authority()
 
 void LauncherIconView::set_model(GtkTreeModel* model)
 {
+	disconnect_model();
 	m_model = model;
-	gtk_icon_view_set_model(m_view, model);
+	if (m_cm_cols > 1 && model)
+	{
+		rebuild_display();
+	}
+	else
+	{
+		gtk_icon_view_set_model(m_view, model);
+	}
 	// apply the cached width only; the owner decides when to re-measure
 	update_item_width(false);
 }
@@ -273,8 +327,11 @@ void LauncherIconView::set_model(GtkTreeModel* model)
 
 void LauncherIconView::unset_model()
 {
+	disconnect_model();
 	m_model = nullptr;
 	gtk_icon_view_set_model(m_view, nullptr);
+	m_to_model.clear();
+	m_to_display.clear();
 }
 
 //-----------------------------------------------------------------------------
@@ -556,3 +613,204 @@ void LauncherIconView::reload_icon_size()
 }
 
 //-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+
+GtkTreePath* LauncherIconView::model_path(GtkTreePath* path) const
+{
+	if (!path)
+	{
+		return nullptr;
+	}
+	if (gtk_icon_view_get_model(m_view) != GTK_TREE_MODEL(m_display) || !m_display)
+	{
+		return gtk_tree_path_copy(path);
+	}
+	const int i = gtk_tree_path_get_indices(path)[0];
+	if (i < 0 || i >= static_cast<int>(m_to_model.size()) || m_to_model[i] < 0)
+	{
+		return nullptr;
+	}
+	return gtk_tree_path_new_from_indices(m_to_model[i], -1);
+}
+
+//-----------------------------------------------------------------------------
+
+GtkTreePath* LauncherIconView::view_path(GtkTreePath* path) const
+{
+	if (!path)
+	{
+		return nullptr;
+	}
+	if (gtk_icon_view_get_model(m_view) != GTK_TREE_MODEL(m_display) || !m_display)
+	{
+		return gtk_tree_path_copy(path);
+	}
+	const int i = gtk_tree_path_get_indices(path)[0];
+	if (i < 0 || i >= static_cast<int>(m_to_display.size()))
+	{
+		return nullptr;
+	}
+	return gtk_tree_path_new_from_indices(m_to_display[i], -1);
+}
+
+//-----------------------------------------------------------------------------
+
+void LauncherIconView::disconnect_model()
+{
+	for (gulong& id : m_model_slots)
+	{
+		if (id && m_model)
+		{
+			g_signal_handler_disconnect(m_model, id);
+		}
+		id = 0;
+	}
+}
+
+//-----------------------------------------------------------------------------
+
+void LauncherIconView::set_column_major(int cols, int rows)
+{
+	cols = std::max(1, cols);
+	rows = std::max(1, rows);
+	if (cols == m_cm_cols && rows == m_cm_rows)
+	{
+		return;
+	}
+	m_cm_cols = cols;
+	m_cm_rows = rows;
+	gtk_icon_view_set_columns(m_view, cols);
+	if (!m_model)
+	{
+		return;
+	}
+	if (cols > 1)
+	{
+		rebuild_display();
+	}
+	else if (gtk_icon_view_get_model(m_view) != m_model)
+	{
+		GtkTreePath* selected = get_selected_path();
+		disconnect_model();
+		gtk_icon_view_set_model(m_view, m_model);
+		if (selected)
+		{
+			gtk_icon_view_select_path(m_view, selected);
+			gtk_tree_path_free(selected);
+		}
+	}
+}
+
+//-----------------------------------------------------------------------------
+
+void LauncherIconView::rebuild_display()
+{
+	if (!m_model)
+	{
+		return;
+	}
+
+	// keep the selection and cursor across the rebuild (model space)
+	GtkTreePath* selected = get_selected_path();
+	GtkTreePath* cursor = get_cursor();
+
+	const int n = gtk_tree_model_iter_n_children(m_model, nullptr);
+	const int cols = std::max(1, m_cm_cols);
+	const int rows = std::max(m_cm_rows, (n + cols - 1) / cols);
+
+	if (!m_display)
+	{
+		const int n_columns = gtk_tree_model_get_n_columns(m_model);
+		std::vector<GType> types(n_columns);
+		for (int i = 0; i < n_columns; ++i)
+		{
+			types[i] = gtk_tree_model_get_column_type(m_model, i);
+		}
+		m_display = gtk_list_store_newv(n_columns, types.data());
+	}
+
+	// detach while refilling: GtkIconView relayouts on every row otherwise
+	gtk_icon_view_set_model(m_view, nullptr);
+	gtk_list_store_clear(m_display);
+	m_to_model.clear();
+	m_to_display.assign(n, -1);
+
+	std::vector<GtkTreeIter> source(n);
+	GtkTreeIter iter;
+	int k = 0;
+	if (gtk_tree_model_get_iter_first(m_model, &iter))
+	{
+		do
+		{
+			source[k++] = iter;
+		} while ((k < n) && gtk_tree_model_iter_next(m_model, &iter));
+	}
+
+	const int n_columns = gtk_tree_model_get_n_columns(m_model);
+	const int used_rows = std::min(rows, std::max(1, n));
+	for (int r = 0; r < used_rows; ++r)
+	{
+		for (int c = 0; c < cols; ++c)
+		{
+			const int s = c * rows + r;
+			GtkTreeIter out;
+			gtk_list_store_append(m_display, &out);
+			const int d = static_cast<int>(m_to_model.size());
+			if (s < n)
+			{
+				for (int col = 0; col < n_columns; ++col)
+				{
+					GValue value = G_VALUE_INIT;
+					gtk_tree_model_get_value(m_model, &source[s], col, &value);
+					gtk_list_store_set_value(m_display, &out, col, &value);
+					g_value_unset(&value);
+				}
+				m_to_model.push_back(s);
+				m_to_display[s] = d;
+			}
+			else
+			{
+				m_to_model.push_back(-1);
+			}
+		}
+	}
+	gtk_icon_view_set_model(m_view, GTK_TREE_MODEL(m_display));
+
+	// follow later changes of the real model
+	if (!m_model_slots[0])
+	{
+		auto changed = +[](gpointer data)
+		{
+			auto view = static_cast<LauncherIconView*>(data);
+			if (!view->m_rebuild_id)
+			{
+				view->m_rebuild_id = g_idle_add_full(G_PRIORITY_HIGH_IDLE, +[](gpointer data) -> gboolean
+				{
+					auto view = static_cast<LauncherIconView*>(data);
+					view->m_rebuild_id = 0;
+					if (view->m_cm_cols > 1)
+					{
+						view->rebuild_display();
+					}
+					return G_SOURCE_REMOVE;
+				}, view, nullptr);
+			}
+		};
+		m_model_slots[0] = g_signal_connect_swapped(m_model, "row-inserted", G_CALLBACK(changed), this);
+		m_model_slots[1] = g_signal_connect_swapped(m_model, "row-deleted", G_CALLBACK(changed), this);
+		m_model_slots[2] = g_signal_connect_swapped(m_model, "row-changed", G_CALLBACK(changed), this);
+		m_model_slots[3] = g_signal_connect_swapped(m_model, "rows-reordered", G_CALLBACK(changed), this);
+	}
+
+	if (selected)
+	{
+		select_path(selected);
+		gtk_tree_path_free(selected);
+	}
+	if (cursor)
+	{
+		set_cursor(cursor);
+		gtk_tree_path_free(cursor);
+	}
+}

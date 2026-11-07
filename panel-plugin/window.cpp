@@ -289,6 +289,7 @@ WhiskerMenu::Window::Window(Plugin* plugin) :
 	// side gap equal to the top resize grip and the inner gaps (6px)
 	gtk_widget_set_margin_start(GTK_WIDGET(m_vbox), 6);
 	gtk_widget_set_margin_end(GTK_WIDGET(m_vbox), 6);
+	gtk_widget_set_margin_bottom(GTK_WIDGET(m_vbox), 6);
 	gtk_grid_attach(grid, GTK_WIDGET(m_vbox), 1, 1, 1, 1);
 
 	// Create box for packing commands
@@ -442,6 +443,10 @@ WhiskerMenu::Window::Window(Plugin* plugin) :
 
 WhiskerMenu::Window::~Window()
 {
+	if (m_last_category)
+	{
+		g_object_remove_weak_pointer(G_OBJECT(m_last_category), reinterpret_cast<gpointer*>(&m_last_category));
+	}
 	if (m_page_width_id)
 	{
 		g_source_remove(m_page_width_id);
@@ -513,6 +518,7 @@ void WhiskerMenu::Window::hide(bool lost_focus)
 
 	// Hide window
 	gtk_widget_hide(GTK_WIDGET(m_window));
+	remember_category();
 
 	// Switch back to default page
 	show_default_page();
@@ -850,7 +856,7 @@ int WhiskerMenu::Window::favorites_capacity_rows() const
 		gtk_widget_get_preferred_height(GTK_WIDGET(m_title_box), nullptr, &title_h);
 		gtk_widget_get_preferred_height(GTK_WIDGET(m_search_box), nullptr, &search_h);
 		// Calibrated with a real probe: window frame + gaps = 10 (beyond the two vbox gaps)
-		avail = wm_settings->menu_height - title_h - search_h - 12 - 10;
+		avail = wm_settings->menu_height - title_h - search_h - 12 - 10 - 6;
 	}
 	// GtkIconView's margin on both ends (default 6x2) reduces the usable height —
 	// without it the capacity was one too high and a borderline scrollbar appeared
@@ -1751,9 +1757,9 @@ bool WhiskerMenu::Window::set_size(int width, int height)
 				GtkTreeModel* model = gtk_icon_view_get_model(GTK_ICON_VIEW(v));
 				const int n = model ? gtk_tree_model_iter_n_children(model, nullptr) : 0;
 				const int cols = CLAMP((n + rows - 1) / rows, 1, max_cols);
-				if (gtk_icon_view_get_columns(GTK_ICON_VIEW(v)) != cols)
+				if (auto icon_view = dynamic_cast<LauncherIconView*>(page->get_view()))
 				{
-					gtk_icon_view_set_columns(GTK_ICON_VIEW(v), cols);
+					icon_view->set_column_major(cols, rows);
 				}
 			}
 			gtk_widget_get_preferred_width(v, &lav_mn, &lav_nt);
@@ -1829,10 +1835,42 @@ void WhiskerMenu::Window::show_favorites()
 
 //-----------------------------------------------------------------------------
 
+void WhiskerMenu::Window::remember_category()
+{
+	if (m_last_category)
+	{
+		g_object_remove_weak_pointer(G_OBJECT(m_last_category), reinterpret_cast<gpointer*>(&m_last_category));
+		m_last_category = nullptr;
+	}
+	GList* children = gtk_container_get_children(GTK_CONTAINER(m_category_buttons));
+	for (GList* i = children; i; i = i->next)
+	{
+		GtkWidget* button = GTK_WIDGET(i->data);
+		if (GTK_IS_TOGGLE_BUTTON(button) && gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(button)))
+		{
+			m_last_category = button;
+			g_object_add_weak_pointer(G_OBJECT(m_last_category), reinterpret_cast<gpointer*>(&m_last_category));
+			break;
+		}
+	}
+	g_list_free(children);
+}
+
+//-----------------------------------------------------------------------------
+
 void WhiskerMenu::Window::show_default_page()
 {
-	// Switch to favorites panel
-	m_default_button->set_active(true);
+	// Switch to the default panel, or back to the last one used
+	if ((wm_settings->default_category == Settings::CategoryLast)
+			&& m_last_category
+			&& (gtk_widget_get_parent(m_last_category) == GTK_WIDGET(m_category_buttons)))
+	{
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(m_last_category), true);
+	}
+	else
+	{
+		m_default_button->set_active(true);
+	}
 
 	// Clear search entry
 	gtk_entry_set_text(m_search_entry, "");

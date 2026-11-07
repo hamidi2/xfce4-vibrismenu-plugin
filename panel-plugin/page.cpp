@@ -175,7 +175,12 @@ void Page::create_view()
 	connect(m_view->get_widget(), "item-activated",
 		[this](GtkIconView*, GtkTreePath* path)
 		{
-			launcher_activated(path);
+			GtkTreePath* model_path = m_view->model_path(path);
+			if (model_path)
+			{
+				launcher_activated(model_path);
+				gtk_tree_path_free(model_path);
+			}
 		});
 
 	connect(m_view->get_widget(), "button-press-event",

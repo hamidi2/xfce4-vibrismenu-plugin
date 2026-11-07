@@ -67,7 +67,7 @@ Settings::Settings(Plugin* plugin) :
 	category_icon_size("/category-icon-size", IconSize::Smaller),
 
 
-	default_category("/default-category", CategoryFavorites, CategoryFavorites, CategoryAll),
+	default_category("/default-category", CategoryFavorites, CategoryFavorites, CategoryLast),
 
 	recent_items_max("/recent-items-max", 10, 0, 100),
 	favorites_in_recent("/favorites-in-recent", false),

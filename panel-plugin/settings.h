@@ -317,7 +317,8 @@ public:
 	{
 		CategoryFavorites = 0,
 		CategoryRecent,
-		CategoryAll
+		CategoryAll,
+		CategoryLast
 	};
 	Integer default_category;
 

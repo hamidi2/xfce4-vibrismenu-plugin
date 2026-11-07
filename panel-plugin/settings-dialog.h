@@ -95,9 +95,7 @@ private:
 	GtkWidget* m_sort_categories;
 
 	// Default Display
-	GtkWidget* m_display_favorites;
-	GtkWidget* m_display_recent;
-	GtkWidget* m_display_applications;
+	GtkWidget* m_default_category;
 
 	// Recently Used
 	GtkWidget* m_remember_favorites;

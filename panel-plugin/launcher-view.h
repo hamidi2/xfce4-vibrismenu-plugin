@@ -45,6 +45,11 @@ public:
 	virtual void scroll_to_path(GtkTreePath* path)=0;
 	virtual void select_path(GtkTreePath* path)=0;
 	virtual void set_cursor(GtkTreePath* path)=0;
+	// path from the widget's own signals -> path in get_model() (new path)
+	virtual GtkTreePath* model_path(GtkTreePath* path) const
+	{
+		return path ? gtk_tree_path_copy(path) : nullptr;
+	}
 
 	virtual void set_fixed_height_mode(bool fixed_height)=0;
 	virtual void set_selection_mode(GtkSelectionMode mode)=0;

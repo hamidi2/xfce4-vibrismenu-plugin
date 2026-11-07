@@ -685,59 +685,26 @@ GtkWidget* SettingsDialog::init_behavior_tab()
 	GtkWidget* display_frame = make_aligned_frame(_("Default Category"), GTK_WIDGET(display_vbox));
 	gtk_box_pack_start(page, display_frame, false, false, 0);
 
-	// Add option to display favorites
-	m_display_favorites = gtk_radio_button_new_with_mnemonic(nullptr, _("Favorites"));
-	gtk_box_pack_start(display_vbox, m_display_favorites, true, true, 0);
+	// Add the page shown when the menu opens
+	m_default_category = gtk_combo_box_text_new();
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(m_default_category), _("Favorites"));
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(m_default_category), _("Recently Used"));
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(m_default_category), _("All Applications"));
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(m_default_category), _("Last used category"));
+	gtk_widget_set_halign(m_default_category, GTK_ALIGN_START);
+	gtk_box_pack_start(display_vbox, m_default_category, false, false, 0);
+	gtk_combo_box_set_active(GTK_COMBO_BOX(m_default_category), wm_settings->default_category);
 
-	// Add option to display recently used
-	m_display_recent = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(m_display_favorites), _("Recently Used"));
-	gtk_box_pack_start(display_vbox, m_display_recent, true, true, 0);
-	gtk_widget_set_sensitive(GTK_WIDGET(m_display_recent), wm_settings->recent_items_max);
-
-	// Add option to display all applications
-	m_display_applications = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(m_display_recent), _("All Applications"));
-	gtk_box_pack_start(display_vbox, m_display_applications, true, true, 0);
-
-	switch (wm_settings->default_category)
-	{
-	case Settings::CategoryRecent:
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(m_display_recent), true);
-		break;
-
-	case Settings::CategoryAll:
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(m_display_applications), true);
-		break;
-
-	default:
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(m_display_favorites), true);
-		break;
-	}
-
-	connect(m_display_favorites, "toggled",
-		[](GtkToggleButton* button)
+	connect(m_default_category, "changed",
+		[](GtkComboBox* combo)
 		{
-			if (gtk_toggle_button_get_active(button))
+			const int active = gtk_combo_box_get_active(combo);
+			if ((active == Settings::CategoryRecent) && !wm_settings->recent_items_max)
 			{
-				wm_settings->default_category = Settings::CategoryFavorites;
+				gtk_combo_box_set_active(combo, Settings::CategoryFavorites);
+				return;
 			}
-		});
-
-	connect(m_display_recent, "toggled",
-		[](GtkToggleButton* button)
-		{
-			if (gtk_toggle_button_get_active(button))
-			{
-				wm_settings->default_category = Settings::CategoryRecent;
-			}
-		});
-
-	connect(m_display_applications, "toggled",
-		[](GtkToggleButton* button)
-		{
-			if (gtk_toggle_button_get_active(button))
-			{
-				wm_settings->default_category = Settings::CategoryAll;
-			}
+			wm_settings->default_category = active;
 		});
 
 
@@ -805,10 +772,9 @@ GtkWidget* SettingsDialog::init_behavior_tab()
 			wm_settings->recent_items_max = gtk_spin_button_get_value_as_int(button);
 
 			const bool active = wm_settings->recent_items_max;
-			gtk_widget_set_sensitive(GTK_WIDGET(m_display_recent), active);
-			if (!active && gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(m_display_recent)))
+			if (!active && (gtk_combo_box_get_active(GTK_COMBO_BOX(m_default_category)) == Settings::CategoryRecent))
 			{
-				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(m_display_favorites), true);
+				gtk_combo_box_set_active(GTK_COMBO_BOX(m_default_category), Settings::CategoryFavorites);
 			}
 		});
 

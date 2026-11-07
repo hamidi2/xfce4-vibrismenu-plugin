@@ -21,6 +21,7 @@
 #include "launcher-view.h"
 
 #include <string>
+#include <vector>
 
 namespace WhiskerMenu
 {
@@ -68,6 +69,10 @@ public:
 	void set_width_authority() override;
 	void schedule_width_update();
 	int measure_item_width() const;
+	// Show the model column by column (top to bottom, then the next column)
+	// in `cols` columns of at least `rows` rows; cols <= 1 shows it as is
+	void set_column_major(int cols, int rows);
+	GtkTreePath* model_path(GtkTreePath* view_path) const override;
 
 public:
 	static int s_item_width;
@@ -75,6 +80,18 @@ public:
 private:
 	bool m_authority;
 	bool m_width_pending;
+
+	// column-major display copy of m_model (nullptr: m_model is shown directly)
+	GtkListStore* m_display = nullptr;
+	std::vector<int> m_to_model;   // display row -> model row, -1 = empty cell
+	std::vector<int> m_to_display; // model row -> display row
+	int m_cm_cols = 0;
+	int m_cm_rows = 0;
+	gulong m_model_slots[4] = {0, 0, 0, 0};
+	guint m_rebuild_id = 0;
+	void rebuild_display();
+	void disconnect_model();
+	GtkTreePath* view_path(GtkTreePath* path) const;
 
 private:
 
