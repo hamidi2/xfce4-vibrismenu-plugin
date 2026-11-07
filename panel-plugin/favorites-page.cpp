@@ -685,14 +685,6 @@ bool FavoritesPage::scrollbar_overlay_effective()
 	{
 		return false;
 	}
-	// Xubuntu exports GTK_OVERLAY_SCROLLING=0 for the whole session
-	// (/etc/X11/Xsession.d/56xubuntu-session), which made the option a
-	// no-op. The option is explicit, so it wins — inside this plugin
-	// process only (GTK reads the variable when it updates indicators).
-	if (g_strcmp0(g_getenv("GTK_OVERLAY_SCROLLING"), "0") == 0)
-	{
-		g_unsetenv("GTK_OVERLAY_SCROLLING");
-	}
 	gboolean setting = TRUE;
 	g_object_get(gtk_settings_get_default(), "gtk-overlay-scrolling", &setting, nullptr);
 	return setting && (g_strcmp0(g_getenv("GTK_OVERLAY_SCROLLING"), "0") != 0);
