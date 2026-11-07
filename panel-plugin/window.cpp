@@ -171,9 +171,6 @@ WhiskerMenu::Window::Window(Plugin* plugin) :
 	// Create the border of the window
 	GtkWidget* frame = gtk_frame_new(nullptr);
 	gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_OUT);
-	// The OUT shadow lights only the bottom/right; add a light left line too for
-	// symmetry — with the same subtle alpha as the dark theme
-	gtk_style_context_add_class(gtk_widget_get_style_context(frame), "vibris-frame");
 	gtk_container_add(GTK_CONTAINER(m_window), frame);
 	m_frame = frame;
 
@@ -308,8 +305,7 @@ WhiskerMenu::Window::Window(Plugin* plugin) :
 	{
 		GtkCssProvider* provider = gtk_css_provider_new();
 		gtk_css_provider_load_from_data(provider,
-				".command-button { padding: 0px; min-width: 0px; min-height: 0px; }\n"
-				"frame.vibris-frame { border-left: 1px solid alpha(white, 0.10); }", -1, nullptr);
+				".command-button { padding: 0px; min-width: 0px; min-height: 0px; }", -1, nullptr);
 		gtk_style_context_add_provider_for_screen(gdk_screen_get_default(),
 				GTK_STYLE_PROVIDER(provider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 		g_object_unref(provider);
@@ -1754,7 +1750,8 @@ bool WhiskerMenu::Window::set_size(int width, int height)
 			{
 				const int max_cols = (wm_settings->favorites_columns > 0) ? wm_settings->favorites_columns : 2;
 				const int rows = std::max(1, favorites_capacity_rows());
-				GtkTreeModel* model = gtk_icon_view_get_model(GTK_ICON_VIEW(v));
+				// the real model: the displayed one also holds the empty cells
+				GtkTreeModel* model = page->get_view()->get_model();
 				const int n = model ? gtk_tree_model_iter_n_children(model, nullptr) : 0;
 				const int cols = CLAMP((n + rows - 1) / rows, 1, max_cols);
 				if (auto icon_view = dynamic_cast<LauncherIconView*>(page->get_view()))
