@@ -629,7 +629,7 @@ void WhiskerMenu::Window::show(const Position position)
 		}
 
 		// Fetch position
-		m_plugin->get_menu_position(&m_geometry.x, &m_geometry.y);
+		menu_position(&m_geometry.x, &m_geometry.y);
 		monitor_gdk = gdk_display_get_monitor_at_window(gtk_widget_get_display(parent), gtk_widget_get_window(parent));
 	}
 	else
@@ -653,6 +653,7 @@ void WhiskerMenu::Window::show(const Position position)
 	// workarea = ناحیهٔ بدون داک/پنل؛ منو هرگز نباید پنل را بپوشاند
 	gdk_monitor_get_workarea(monitor_gdk, &m_workarea);
 	m_max_bottom = m_workarea.y + m_workarea.height;
+	tall_update_mode(position == PositionAtButton);
 	const bool resized = set_size(wm_settings->menu_width, wm_settings->menu_height);
 
 	// Center window if requested
@@ -745,16 +746,25 @@ void WhiskerMenu::Window::show(const Position position)
 		check_scrollbar_needed();
 	}
 
-	// Fetch actual window size
+	// Fetch actual window size (the menu, not the tall window around it)
 	GtkRequisition size;
-	gtk_widget_get_preferred_size(GTK_WIDGET(m_window), &size, nullptr);
+	if (m_tall)
+	{
+		gtk_widget_set_margin_top(m_frame, 0);
+		gtk_widget_get_preferred_size(m_frame, &size, nullptr);
+		gtk_widget_set_margin_top(m_frame, std::max(0, m_geometry.y - m_tall_top));
+	}
+	else
+	{
+		gtk_widget_get_preferred_size(GTK_WIDGET(m_window), &size, nullptr);
+	}
 	m_geometry.width = std::max(size.width, m_geometry.width);
 	m_geometry.height = std::max(size.height, m_geometry.height);
 
 	// Fetch position again to make sure window does not overlap panel
 	if (position == PositionAtButton)
 	{
-		m_plugin->get_menu_position(&m_geometry.x, &m_geometry.y);
+		menu_position(&m_geometry.x, &m_geometry.y);
 	}
 	else if (position == PositionAtCenter)
 	{
@@ -830,7 +840,8 @@ int WhiskerMenu::Window::favorites_capacity_rows() const
 	// حین درگ از «هندسهٔ خواسته − chrome ذخیره‌شده» بگیر نه تخصیص: تخصیص یک
 	// فریم عقب می‌ماند و همان حالت گذرای «آخرین آیتم رفته ستون اول ولی هنوز
 	// دوسطونه‌ایم» می‌شود (خواستهٔ کاربر: یک تکون، نه دو تکون)
-	const int win_alloc = gtk_widget_get_allocated_height(GTK_WIDGET(m_window));
+	// frame = the menu itself (window minus the tall-mode margin)
+	const int win_alloc = gtk_widget_get_allocated_height(m_frame ? m_frame : GTK_WIDGET(m_window));
 	const int alloc_h = gtk_widget_get_allocated_height(v);
 	int avail = 0;
 	if ((win_alloc > 1) && (alloc_h > 1) && (win_alloc == m_geometry.height))
@@ -894,6 +905,14 @@ void WhiskerMenu::Window::resize(int delta_x, int delta_y, int delta_width, int 
 			target_y = m_workarea.y;
 			target_h = std::max(m_min_h, m_max_bottom - target_y);
 		}
+	}
+	if (m_tall && (m_tall_bottom > 0) && (delta_height != 0))
+	{
+		// tall mode: the bottom edge is the window's own bottom and never
+		// moves; only the top follows the pointer. Without this the min-height
+		// floor kept y and lifted the bottom edge (2061 -> 2025 on :97).
+		target_h = std::max(m_min_h, std::min(target_h, m_tall_bottom - m_tall_top));
+		target_y = m_tall_bottom - target_h;
 	}
 	// هدف را به‌روز کن؛ اعمال یک‌بار در هر چرخهٔ main-loop (coalesce موشن‌های تند) —
 	// اعمالِ re-entrant داخل هندلرِ موشن = پیرپیر حین حرکت تند
@@ -983,10 +1002,6 @@ void WhiskerMenu::Window::resize_start()
 {
 	m_resizing = true;
 	pin_fixed_edge();
-	if (tall_supported())
-	{
-		tall_begin();
-	}
 	// policy favorites در view_created ست شده و دیگر دست نمی‌خورد:
 	// اسکرول‌بار overlay است — جا نمی‌گیرد پس هیچ جهش عرضی در درگ نیست
 	// حداقل ارتفاعِ محتوای واقعی — از ویجت محتوا؛ خود پنجره را نگیر چون
@@ -1015,14 +1030,8 @@ void WhiskerMenu::Window::resize_end()
 
 	// بدون جابه‌جایی پنجره: درگِ لبه فقط همان لبه را حرکت داده و y ثابت مانده —
 	// فراخوانی get_menu_position اینجا کل منو را می‌پراند (منشأ پرش پس از رها کردن)
-	if (m_tall)
-	{
-		tall_end();
-	}
-	else
-	{
-		move_window();
-	}
+	// tall mode: the X window is already final (constant during the drag)
+	move_window();
 
 	// Allow menu to hide
 	m_resizing = false;
@@ -1282,66 +1291,154 @@ bool WhiskerMenu::Window::tall_supported() const
 	{
 		return false;
 	}
-	// only for a menu above a bottom panel (the case the drag is built for)
-	const int centre_y = m_geometry.y + (m_geometry.height / 2);
-	return centre_y >= (m_monitor.y + (m_monitor.height / 2));
+	// only for a menu above a bottom panel: decided from the panel button,
+	// not from the menu (whose height is not known yet on the first show)
+	GtkWidget* button = m_plugin->get_button();
+	GdkWindow* bw = button ? gtk_widget_get_window(button) : nullptr;
+	if (!bw)
+	{
+		return false;
+	}
+	int bx = 0, by = 0;
+	gdk_window_get_origin(bw, &bx, &by);
+	if (!gtk_widget_get_has_window(button))
+	{
+		GtkAllocation alloc;
+		gtk_widget_get_allocation(button, &alloc);
+		by += alloc.y;
+	}
+	return by >= (m_monitor.y + (m_monitor.height / 2));
 }
 
 //-----------------------------------------------------------------------------
 
-void WhiskerMenu::Window::tall_begin()
+void WhiskerMenu::Window::menu_position(int* x, int* y)
 {
-	// The X window grows once, upward, to the top of the workarea; the bottom
-	// edge is where it is now. From here until tall_end() the X window is not
-	// resized vertically at all.
-	m_tall = true;
-	m_tall_bottom = m_geometry.y + m_geometry.height;
-	m_tall_top = m_workarea.y;
-	m_tall_w = -1; // force the first tall_apply() to configure the window
-	tall_apply();
+	// xfce_panel_plugin_position_widget() places the window by its size
+	// request; in tall mode that is the tall window, so let it see the menu
+	if (!m_tall)
+	{
+		m_plugin->get_menu_position(x, y);
+		return;
+	}
+	const int margin = gtk_widget_get_margin_top(m_frame);
+	gtk_widget_set_margin_top(m_frame, 0);
+	gtk_widget_set_size_request(GTK_WIDGET(m_window), m_geometry.width, m_geometry.height);
+	m_plugin->get_menu_position(x, y);
+	gtk_widget_set_margin_top(m_frame, margin);
+	gtk_widget_set_size_request(GTK_WIDGET(m_window), m_tall_w > 0 ? m_tall_w : m_geometry.width,
+			m_tall_bottom > 0 ? m_tall_bottom - m_tall_top : m_geometry.height);
 }
 
 //-----------------------------------------------------------------------------
 
 void WhiskerMenu::Window::tall_apply()
 {
-	const int tall_h = m_tall_bottom - m_tall_top;
-	// the menu is drawn in the bottom part; the frame's margin is the
-	// transparent area above it. GTK relayouts + repaints in one frame.
-	gtk_widget_set_margin_top(m_frame, std::max(0, m_geometry.y - m_tall_top));
-	if (m_tall_w != m_geometry.width)
+	// While the menu is shown (composited, above a bottom panel) the X window
+	// spans from the top of the workarea to the menu's bottom edge. The menu
+	// is drawn in its bottom part (frame margin-top); everything above is
+	// transparent and, through the input shape, not even part of the window
+	// for the pointer — clicks there reach the windows below (focus-out
+	// still closes the menu). A top-edge drag changes only the margin:
+	// no X configure at press, during the drag or at release.
+	const int bottom = m_geometry.y + m_geometry.height;
+	const int tall_h = bottom - m_tall_top;
+	const int margin = std::max(0, m_geometry.y - m_tall_top);
+	gtk_widget_set_margin_top(m_frame, margin);
+
+	GdkWindow* win = gtk_widget_get_window(GTK_WIDGET(m_window));
+	if ((m_tall_w != m_geometry.width) || (m_tall_bottom != bottom) || (m_tall_x != m_geometry.x))
 	{
-		// first frame, or a width change (columns / scrollbar): one real
-		// configure; height and bottom edge stay the same
 		m_tall_w = m_geometry.width;
+		m_tall_bottom = bottom;
+		m_tall_x = m_geometry.x;
+		// Only GTK's own API here: direct gdk configures raced with GTK's
+		// (stale size hints, remembered size) and left the window misplaced.
+		// gtk_window_resize also stops GTK from re-sending the size it last
+		// saw in a ConfigureNotify (the width that would not go back to one
+		// column). gtk_window_move takes the top-left corner even with a
+		// gravity set (the gravity only tells the WM how to treat its frame);
+		// GTK sends move+resize as one configure.
 		gtk_widget_set_size_request(GTK_WIDGET(m_window), m_geometry.width, tall_h);
-		GdkWindow* win = gtk_widget_get_window(GTK_WIDGET(m_window));
-		if (win)
+		gtk_window_resize(m_window, m_geometry.width, tall_h);
+		gtk_window_move(m_window, m_geometry.x, m_tall_top);
+		// During show() several provisional geometries are requested before
+		// and right after the first map, and xfwm4 placed the window from one
+		// of them. Once GTK's layout pass has run (size hints current), check
+		// the real X geometry once and correct it with a single configure.
+		if (!m_tall_settle_id)
 		{
-			gdk_window_move_resize(win, m_geometry.x, m_tall_top, m_geometry.width, tall_h);
+			m_tall_settle_id = g_idle_add_full(G_PRIORITY_LOW, +[](gpointer data) -> gboolean
+			{
+				auto window = static_cast<Window*>(data);
+				window->m_tall_settle_id = 0;
+				window->tall_settle();
+				return G_SOURCE_REMOVE;
+			}, this, nullptr);
 		}
+	}
+	if (win)
+	{
+		const cairo_rectangle_int_t menu_rect = {0, margin, m_geometry.width, m_geometry.height};
+		cairo_region_t* region = cairo_region_create_rectangle(&menu_rect);
+		gdk_window_input_shape_combine_region(win, region, 0, 0);
+		cairo_region_destroy(region);
 	}
 	gtk_widget_queue_draw(GTK_WIDGET(m_window));
 }
 
 //-----------------------------------------------------------------------------
 
-void WhiskerMenu::Window::tall_end()
+void WhiskerMenu::Window::tall_settle()
 {
-	// Back to a window exactly the size of the menu. bit_gravity SouthWest
-	// keeps the bottom pixels — which are already the final menu — so the
-	// shrink is not visible.
-	m_tall = false;
-	gtk_widget_set_margin_top(m_frame, 0);
-	// No explicit gdk configure here: GTK's WM_NORMAL_HINTS still carry the
-	// tall min height until its next layout pass, so xfwm4 would clamp the
-	// height and only move the window (seen on :97). gtk_window_resize makes
-	// GTK send the shrink itself on that pass, after updating the hints
-	// (without it GTK keeps the remembered tall size); the SouthWest gravity
-	// hint keeps the bottom edge (= m_tall_bottom) in place.
-	gtk_widget_set_size_request(GTK_WIDGET(m_window), m_geometry.width, m_geometry.height);
-	gtk_window_resize(m_window, m_geometry.width, m_geometry.height);
-	gtk_widget_queue_draw(GTK_WIDGET(m_window));
+	GdkWindow* win = gtk_widget_get_window(GTK_WIDGET(m_window));
+	if (!m_tall || !win || !gtk_widget_get_mapped(GTK_WIDGET(m_window)) || (m_tall_bottom < 0))
+	{
+		return;
+	}
+	const int tall_h = m_tall_bottom - m_tall_top;
+	int x = 0, y = 0;
+	gdk_window_get_root_origin(win, &x, &y);
+	if ((x != m_tall_x) || (y != m_tall_top) || (gdk_window_get_width(win) != m_tall_w)
+			|| (gdk_window_get_height(win) != tall_h))
+	{
+		gdk_window_move_resize(win, m_tall_x, m_tall_top, m_tall_w, tall_h);
+	}
+}
+
+//-----------------------------------------------------------------------------
+
+void WhiskerMenu::Window::tall_update_mode(bool at_button)
+{
+	// decided on every show (compositor / panel position may have changed)
+	const bool tall = at_button && tall_supported();
+	if (tall == m_tall)
+	{
+		if (tall)
+		{
+			m_tall_top = m_workarea.y;
+		}
+		return;
+	}
+	m_tall = tall;
+	m_tall_w = m_tall_bottom = m_tall_x = -1;
+	m_tall_top = m_workarea.y;
+	// tall window: its TOP edge is the fixed one (workarea top) and it is
+	// only ever resized in width — NorthWest, or xfwm4 interprets every
+	// requested position relative to the bottom edge (window landed at y=99
+	// on :97). Normal window above a bottom panel: SouthWest as before.
+	gtk_window_set_gravity(m_window, tall ? GDK_GRAVITY_NORTH_WEST : GDK_GRAVITY_SOUTH_WEST);
+	if (!tall)
+	{
+		gtk_widget_set_margin_top(m_frame, 0);
+		GdkWindow* win = gtk_widget_get_window(GTK_WIDGET(m_window));
+		if (win)
+		{
+			gdk_window_input_shape_combine_region(win, nullptr, 0, 0);
+		}
+		gtk_widget_set_size_request(GTK_WIDGET(m_window), m_geometry.width, m_geometry.height);
+		gtk_window_resize(m_window, m_geometry.width, m_geometry.height);
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -1674,7 +1771,11 @@ bool WhiskerMenu::Window::set_size(int width, int height)
 		// به‌روز نشود، GTK هر gtk_window_resize را به همان حداقلِ کهنه کلمپ می‌کند
 		// و ارتفاع تغییر نمی‌کند در حالی که y حرکت کرده (منشأ «سُرخوردن» کل منو).
 		// GTK همهٔ اینها را در یک ConfigureRequest واحد ادغام می‌کند.
-		if (!m_tall)
+		if (m_tall)
+		{
+			tall_apply();
+		}
+		else
 		{
 			gtk_widget_set_size_request(GTK_WIDGET(m_window), m_geometry.width, m_geometry.height);
 		}
