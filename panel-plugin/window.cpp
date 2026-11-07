@@ -1288,9 +1288,14 @@ void WhiskerMenu::Window::pin_fixed_edge()
 	const bool bottom_fixed = centre_y >= (m_monitor.y + (m_monitor.height / 2));
 	const int gravity = bottom_fixed ? SouthWestGravity : NorthWestGravity;
 
+	// Only bit_gravity. win_gravity on the client must stay NorthWest: xfwm4
+	// already keeps the frame's bottom fixed (WM_NORMAL_HINTS gravity) and
+	// places the client at the frame's top-left. With win_gravity SouthWest
+	// the server shifted the client inside the shrinking frame a second time,
+	// so the whole menu ran upward ~2x the drag distance (tested on :97).
 	XSetWindowAttributes attributes;
 	attributes.bit_gravity = gravity;
-	attributes.win_gravity = gravity;
+	attributes.win_gravity = NorthWestGravity;
 	XChangeWindowAttributes(GDK_WINDOW_XDISPLAY(win), GDK_WINDOW_XID(win),
 			CWBitGravity | CWWinGravity, &attributes);
 

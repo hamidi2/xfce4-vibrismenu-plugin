@@ -602,6 +602,19 @@ void FavoritesPage::view_created()
 			const bool overflow = has_overflow();
 			gtk_widget_set_opacity(vsb, overflow ? 1.0 : 0.0);
 			gtk_widget_set_sensitive(vsb, overflow);
+			if (!scrollbar_overlay_effective() && (overflow != m_sb_shown))
+			{
+				// overflow flipped: switch policy and re-measure width outside
+				// the allocation pass
+				g_idle_add(+[](gpointer data) -> gboolean
+				{
+					auto page = static_cast<FavoritesPage*>(data);
+					page->apply_scrollbar_mode();
+					page->get_window()->sync_width();
+					return G_SOURCE_REMOVE;
+				}, this);
+				m_sb_shown = overflow;
+			}
 			if (get_window()->is_resizing())
 			{
 				// بازچینش فقط با تغییر واقعی ظرفیت — نه هر فریمِ درگ. rebuildِ
@@ -648,10 +661,14 @@ void FavoritesPage::apply_scrollbar_mode()
 	}
 	else
 	{
-		// space always reserved after the last column (constant width, so
-		// it never "fattens" the menu); shown only on real overflow
+		// No overflow: EXTERNAL = no scrollbar and no space for it, while the
+		// content still does not force the minimum height (NEVER would, and
+		// that is what made dragging stiff). Overflow (every column full):
+		// ALWAYS, and get_scrollbar_reserve() widens the menu by its width.
 		g_object_set(sw, "overlay-scrolling", FALSE, nullptr);
-		gtk_scrolled_window_set_policy(sw, GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
+		m_sb_shown = has_overflow();
+		gtk_scrolled_window_set_policy(sw, GTK_POLICY_NEVER,
+				m_sb_shown ? GTK_POLICY_ALWAYS : GTK_POLICY_EXTERNAL);
 	}
 }
 
@@ -659,7 +676,7 @@ void FavoritesPage::apply_scrollbar_mode()
 
 int FavoritesPage::get_scrollbar_reserve()
 {
-	if (scrollbar_overlay_effective())
+	if (scrollbar_overlay_effective() || !has_overflow())
 	{
 		return 0;
 	}

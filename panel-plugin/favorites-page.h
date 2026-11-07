@@ -82,6 +82,8 @@ private:
 	int m_built_capacity = 0;
 	// سرریز از ظرفیت کل ستون‌ها = scrollbar عمودی واقعی (نه گذرا)
 	bool m_overflow = false;
+	// non-overlay mode: scrollbar currently shown (policy ALWAYS) vs EXTERNAL
+	bool m_sb_shown = false;
 	// favorites list content changed since the last width measurement
 	bool m_content_dirty = true;
 	// نگاشت سلول‌های مدل (سطری) به ایندکس منطقی favorites؛ -1 = خانهٔ خالی
