@@ -425,7 +425,6 @@ void Settings::property_changed(const gchar* property, const GValue* value)
 			|| menu_opacity.load(property, value)
 			|| search_actions.load(property, value))
 	{
-		// تغییر ستون‌بندی/جهت favorites: بازچینش زندهٔ منو
 		// تغییر ستون‌بندی/جهت favorites یا ارتفاع منو: ظرفیت ستون‌ها عوض می‌شود
 		// → بازچینش زندهٔ منو (ارتفاع = ظرفیت ردیف‌های هر ستون)
 		if ((g_strcmp0(property, "/favorites-columns") == 0)

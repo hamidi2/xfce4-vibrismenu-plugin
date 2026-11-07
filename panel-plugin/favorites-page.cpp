@@ -189,20 +189,8 @@ void FavoritesPage::set_menu_items()
 		}
 	}
 
-	{
-		// پروب موقت
-		GtkAllocation a;
-		gtk_widget_get_allocation(get_view()->get_widget(), &a);
-		m_built_capacity = capacity;
-		FILE* f = fopen("/tmp/wm-geo.log", "a");
-		if (f) { fprintf(f, "layout: n=%d m_columns=%d capacity=%d used=%d slots=%d s0=%d s1=%d s2=%d s3=%d s4=%d s5=%d iw=%d alloc_h=%d win_alloc=%d win_geo=%d resizing=%d\n",
-				n, m_columns, capacity, m_used_cols, (int)m_model_slots.size(),
-				(m_model_slots.size()>0?m_model_slots[0]:-1),(m_model_slots.size()>1?m_model_slots[1]:-1),(m_model_slots.size()>2?m_model_slots[2]:-1),(m_model_slots.size()>3?m_model_slots[3]:-1),(m_model_slots.size()>4?m_model_slots[4]:-1),(m_model_slots.size()>5?m_model_slots[5]:-1),
-				LauncherIconView::s_item_width, a.height,
-				gtk_widget_get_allocated_height(GTK_WIDGET(get_window()->get_widget())),
-				gtk_widget_get_allocated_width(GTK_WIDGET(get_window()->get_widget())),
-				(int)get_window()->is_resizing()); fclose(f); }
-	}
+	m_built_capacity = capacity;
+
 	// Same content, only a capacity change (drag / height change): never
 	// replace the model — a new model makes GtkIconView drop and re-lay-out
 	// every item (the items blinking while dragging). Unchanged layout: do
@@ -544,20 +532,6 @@ void FavoritesPage::sync_capacity()
 	}
 	gtk_tree_path_free(path);
 	const int cap = get_window()->favorites_capacity_rows();
-	{
-		GtkAllocation wa, va;
-		gtk_widget_get_allocation(GTK_WIDGET(get_window()->get_widget()), &wa);
-		gtk_widget_get_allocation(get_view()->get_widget(), &va);
-		FILE* f = fopen("/tmp/wm-geo.log", "a");
-		if (f)
-		{
-			fprintf(f, "sync_cap: menu_h(set)=%d win=%d view=%d chrome_win-view=%d pitch_meas=%d cap=%d built=%d scale=%d\n",
-					(int)wm_settings->menu_height, wa.height, va.height,
-					wa.height - va.height, FavoritesPage::s_measured_pitch,
-					cap, m_built_capacity, gtk_widget_get_scale_factor(get_view()->get_widget()));
-			fclose(f);
-		}
-	}
 	if (cap != m_built_capacity)
 	{
 		resync_now();
@@ -710,6 +684,14 @@ bool FavoritesPage::scrollbar_overlay_effective()
 	if (!wm_settings->favorites_scrollbar_overlay)
 	{
 		return false;
+	}
+	// Xubuntu exports GTK_OVERLAY_SCROLLING=0 for the whole session
+	// (/etc/X11/Xsession.d/56xubuntu-session), which made the option a
+	// no-op. The option is explicit, so it wins — inside this plugin
+	// process only (GTK reads the variable when it updates indicators).
+	if (g_strcmp0(g_getenv("GTK_OVERLAY_SCROLLING"), "0") == 0)
+	{
+		g_unsetenv("GTK_OVERLAY_SCROLLING");
 	}
 	gboolean setting = TRUE;
 	g_object_get(gtk_settings_get_default(), "gtk-overlay-scrolling", &setting, nullptr);

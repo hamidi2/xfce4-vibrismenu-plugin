@@ -684,6 +684,9 @@ void WhiskerMenu::Window::show(const Position position)
 		m_profile->update_picture();
 		m_profile_shape = wm_settings->profile_shape;
 		update_layout();
+		// the width was computed above with the old layout (e.g. categories
+		// still horizontal) — recompute it from the new one
+		sync_width();
 	}
 
 	// Show window — اما نه قبل از اینکه چیدمان در اندازهٔ نهایی برسد:
@@ -696,50 +699,10 @@ void WhiskerMenu::Window::show(const Position position)
 		gtk_main_iteration_do(FALSE);
 	}
 
-	// رندر کامل منو در بافر حافظه قبل از دیده‌شدن (معادل BitBlt): یک
-	// image surface می‌سازیم، کل درخت ویجت را داخلش draw می‌کنیم —
-	// هیچ پیکسلی از این مرحله روی صفحه نمی‌رود. پس‌زمینهٔ سفید دیباگ هم
-	// فقط داخل همین بافر کشیده می‌شود و دیگر با پنجرهٔ X کاری ندارد.
-	{
-		const int w = gtk_widget_get_allocated_width(GTK_WIDGET(m_window));
-		const int h = gtk_widget_get_allocated_height(GTK_WIDGET(m_window));
-		if ((w > 0) && (h > 0))
-		{
-			cairo_surface_t* buffer = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, w, h);
-			cairo_t* cr = cairo_create(buffer);
-			if (g_getenv("VIBRIS_DEBUG_WHITE"))
-			{
-				cairo_set_source_rgb(cr, 1.0, 1.0, 1.0);
-			}
-			else
-			{
-				// همان پس‌زمینهٔ عادی تم — نه سفید
-				GtkStyleContext* ctx = gtk_widget_get_style_context(GTK_WIDGET(m_window));
-				gtk_render_background(ctx, cr, 0, 0, w, h);
-			}
-			gtk_widget_draw(GTK_WIDGET(m_window), cr);
-			cairo_destroy(cr);
-			cairo_surface_destroy(buffer);
-		}
-	}
-
 	// ظرفیت ستون‌ها با تخصیص نهایی — هنوز مخفی؛ هر اصلاحی اینجا نامرئی است
 	m_favorites->sync_capacity();
 
 	gtk_window_present(m_window);
-
-	// پس‌زمینهٔ سفید فقط ابزار دیباگ محیط تست (VIBRIS_DEBUG_WHITE) — روی
-	// جلسهٔ واقعی هرگز؛ پس‌زمینهٔ پنجره همان پس‌زمینهٔ عادی تم می‌ماند تا
-	// اولین فریمِ پاک‌شدن پنجره سفید دیده نشود
-	if (g_getenv("VIBRIS_DEBUG_WHITE"))
-	{
-		GdkWindow* win = gtk_widget_get_window(GTK_WIDGET(m_window));
-		if (win)
-		{
-			GdkRGBA white = {1.0, 1.0, 1.0, 1.0};
-			gdk_window_set_background_rgba(win, &white);
-		}
-	}
 
 	if (resized)
 	{
@@ -1075,6 +1038,8 @@ void WhiskerMenu::Window::set_items()
 	m_search_results->set_menu_items();
 	m_favorites->set_menu_items();
 	m_recent->set_menu_items();
+	// new items / layout (columns, fill direction): the width follows
+	sync_width();
 
 	// Handle switching to favorites are added
 	connect(m_favorites->get_view()->get_model(), "row-inserted",
@@ -1742,29 +1707,6 @@ bool WhiskerMenu::Window::set_size(int width, int height)
 	}
 	if ((m_geometry.width != width) || (m_geometry.height != height))
 	{
-		{
-			Page* dbg_page = get_active_page();
-			gint dbg_lav = 0, dbg_cat = 0, dbg_iw = 0;
-			if (dbg_page == m_favorites)
-			{
-				GtkWidget* dv = m_favorites->get_view()->get_widget();
-				dbg_iw = gtk_icon_view_get_item_width(GTK_ICON_VIEW(dv));
-			}
-			else
-			{
-				gtk_widget_get_preferred_width(GTK_WIDGET(dbg_page->get_view()->get_widget()), nullptr, &dbg_lav);
-			}
-			gtk_widget_get_preferred_width(GTK_WIDGET(m_category_buttons), nullptr, &dbg_cat);
-			FILE* df = fopen("/tmp/wm-width.log", "a");
-			if (df)
-			{
-				fprintf(df, "set_size: %d -> %d (h %d->%d) resizing=%d iw=%d lav_nt=%d cat_nt=%d used=%d\n",
-						m_geometry.width, width, m_geometry.height, height,
-						(int)m_resizing, dbg_iw, dbg_lav, dbg_cat,
-						m_favorites->get_used_columns());
-				fclose(df);
-			}
-		}
 		m_geometry.width = width;
 		m_geometry.height = height;
 		// set_size_request همیشه — این حداقلِ toplevel نزد GTK است؛ اگر حین درگ
