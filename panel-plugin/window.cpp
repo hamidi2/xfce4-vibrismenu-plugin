@@ -78,9 +78,9 @@ WhiskerMenu::Window::Window(Plugin* plugin) :
 	gtk_window_set_decorated(m_window, false);
 	gtk_window_set_skip_taskbar_hint(m_window, true);
 	gtk_window_set_skip_pager_hint(m_window, true);
-	// gravity جنوب‌غرب: X خودش هنگام تغییر ارتفاع، y را طوری تنظیم می‌کند که
-	// لبهٔ پایین ثابت بماند — اتمیک و در همان درخواست resize. پیرپیر پایین
-	// (دو فریم move/resize جدا) از بین می‌رود چون y اصلاً از ما نمی‌آید
+	// South-west gravity: on a height change X itself adjusts y so the bottom edge
+	// stays put — atomically, in the same resize request. This removes the bottom
+	// flicker (separate move/resize frames) since y no longer comes from us
 	gtk_window_set_gravity(m_window, GDK_GRAVITY_SOUTH_WEST);
 	gtk_window_set_type_hint(m_window, GDK_WINDOW_TYPE_HINT_MENU);
 	gtk_window_stick(m_window);
@@ -171,8 +171,8 @@ WhiskerMenu::Window::Window(Plugin* plugin) :
 	// Create the border of the window
 	GtkWidget* frame = gtk_frame_new(nullptr);
 	gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_OUT);
-	// سایهٔ OUT فقط پایین/راست را روشن می‌کند؛ خط روشن چپ هم برای تقارن
-	// (خواستهٔ کاربر) — با همان آلفای ظریف تم تیره
+	// The OUT shadow lights only the bottom/right; add a light left line too for
+	// symmetry — with the same subtle alpha as the dark theme
 	gtk_style_context_add_class(gtk_widget_get_style_context(frame), "vibris-frame");
 	gtk_container_add(GTK_CONTAINER(m_window), frame);
 	m_frame = frame;
@@ -187,8 +187,8 @@ WhiskerMenu::Window::Window(Plugin* plugin) :
 	gtk_widget_set_valign(GTK_WIDGET(m_window_load_spinner), GTK_ALIGN_CENTER);
 	gtk_stack_add_named(m_window_stack, GTK_WIDGET(m_window_load_spinner), "load");
 
-	// Create resizers — فقط لبهٔ بالا draggable است (منو به پنل پایین چسبیده است)؛
-	// لبه‌های دیگر عملکرد درستی نداشتند (چپ منو را می‌کشید، راست بیکار بود)
+	// Create resizers — only the top edge is draggable (the menu sits on a bottom panel);
+	// the other edges did not work right (left moved the menu, right did nothing)
 	m_resize[Resizer::TopLeft] = nullptr;
 	m_resize[Resizer::Top] = new Resizer(Resizer::Top, this);
 	m_resize[Resizer::TopRight] = nullptr;
@@ -210,8 +210,8 @@ WhiskerMenu::Window::Window(Plugin* plugin) :
 			{
 				hide();
 			});
-		// آیکون دکمه‌های هدر = همان اندازهٔ آیکون‌های favorites (GTK_ICON_SIZE_DIALOG
-		// تابع تم است و با launcher-icon-size یکی نمی‌شود)
+		// Header button icons = the favorites icon size (GTK_ICON_SIZE_DIALOG
+		// depends on the theme and does not match launcher-icon-size)
 		gtk_container_foreach(GTK_CONTAINER(m_commands_button[i]),
 			+[](GtkWidget* w, gpointer)
 			{
@@ -278,7 +278,7 @@ WhiskerMenu::Window::Window(Plugin* plugin) :
 	gtk_box_pack_start(search_results, m_search_results->get_widget(), true, true, 0);
 	gtk_container_set_border_width(GTK_CONTAINER(search_results), 0);
 
-	// Create grid for packing resizers — فقط Top وجود دارد؛ سلول‌های دیگر خالی می‌مانند
+	// Create grid for packing resizers — only Top exists; the other cells stay empty
 	GtkGrid* grid = GTK_GRID(gtk_grid_new());
 	gtk_grid_attach(grid, m_resize[Resizer::Top]->get_widget(), 0, 0, 3, 1);
 	gtk_stack_add_named(m_window_stack, GTK_WIDGET(grid), "contents");
@@ -286,6 +286,9 @@ WhiskerMenu::Window::Window(Plugin* plugin) :
 	// Create box for packing children
 	m_vbox = GTK_BOX(gtk_box_new(GTK_ORIENTATION_VERTICAL, 6));
 	gtk_container_set_border_width(GTK_CONTAINER(m_vbox), 0);
+	// side gap equal to the top resize grip and the inner gaps (6px)
+	gtk_widget_set_margin_start(GTK_WIDGET(m_vbox), 6);
+	gtk_widget_set_margin_end(GTK_WIDGET(m_vbox), 6);
 	gtk_grid_attach(grid, GTK_WIDGET(m_vbox), 1, 1, 1, 1);
 
 	// Create box for packing commands
@@ -299,8 +302,8 @@ WhiskerMenu::Window::Window(Plugin* plugin) :
 
 	// Create box for packing username and commands
 	m_title_box = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 6));
-	// هدر کاملاً قطعی: پد تمِ دکمه‌ها صفر می‌شود تا هر گپ = 6px ثابت باشد
-	// (چپ آواتار = بین دکمه‌ها = راست logout = 6؛ مستقل از تم و اندازهٔ آیکون)
+	// Fully fixed header: the theme padding of the buttons is zeroed so every gap is 6px
+	// (left of avatar = between buttons = right of logout = 6; independent of theme and icon size)
 	{
 		GtkCssProvider* provider = gtk_css_provider_new();
 		gtk_css_provider_load_from_data(provider,
@@ -317,8 +320,8 @@ WhiskerMenu::Window::Window(Plugin* plugin) :
 	gtk_box_pack_start(m_title_box, GTK_WIDGET(m_commands_box), false, false, 0);
 	gtk_widget_set_margin_start(m_profile->get_picture(), 6);
 	gtk_widget_set_margin_end(m_profile->get_picture(), 6);
-	// هر دو margin: جلسهٔ RTL است و margin_start در RTL سمت معکوس می‌شود؛
-	// با هر دو، گپ هر دو لبه 6px ثابت و مستقل از جهت است
+	// Both margins: in an RTL session margin_start flips sides;
+	// with both set, the gap at each edge is 6px regardless of direction
 	gtk_widget_set_margin_start(GTK_WIDGET(m_commands_box), 6);
 	gtk_widget_set_margin_end(GTK_WIDGET(m_commands_box), 6);
 
@@ -342,7 +345,7 @@ WhiskerMenu::Window::Window(Plugin* plugin) :
 
 	// Create box for packing launcher pages
 	m_panels_stack = GTK_STACK(gtk_stack_new());
-	// عرض پنجره از صفحهٔ فعال می‌آید نه ماکزیمم همهٔ صفحات (تک‌ستونه/دوستونه هر صفحه خودش)
+	// The window width comes from the active page, not the maximum of all pages
 	gtk_stack_set_hhomogeneous(m_panels_stack, FALSE);
 	gtk_grid_attach(m_contents_box, GTK_WIDGET(m_panels_stack), 0, 1, 1, 1);
 	gtk_widget_set_hexpand(GTK_WIDGET(m_panels_stack), true);
@@ -351,7 +354,7 @@ WhiskerMenu::Window::Window(Plugin* plugin) :
 	gtk_stack_add_named(m_panels_stack, m_recent->get_widget(), "recent");
 	gtk_stack_add_named(m_panels_stack, m_applications->get_widget(), "applications");
 
-	// عرض منو = عرض محتوای صفحهٔ فعال؛ با تعویض صفحه (یا رفتن به جست‌وجو) به‌روز شود
+	// Menu width = width of the active page's content; update it on page change (or search)
 	auto on_page_switch = +[](GObject*, GParamSpec*, gpointer user_data) -> void
 	{
 		g_idle_add(+[](gpointer data) -> gint
@@ -414,9 +417,9 @@ WhiskerMenu::Window::Window(Plugin* plugin) :
 	// Load applications
 	m_applications->load();
 
-	// DnD هر صفحه‌ای (applications/recent/favorites) فلگ سراسری را ست می‌کند
-	// تا hover-activate دسته‌ها حین درگ صفحه را عوض نکند (گاردِ قبلی فقط
-	// روی favorites بود و درگِ شروع‌شده از All Applications را پوشش نمی‌داد)
+	// DnD from any page (applications/recent/favorites) sets the global flag
+	// so category hover-activate does not switch pages during the drag (the old guard
+	// covered only favorites, not drags started from All Applications)
 	for (Page* page : { static_cast<Page*>(m_search_results), static_cast<Page*>(m_recent),
 			static_cast<Page*>(m_applications), static_cast<Page*>(m_favorites) })
 	{
@@ -439,6 +442,11 @@ WhiskerMenu::Window::Window(Plugin* plugin) :
 
 WhiskerMenu::Window::~Window()
 {
+	if (m_page_width_id)
+	{
+		g_source_remove(m_page_width_id);
+	}
+
 	for (int i = 0; i < 9; ++i)
 	{
 		g_signal_handler_disconnect(m_commands_button[i], m_command_slots[i]);
@@ -650,7 +658,7 @@ void WhiskerMenu::Window::show(const Position position)
 	}
 #endif
 	gdk_monitor_get_geometry(monitor_gdk, &m_monitor);
-	// workarea = ناحیهٔ بدون داک/پنل؛ منو هرگز نباید پنل را بپوشاند
+	// workarea = the area without docks/panels; the menu must never cover the panel
 	gdk_monitor_get_workarea(monitor_gdk, &m_workarea);
 	m_max_bottom = m_workarea.y + m_workarea.height;
 	tall_update_mode(position == PositionAtButton);
@@ -706,9 +714,9 @@ void WhiskerMenu::Window::show(const Position position)
 		}
 	}
 
-	// Show window — اما نه قبل از اینکه چیدمان در اندازهٔ نهایی برسد:
-	// realize در حالت مخفی تا چرخهٔ size-allocate قبل از دیده‌شدن کامل شود،
-	// بعد پمپ رویداد؛ منو یک‌پارچه و با اندازهٔ نهایی map می‌شود
+	// Show window — but not before the layout reaches its final size:
+	// realize while hidden so the size-allocate cycle completes before it is seen,
+	// then pump events; the menu maps in one piece at its final size
 	gtk_widget_realize(GTK_WIDGET(m_window));
 	int pumped = 0;
 	while (gtk_events_pending() && (pumped++ < 25))
@@ -716,7 +724,7 @@ void WhiskerMenu::Window::show(const Position position)
 		gtk_main_iteration_do(FALSE);
 	}
 
-	// ظرفیت ستون‌ها با تخصیص نهایی — هنوز مخفی؛ هر اصلاحی اینجا نامرئی است
+	// Column capacity from the final allocation — still hidden; any fix here is invisible
 	m_favorites->sync_capacity();
 
 	gtk_window_present(m_window);
@@ -754,8 +762,8 @@ void WhiskerMenu::Window::show(const Position position)
 	// Move window
 	move_window();
 
-	// تضمین نهایی: پایین منو هرگز وارد workarea (پنل) نشود؛
-	// اگر ارتفاع ذخیره‌شده جا نشود کل پنجره بالا می‌رود (پایین چسبیده به پنل)
+	// Final guarantee: the menu bottom never enters the panel;
+	// if the stored height does not fit, the whole window moves up (bottom on the panel)
 	if ((m_max_bottom > 0) && (m_geometry.y + m_geometry.height > m_max_bottom))
 	{
 		m_geometry.y = m_max_bottom - m_geometry.height;
@@ -767,10 +775,10 @@ void WhiskerMenu::Window::show(const Position position)
 
 int WhiskerMenu::Window::favorites_capacity_rows() const
 {
-	// ظرفیت ستون‌ها — کاملاً در لحظهٔ تغییر محتوا و بدون نیاز به show:
-	// pitch = بلندترین محتوای سلول (آیکون یا متن) + row-spacing؛ همه در حافظه
-	// با pango/تنظیمات خودمان محاسبه می‌شوند، نه از ویجت رندرشده.
-	// استثنا: حین درگ، تخصیص واقعی معیار است (خود درگ = تغییر ارتفاع).
+	// Column capacity — computed when the content changes, without needing a show:
+	// pitch = tallest cell content (icon or text) + row-spacing; all computed in memory
+	// from pango and our own settings, not from the rendered widget.
+	// Exception: while dragging, the real allocation is the measure (the drag is the height change).
 	GtkWidget* v = m_favorites->get_view()->get_widget();
 	const gint icon = wm_settings->launcher_icon_size.get_size();
 
@@ -802,8 +810,8 @@ int WhiskerMenu::Window::favorites_capacity_rows() const
 		}
 		g_object_unref(layout);
 	}
-	// pitch: اولویت با اندازه‌گیری واقعی قبلی (sync_capacity)؛ فرمول فقط
-	// قبل از اولین show که هیچ سلولی رسم نشده
+	// pitch: a previous real measurement (sync_capacity) wins; the formula is used only
+	// before the first show, when no cell has been drawn
 	int pitch = FavoritesPage::s_measured_pitch;
 	if (pitch <= 0)
 	{
@@ -812,14 +820,14 @@ int WhiskerMenu::Window::favorites_capacity_rows() const
 		pitch = std::max(icon, text_h) + 2 * item_pad + rs;
 	}
 
-	// ارتفاع در دسترس: تخصیصِ view فقط وقتی معتبر است که با هندسهٔ خواستهٔ
-	// فعلی هم‌خوان باشد. در حالت هم‌خوان، chrome واقعی (win−view) ذخیره می‌شود
-	// تا تخمینِ فریم‌های ناهم‌خوان (بین درخواست و تخصیص) دقیقاً همان عدد را
-	// بدهد — اختلاف estimate/allocation ظرفیت را یکی جابه‌جا می‌کرد و ستون‌ها
-	// ۱↔۲ فلیپ می‌شدند (عرض ۵۸۴↔۵۹۶ و جابه‌جایی آیتم‌ها = پیرپیر)
-	// حین درگ از «هندسهٔ خواسته − chrome ذخیره‌شده» بگیر نه تخصیص: تخصیص یک
-	// فریم عقب می‌ماند و همان حالت گذرای «آخرین آیتم رفته ستون اول ولی هنوز
-	// دوسطونه‌ایم» می‌شود (خواستهٔ کاربر: یک تکون، نه دو تکون)
+	// Available height: the view allocation is valid only when it matches the
+	// current requested geometry. When it does, the real chrome (win - view) is stored
+	// so estimates for inconsistent frames (between request and allocation) give exactly
+	// the same number — an estimate/allocation mismatch shifted the capacity by one and the
+	// columns flipped 1<->2 (width 584<->596 and items jumping = flicker).
+	// While dragging use requested geometry - stored chrome, not the allocation: the
+	// allocation lags one frame behind and produces the transient state "last item moved
+	// to the first column but still two columns" (one jump, not two)
 	// frame = the menu itself (window minus the tall-mode margin)
 	const int win_alloc = gtk_widget_get_allocated_height(m_frame ? m_frame : GTK_WIDGET(m_window));
 	const int alloc_h = gtk_widget_get_allocated_height(v);
@@ -841,11 +849,11 @@ int WhiskerMenu::Window::favorites_capacity_rows() const
 		gint title_h = 0, search_h = 0;
 		gtk_widget_get_preferred_height(GTK_WIDGET(m_title_box), nullptr, &title_h);
 		gtk_widget_get_preferred_height(GTK_WIDGET(m_search_box), nullptr, &search_h);
-		// کالیبره‌شده با پروب واقعی: قاب پنجره + فاصله‌ها = 10 (فراتر از دو گپ vbox)
+		// Calibrated with a real probe: window frame + gaps = 10 (beyond the two vbox gaps)
 		avail = wm_settings->menu_height - title_h - search_h - 12 - 10;
 	}
-	// margin دوسرِ GtkIconView (پیش‌فرض 6×2) از ارتفاع مؤثر کم می‌شود —
-	// نبودش یعنی ظرفیت یکی بیش‌تر حساب می‌شد و scrollbar مرزی ظاهر می‌شد
+	// GtkIconView's margin on both ends (default 6x2) reduces the usable height —
+	// without it the capacity was one too high and a borderline scrollbar appeared
 	gint iv_margin = 0;
 	g_object_get(G_OBJECT(v), "margin", &iv_margin, nullptr);
 	avail -= 2 * iv_margin;
@@ -861,19 +869,19 @@ int WhiskerMenu::Window::favorites_capacity_rows() const
 
 void WhiskerMenu::Window::resize(int delta_x, int delta_y, int delta_width, int delta_height)
 {
-	// حل هدف در سه قید: سقف بالا (workarea)، حداقل ارتفاع محتوا، چسبیدن پایین به پنل.
-	// y و h همزمان حل می‌شوند وگرنه در مرزها «ته خالی» یا عبور از پنل رخ می‌دهد.
+	// Solve the target under three constraints: top limit (workarea), minimum content height,
+	// bottom on the panel. y and h are solved together, otherwise the edges leave an empty gap or cross the panel.
 	int target_y = m_geometry.y + delta_y;
 	int target_h = m_geometry.height + delta_height;
 	if (target_y < m_workarea.y)
 	{
-		target_h += target_y - m_workarea.y; // بالای صفحه: رشد کمتر، نه جدا شدن پایین
+		target_h += target_y - m_workarea.y; // top of the screen: grow less, never detach the bottom
 		target_y = m_workarea.y;
 	}
 	if (target_h < m_min_h)
 	{
-		// کف ارتفاع: ارتفاع روی حداقل می‌ماند — y هم باید سر جای خودش بماند
-		// (وگرنه کل پنجره سر می‌خورد و لبهٔ پایین جابه‌جا می‌شود = پیرپیر)
+		// Height floor: the height stays at the minimum — y must stay put too
+		// (otherwise the whole window slides and the bottom edge moves = flicker)
 		target_h = m_min_h;
 		target_y = m_geometry.y;
 	}
@@ -894,8 +902,8 @@ void WhiskerMenu::Window::resize(int delta_x, int delta_y, int delta_width, int 
 		target_h = std::max(m_min_h, std::min(target_h, m_tall_bottom - m_tall_top));
 		target_y = m_tall_bottom - target_h;
 	}
-	// هدف را به‌روز کن؛ اعمال یک‌بار در هر چرخهٔ main-loop (coalesce موشن‌های تند) —
-	// اعمالِ re-entrant داخل هندلرِ موشن = پیرپیر حین حرکت تند
+	// Update the target; apply once per main-loop iteration (coalesce fast motions) —
+	// applying re-entrantly inside the motion handler flickers on fast moves
 	m_target_x = m_geometry.x + delta_x;
 	m_target_y = target_y;
 	m_target_w = m_geometry.width + delta_width;
@@ -921,11 +929,30 @@ void WhiskerMenu::Window::resize(int delta_x, int delta_y, int delta_width, int 
 
 //-----------------------------------------------------------------------------
 
+void WhiskerMenu::Window::schedule_page_width()
+{
+	// the visible page or its rows changed: recompute its column count and the
+	// menu width once the models have settled
+	if (m_page_width_id)
+	{
+		return;
+	}
+	m_page_width_id = g_idle_add(+[](gpointer data) -> gboolean
+		{
+			Window* window = static_cast<Window*>(data);
+			window->m_page_width_id = 0;
+			window->sync_width();
+			return G_SOURCE_REMOVE;
+		}, this);
+}
+
+//-----------------------------------------------------------------------------
+
 void WhiskerMenu::Window::sync_width()
 {
-	// بعد از هر بازچینش favorites، عرض منو = عرض محتوای تازه (ارتفاع دست نمی‌خورد)؛
-	// set_size عرض را از natural ویجت‌ها می‌گیرد، پس مقدار ورودی فقط سقف است —
-	// عرض کهنه menu_width نگذاریم جلوی جمع‌شدن را بگیرد
+	// After any favorites relayout, menu width = width of the new content (height untouched);
+	// set_size takes the width from the widgets' natural size, so the input is only a cap —
+	// do not let a stale menu_width keep the menu from shrinking
 	set_size(10, m_geometry.height);
 }
 
@@ -933,8 +960,8 @@ void WhiskerMenu::Window::sync_width()
 
 void WhiskerMenu::Window::update_min_h()
 {
-	// حین درگِ زنده، بعد از هر بازچینش حداقل ارتفاعِ محتوا تازه شود — وگرنه
-	// با چیدمان بلندِ قبلی (تک‌ستونه) clamp به min_h درگِ به پایین را «سفت» می‌کند
+	// During a live drag, refresh the minimum content height after each relayout — otherwise
+	// the previous tall (one-column) layout clamps min_h and makes dragging down feel stuck
 	gint min_h = 0;
 	gtk_widget_get_preferred_height(GTK_WIDGET(m_vbox), &min_h, nullptr);
 	m_min_h = std::max(10, static_cast<int>(min_h) + 10);
@@ -956,10 +983,10 @@ void WhiskerMenu::Window::apply_target_size()
 		// the X window does not follow the menu in tall mode — nothing to sync
 		return;
 	}
-	// همگام‌سازی با واقعیت: WM ممکن است درخواست را کلمپ کند (مثلاً منو زیر
-	// پنل نرود) — بدون این، m_geometry از واقعیت عقب می‌ماند و هر فریم بعدی
-	// از مقدار کهنه حساب می‌شود = پرش ۹۷px (اثبات: xtrace روی :0،
-	// درخواست bottom=2160 که WM به ۲۰۶۳ اصلاح کرد)
+	// Sync with reality: the WM may clamp the request (e.g. keep the menu above the
+	// panel) — without this m_geometry lags behind and every later frame is computed
+	// from a stale value = a 97px jump (seen with xtrace: a request for bottom=2160
+	// was corrected by the WM to 2063)
 	GdkWindow* win = gtk_widget_get_window(GTK_WIDGET(m_window));
 	if (win)
 	{
@@ -982,10 +1009,10 @@ void WhiskerMenu::Window::resize_start()
 {
 	m_resizing = true;
 	pin_fixed_edge();
-	// policy favorites در view_created ست شده و دیگر دست نمی‌خورد:
-	// اسکرول‌بار overlay است — جا نمی‌گیرد پس هیچ جهش عرضی در درگ نیست
-	// حداقل ارتفاعِ محتوای واقعی — از ویجت محتوا؛ خود پنجره را نگیر چون
-	// set_size_request ما minimum آن را override کرده و همیشه = ارتفاع فعلی می‌شود
+	// The favorites scrollbar policy is set in view_created and not touched again,
+	// so its width never jumps during a drag.
+	// Real minimum content height — from the content widget; not from the window, since
+	// our set_size_request overrides its minimum and it always equals the current height
 	gint min_h = 0;
 	gtk_widget_get_preferred_height(GTK_WIDGET(m_vbox), &min_h, nullptr);
 	m_min_h = std::max(10, static_cast<int>(min_h) + 10);
@@ -996,7 +1023,7 @@ void WhiskerMenu::Window::resize_start()
 
 void WhiskerMenu::Window::resize_end()
 {
-	// اگر موشن آخر هنوز اعمال نشده، همین‌جا هم‌گام کن تا اندازهٔ ذخیره‌شده درست باشد
+	// If the last motion has not been applied yet, sync now so the stored size is right
 	if (m_size_idle_id)
 	{
 		g_source_remove(m_size_idle_id);
@@ -1008,16 +1035,16 @@ void WhiskerMenu::Window::resize_end()
 	wm_settings->menu_width = m_geometry.width;
 	wm_settings->menu_height = m_geometry.height;
 
-	// بدون جابه‌جایی پنجره: درگِ لبه فقط همان لبه را حرکت داده و y ثابت مانده —
-	// فراخوانی get_menu_position اینجا کل منو را می‌پراند (منشأ پرش پس از رها کردن)
+	// Do not move the window: an edge drag moved only that edge and y stayed —
+	// calling get_menu_position here made the whole menu jump after release
 	// tall mode: the X window is already final (constant during the drag)
 	move_window();
 
 	// Allow menu to hide
 	m_resizing = false;
 	m_child_has_focus = false;
-	// یک بازچینش نهایی با تخصیص قطعی (فقط اصلاح وضعیت، نه کار جبرانی —
-	// کار اصلی حین درگ انجام شده)
+	// One final relayout with the definite allocation (only a state fix, not
+	// compensation — the real work was done during the drag)
 	m_favorites->on_height_changed();
 }
 
@@ -1589,6 +1616,7 @@ void WhiskerMenu::Window::favorites_toggled()
 {
 	m_favorites->reset_selection();
 	gtk_stack_set_visible_child_name(m_panels_stack, "favorites");
+	schedule_page_width();
 	gtk_widget_grab_focus(GTK_WIDGET(m_search_entry));
 }
 
@@ -1598,6 +1626,7 @@ void WhiskerMenu::Window::recent_toggled()
 {
 	m_recent->reset_selection();
 	gtk_stack_set_visible_child_name(m_panels_stack, "recent");
+	schedule_page_width();
 	gtk_widget_grab_focus(GTK_WIDGET(m_search_entry));
 }
 
@@ -1607,6 +1636,7 @@ void WhiskerMenu::Window::category_toggled()
 {
 	m_applications->reset_selection();
 	gtk_stack_set_visible_child_name(m_panels_stack, "applications");
+	schedule_page_width();
 	gtk_widget_grab_focus(GTK_WIDGET(m_search_entry));
 }
 
@@ -1636,12 +1666,12 @@ void WhiskerMenu::Window::move_window()
 	else
 #endif
 	{
-		// ادلهٔ xtrace: gtk_window_move و gtk_window_resize هر کدام به‌محض
-		// mapped بودن، XMoveWindow و XResizeWindow «جداگانه» می‌فرستند —
-		// نتیجه: اول کل پنجره جابه‌جا دیده می‌شود، بعد resize می‌رسد و لبهٔ
-		// پایین می‌پرد و برمی‌گردد (همان پیرپیر پایین). راه‌حل: یک درخواست
-		// merged با هر چهار مقدار؛ state داخلی GTK هم از ConfigureNotify
-		// بعدی همگرا می‌شود
+		// xtrace evidence: gtk_window_move and gtk_window_resize each send XMoveWindow
+		// and XResizeWindow separately as soon as the window is mapped —
+		// so the whole window is first seen moved, then the resize arrives and the bottom
+		// edge jumps and returns (the bottom flicker). Fix: one merged request with all
+		// four values; GTK's internal state converges from the next
+		// ConfigureNotify
 		GdkWindow* win = gtk_widget_get_window(GTK_WIDGET(m_window));
 		if (m_tall)
 		{
@@ -1649,8 +1679,8 @@ void WhiskerMenu::Window::move_window()
 		}
 		else if (m_resizing && win)
 		{
-			// حین درگ: فقط resize — gravity جنوب‌غرب y را در همان درخواست
-			// تنظیم می‌کند و لبهٔ پایین پیکسل‌به‌پیکسل ثابت می‌ماند
+			// While dragging: resize only — south-west gravity adjusts y in the same request
+			// and the bottom edge stays put pixel for pixel
 			gdk_window_resize(win, m_geometry.width, m_geometry.height);
 		}
 		else if (win)
@@ -1673,9 +1703,9 @@ bool WhiskerMenu::Window::set_size(int width, int height)
 	bool resized = false;
 	width = CLAMP(width, 10, m_monitor.width);
 	height = CLAMP(height, 10, m_monitor.height);
-	// عرض از محتوا — همیشه، حتی حین درگ (خواستهٔ کاربر: همهٔ کار در اثنای
-	// درگ انجام می‌شود، رها کردن هیچ کاری ندارد). محاسبه ارزان است: عرض آیتم
-	// در تغییر محتوا کش شده و فرمول فقط ضرب و جمع است.
+	// Width from the content — always, even while dragging (all the work happens
+	// during the drag; release does nothing). It is cheap: the item width is
+	// cached on content change and the formula is just arithmetic.
 	{
 		Page* page = get_active_page();
 		if (!page)
@@ -1685,12 +1715,10 @@ bool WhiskerMenu::Window::set_size(int width, int height)
 		gint lav_mn = 0, lav_nt = 0, cat_mn = 0, cat_nt = 0;
 		if (page == m_favorites)
 		{
-			// فرمول قطعی (خواستهٔ کاربر): تعداد ستون‌های «استفاده‌شده» × عرض
-			// عریض‌ترین آیتم + حاشیه‌ها + گپ بین ستون‌ها. تعداد ستون تنظیمی =
-			// حداکثر؛ ستون بدون آیتم فضا نمی‌گیرد. item_width یک‌بار در تغییر
-			// محتوا محاسبه و در s_item_width ذخیره می‌شود.
-			// حین درگ اصلاً اینجا نمی‌آییم (m_resizing) → عرض ثابت می‌ماند و
-			// بعد از رها کردن با ستون‌های نهایی sync می‌شود.
+			// Exact formula: number of used columns x width
+			// of the widest item + margins + gaps between columns. The configured column count
+			// is a maximum; an empty column takes no space. item_width is computed once per
+			// content change and stored in s_item_width.
 			// Exactly what GtkIconView lays out (gtk_icon_view_layout):
 			//   2*margin + cols*(item_width + 2*item_padding) + (cols-1)*column_spacing
 			// item_width is the stored measurement (taken only when the
@@ -1713,10 +1741,25 @@ bool WhiskerMenu::Window::set_size(int width, int height)
 		}
 		else
 		{
-			gtk_widget_get_preferred_width(GTK_WIDGET(page->get_view()->get_widget()), &lav_mn, &lav_nt);
+			// Other pages use the favorites column setting as a maximum: only
+			// as many columns as their rows need at the current menu height
+			GtkWidget* v = page->get_view()->get_widget();
+			if (GTK_IS_ICON_VIEW(v))
+			{
+				const int max_cols = (wm_settings->favorites_columns > 0) ? wm_settings->favorites_columns : 2;
+				const int rows = std::max(1, favorites_capacity_rows());
+				GtkTreeModel* model = gtk_icon_view_get_model(GTK_ICON_VIEW(v));
+				const int n = model ? gtk_tree_model_iter_n_children(model, nullptr) : 0;
+				const int cols = CLAMP((n + rows - 1) / rows, 1, max_cols);
+				if (gtk_icon_view_get_columns(GTK_ICON_VIEW(v)) != cols)
+				{
+					gtk_icon_view_set_columns(GTK_ICON_VIEW(v), cols);
+				}
+			}
+			gtk_widget_get_preferred_width(v, &lav_mn, &lav_nt);
 		}
 		gtk_widget_get_preferred_width(GTK_WIDGET(m_category_buttons), &cat_mn, &cat_nt);
-		int content_w = (int)lav_nt + (int)cat_nt + 26;
+		int content_w = (int)lav_nt + (int)cat_nt + 26 + 12;
 		if (content_w > 300)
 		{
 			width = content_w;
@@ -1726,10 +1769,10 @@ bool WhiskerMenu::Window::set_size(int width, int height)
 	{
 		m_geometry.width = width;
 		m_geometry.height = height;
-		// set_size_request همیشه — این حداقلِ toplevel نزد GTK است؛ اگر حین درگ
-		// به‌روز نشود، GTK هر gtk_window_resize را به همان حداقلِ کهنه کلمپ می‌کند
-		// و ارتفاع تغییر نمی‌کند در حالی که y حرکت کرده (منشأ «سُرخوردن» کل منو).
-		// GTK همهٔ اینها را در یک ConfigureRequest واحد ادغام می‌کند.
+		// Always set_size_request — it is the toplevel minimum for GTK; if it is not updated
+		// during a drag, GTK clamps every gtk_window_resize to the stale minimum
+		// and the height does not change while y moved (the whole menu slid).
+		// GTK merges all of this into a single ConfigureRequest.
 		if (m_tall)
 		{
 			tall_apply();
@@ -1820,6 +1863,7 @@ void WhiskerMenu::Window::search()
 
 	// Apply filter
 	m_search_results->set_filter(text);
+	schedule_page_width();
 }
 
 //-----------------------------------------------------------------------------

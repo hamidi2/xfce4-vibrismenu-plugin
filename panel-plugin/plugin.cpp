@@ -454,8 +454,8 @@ gboolean Plugin::size_changed(gint size)
 	gint icon_size = xfce_panel_plugin_get_icon_size(m_plugin);
 	if (!wm_settings->button_single_row)
 	{
-		// پنل چندردیفه: آیکون تمامِ فضای span نشود — ۳/۴ فضای «حداکثر دو ردیف»؛
-		// سه ردیفه یا بیشتر شدن پنل بخش موش را عریض‌تر نمی‌کند (سقف = اندازهٔ فعلی)
+		// Multi-row panel: the icon does not take the whole span — 3/4 of the space of
+		// at most two rows; three or more rows do not make the button wider (cap = current size)
 		const gint span_rows = std::min<gint>(xfce_panel_plugin_get_nrows(m_plugin), 2);
 		icon_size = (icon_size * span_rows * 3) / 4;
 	}

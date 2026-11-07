@@ -126,7 +126,7 @@ void Profile::reset_tooltip()
 void Profile::update_picture()
 {
 	const gint scale = gtk_widget_get_scale_factor(m_image);
-	// آواتار هم‌اندازهٔ آیکون‌ها (پیروی از launcher-icon-size مثل بقیهٔ اجزای منو)
+	// Avatar has the same size as the item icons (follows launcher-icon-size)
 	const gint size = wm_settings->launcher_icon_size.get_size();
 	const gint half_size = size / 2;
 
@@ -137,8 +137,8 @@ void Profile::update_picture()
 		return;
 	}
 
-	// crop مربع مرکزی — عکس‌های غیرمربعی بدون این، بیضی می‌شوند و لبهٔ دیدنی
-	// آواتار به aspect عکس وابسته می‌شد (حاشیهٔ هدر قطعی نمی‌ماند)
+	// Crop a centered square — without it non-square pictures become ellipses and the
+	// visible avatar edge depends on the picture's aspect ratio
 	{
 		const gint pw = gdk_pixbuf_get_width(pixbuf);
 		const gint ph = gdk_pixbuf_get_height(pixbuf);
@@ -147,7 +147,7 @@ void Profile::update_picture()
 		{
 			GdkPixbuf* square = gdk_pixbuf_new_subpixbuf(pixbuf,
 					(pw - side) / 2, (ph - side) / 2, side, side);
-			// مقیاس به اندازهٔ هدف
+			// Scale to the target size
 			GdkPixbuf* scaled = gdk_pixbuf_scale_simple(square, size * scale, size * scale,
 					GDK_INTERP_BILINEAR);
 			g_object_unref(square);
@@ -166,8 +166,8 @@ void Profile::update_picture()
 	cairo_surface_set_device_scale(surface, scale, scale);
 	cairo_t* cr = cairo_create(surface);
 
-	// inset اپتیکال ۲px: glyph آیکون‌های تم داخل جعبه‌شان حاشیهٔ شفاف دارند ولی
-	// آواتار تا لبه پر می‌شد — برای همین «حاشیهٔ کمتری» برای آواتار دیده می‌شد
+	// 2px optical inset: theme icon glyphs have a transparent border inside their box
+	// while the avatar filled it edge to edge, so it looked like it had less margin
 	const gint inset = 2;
 
 	if (wm_settings->profile_shape == Settings::ProfileRound)

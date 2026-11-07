@@ -28,8 +28,8 @@ namespace WhiskerMenu
 class FavoritesPage : public Page
 {
 public:
-	// حین drag-and-drop واقعی (افزودن/برداشتن از لیست) — hover دسته‌ها
-	// و hover-selection نباید درگیر شوند (شکایت «dragging with hover»)
+	// During a real drag-and-drop (adding to/removing from the list) category
+	// hover and hover-selection must stay out of the way
 	static bool drag_in_progress;
 public:
 	explicit FavoritesPage(Window* window);
@@ -42,10 +42,10 @@ public:
 	void set_menu_items();
 	void unset_menu_items();
 	void on_height_changed();
-	// ظرفیت واقعی پس از pump در show — اگر با آخرین بازچینش فرق دارد resync
+	// Real capacity after the pump in show — resync if it differs from the last layout
 	void sync_capacity();
-	// تعداد ستون‌های دارای آیتم — مبنای عرض منو (کاربر: تعداد ستون تنظیمی =
-	// حداکثر؛ ستون بدون آیتم فضا نمی‌گیرد)
+	// Number of columns that hold items — the basis of the menu width (the
+	// configured column count is a maximum; an empty column takes no space)
 	int get_used_columns() const
 	{
 		return m_used_cols;
@@ -57,7 +57,7 @@ public:
 
 private:
 	static int placeholder_guard;
-	// pitch واقعی اندازه‌گیری‌شده پس از اولین رندر — تخمین showهای بعدی
+	// Real row pitch measured after the first render — estimate for later shows
 	static int s_measured_pitch;
 	friend class Window;
 	void extend_context_menu(GtkWidget* menu) override;
@@ -80,7 +80,7 @@ private:
 	int m_columns = 2;
 	int m_used_cols = 1;
 	int m_built_capacity = 0;
-	// سرریز از ظرفیت کل ستون‌ها = scrollbar عمودی واقعی (نه گذرا)
+	// Overflow past the capacity of all columns = a real vertical scrollbar
 	bool m_overflow = false;
 	// non-overlay mode: scrollbar currently shown (policy ALWAYS) vs EXTERNAL
 	bool m_sb_shown = false;
@@ -88,7 +88,7 @@ private:
 	bool m_inplace = false;
 	// favorites list content changed since the last width measurement
 	bool m_content_dirty = true;
-	// نگاشت سلول‌های مدل (سطری) به ایندکس منطقی favorites؛ -1 = خانهٔ خالی
+	// Maps model cells (row-major) to logical favorites indexes; -1 = empty cell
 	std::vector<int> m_model_slots;
 };
 

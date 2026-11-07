@@ -25,9 +25,6 @@ namespace WhiskerMenu
 
 class RecentPage : public Page
 {
-protected:
-	void view_created() override;
-
 public:
 	explicit RecentPage(Window* window);
 	~RecentPage();

@@ -76,7 +76,7 @@ void FavoritesPage::add(Launcher* launcher)
 		return;
 	}
 
-	// ترتیب نهایی را sort_favorites() در بازچینش تعیین می‌کند
+	// The final order is set by sort_favorites() during relayout
 	wm_settings->favorites.push_back(launcher->get_desktop_id());
 	m_content_dirty = true;
 	rebuild();
@@ -113,15 +113,15 @@ void FavoritesPage::set_menu_items()
 	StringList& fav = wm_settings->favorites;
 	const int n = fav.size();
 
-	// ستون‌بندی: تعداد ستون‌ها دستی (/favorites-columns = 1..4؛ پیش‌فرض 2) و
-	// پر کردن تا ظرفیت عمودی ستون: آیتم به ستون بعد نمی‌رود مگر وقتی ستون جاری
-	// پر شده باشد. سرریز از ظرفیت کل = ادامه در ستون آخر + scrollbar عمودی.
-	// layout همیشه با «همهٔ» ستون‌های تنظیم‌شده انجام می‌شود — نمایان/غیرنمایان
-	// وجود ندارد؛ عرض = ستون‌ها × عریض‌ترین آیتم + حاشیه‌ها
+	// Columns: the column count is set by the user (/favorites-columns = 1..4; default 2),
+	// and each column is filled up to its vertical capacity: an item moves to the next
+	// column only once the current one is full. Overflow past the total capacity continues
+	// in the last column with a vertical scrollbar. Width = used columns x widest item
+	// + margins
 	m_columns = (wm_settings->favorites_columns > 0) ? wm_settings->favorites_columns : 2;
 	m_columns = std::min(m_columns, std::max(1, n));
 
-	// ظرفیت ردیف‌های هر ستون (فقط برای حالت ستونی؛ از ارتفاع واقعی/منو)
+	// Rows per column (column-first mode only; from the real/menu height)
 	// Real capacity even with one column: it decides whether the scrollbar is
 	// needed, and size-allocate compares it with m_built_capacity — using n
 	// here made every drag frame look like a capacity change (needless
@@ -144,7 +144,7 @@ void FavoritesPage::set_menu_items()
 	}
 	else if (wm_settings->favorites_horizontal)
 	{
-		// سطری: پر کردن سطرها؛ سلول (r,c) ← آیتم r*cols + c
+		// Row-first: fill rows; cell (r,c) <- item r*cols + c
 		m_used_cols = std::min(m_columns, std::max(1, n));
 		const int rows = (n + m_columns - 1) / m_columns;
 		for (int r = 0; r < rows; ++r)
@@ -159,9 +159,9 @@ void FavoritesPage::set_menu_items()
 	}
 	else
 	{
-		// ستونی: پر کردن تا ظرفیت (capacity ردیف در هر ستون)؛ آیتم به ستون بعد
-		// نمی‌رود مگر ستون جاری پر شده باشد. ستون آخر اگر سرریز شد، آیتم‌های
-		// اضافه زیر آن ادامه می‌یابند (scrollbar عمودی، نه ستون تازه)
+		// Column-first: fill up to capacity (capacity rows per column); an item moves to the
+		// next column only when the current one is full. If the last column overflows,
+		// the extra items continue below it (vertical scrollbar, not a new column)
 		int rows = 0;
 		int counts[4] = {0, 0, 0, 0};
 		for (int c = 0; c < m_columns; ++c)
@@ -247,7 +247,7 @@ void FavoritesPage::set_menu_items()
 		return;
 	}
 
-	// ساخت مدل — هر سلول دقیقاً یک ردیف تا m_model_slots با ردیف‌ها هم‌اندیس بماند
+	// Build the model — exactly one row per cell so m_model_slots shares row indexes
 	GtkListStore* store = gtk_list_store_new(
 			LauncherView::N_COLUMNS,
 			G_TYPE_ICON,
@@ -277,8 +277,8 @@ void FavoritesPage::set_menu_items()
 	}
 
 	GtkTreeModel* model = GTK_TREE_MODEL(store);
-	// layout فقط با ستون‌های دارای آیتم — ستون خالی وجود ندارد که نه دیده شود
-	// و نه با arrow-right بشود داخلش رفت (خواستهٔ کاربر)
+	// Lay out only the columns that hold items — there is no empty column to see
+	// or to enter with arrow-right
 	gtk_icon_view_set_columns(GTK_ICON_VIEW(get_view()->get_widget()), m_used_cols);
 	apply_scrollbar_mode();
 	get_view()->set_model(model);
@@ -324,7 +324,7 @@ void FavoritesPage::unset_menu_items()
 
 void FavoritesPage::extend_context_menu(GtkWidget* menu)
 {
-	// sort خودکار صعودی جایگزین sort دستی شده؛ آیتمی به منو اضافه نمی‌شود
+	// Automatic ascending sort replaced manual ordering; nothing is added to the menu
 	(void)menu;
 }
 
@@ -344,7 +344,7 @@ void FavoritesPage::on_row_changed(GtkTreeModel* model, GtkTreePath* path, GtkTr
 		return; // our own relayout, not a user drag-and-drop
 	}
 
-	// ردیفی که بعداً پر شده (مثل درگ از صفحهٔ اپ‌ها) به فهرست اضافه شود
+	// A row filled in later (e.g. dragged from the applications page) is added to the list
 	Element* element = nullptr;
 	gtk_tree_model_get(model, iter, LauncherView::COLUMN_LAUNCHER, &element, -1);
 	Launcher* launcher = dynamic_cast<Launcher*>(element);
@@ -385,7 +385,7 @@ void FavoritesPage::on_row_deleted(GtkTreePath* path)
 		return; // our own relayout, not a user drag-and-drop
 	}
 
-	// جای مدل را با نگاشت چیدمان به جای منطقی favorites برگردان
+	// Map the model position back to the logical favorites index
 	const int pos = gtk_tree_path_get_indices(path)[0];
 	if (pos < 0 || pos >= static_cast<int>(m_model_slots.size()))
 	{
@@ -426,7 +426,7 @@ std::vector<Launcher*> FavoritesPage::sort() const
 
 void FavoritesPage::sort_favorites()
 {
-	// sort خودکار صعودی بر اساس نام؛ شناسه‌های بدون لانچر حذف نمی‌شوند و ته لیست می‌مانند
+	// Automatic ascending sort by name; ids without a launcher are kept at the end
 	std::vector<Launcher*> items;
 	items.reserve(wm_settings->favorites.size());
 	StringList missing("", {});
@@ -460,8 +460,8 @@ void FavoritesPage::sort_favorites()
 
 void FavoritesPage::rebuild()
 {
-	// عرض منو فقط به دنبال تغییر واقعی محتوا/چیدمان sync می‌شود —
-	// rebuild از مسیر show صدا زده نمی‌شود
+	// The menu width is synced only after a real content/layout change —
+	// rebuild is not called from the show path
 	set_menu_items();
 	get_window()->sync_width();
 }
@@ -470,8 +470,8 @@ void FavoritesPage::rebuild()
 
 void FavoritesPage::on_height_changed()
 {
-	// تغییر ارتفاع منو = تغییر ظرفیت ستون‌ها → بازچینش؛ این هم نوعی «تغییر
-	// محتوا» است و تنها جای مجاز برای تغییر توزیع پس از resize است
+	// A menu height change = a column capacity change -> relayout; this is also a kind
+	// of content change and the only place the distribution may change after a resize
 	rebuild();
 }
 
@@ -481,13 +481,13 @@ void FavoritesPage::schedule_resync()
 {
 	if (m_resync_source)
 	{
-		return; // coalesce: idle معلق با آخرین وضعیت اجرا می‌شود
+		return; // coalesce: the pending idle runs with the latest state
 	}
 	if (get_window()->is_resizing())
 	{
-		// حین درگ: بدون تأخیر — idle با اولویت بالا قبل از paint همان فریم اجرا
-		// می‌شود؛ هر motion بعدی یا به idleِ معلق می‌رسد (همان از دادهٔ جدید
-		// استفاده می‌کند) یا idle تازه می‌سازد. کنسلِ بازچینشِ نیمه‌کاره همین است.
+		// While dragging: no delay — a high-priority idle runs before the paint of the same
+		// frame; later motions either reach the pending idle (which uses the new data) or
+		// create a new one. That is how a half-done relayout gets cancelled.
 		m_resync_source = g_idle_add_full(G_PRIORITY_HIGH_IDLE, +[](gpointer data) -> gint
 		{
 			auto page = static_cast<FavoritesPage*>(data);
@@ -542,14 +542,14 @@ void FavoritesPage::sync_capacity()
 
 void FavoritesPage::resync_now()
 {
-	// حین درگ هم بازچینش زنده است (خواستهٔ کاربر: هر تغییر همان‌جا اعمال شود)
+	// Relayout stays live while dragging (every change is applied immediately)
 	if (get_window()->is_resizing())
 	{
 		get_window()->update_min_h();
 	}
 	if (m_pending_add)
 	{
-		// ترتیب نهایی را sort_favorites() در بازچینش تعیین می‌کند
+		// The final order is set by sort_favorites() during relayout
 		wm_settings->favorites.push_back(m_pending_add->get_desktop_id());
 		m_pending_add = nullptr;
 		m_content_dirty = true;
@@ -570,11 +570,11 @@ void FavoritesPage::resync_now()
 
 void FavoritesPage::view_created()
 {
-	// درگ برای افزودن/برداشتن فعال می‌ماند؛ ترتیب را sort خودکار تعیین می‌کند؛
-	// ستون‌ها فقط دستی‌اند
+	// Dragging stays enabled for adding/removing; the order comes from the automatic sort;
+	// the column count is set only by the user
 	set_reorderable(true);
 
-	// ردیابی DnD واقعی
+	// Track a real DnD
 	g_signal_connect(get_view()->get_widget(), "drag-begin",
 		G_CALLBACK(+[](GtkWidget*, GdkDragContext*, gpointer) -> void
 		{
@@ -629,12 +629,12 @@ void FavoritesPage::view_created()
 		}),
 		nullptr);
 
-	// بازچینش زنده حین درگ (خواستهٔ کاربر: با هر درگ، نه فقط رها کردن):
-	// تغییر تخصیص ارتفاع حین درگ = تغییر ظرفیت → schedule_resync که حین درگ
-	// با idleِ اولویت‌بالا (بدون تأخیر، coalesce) اجرا می‌شود. sync مستقیم داخل
-	// size-allocate تجربه شد و مدل را وسط پاس تخصیص خراب می‌کند (لیست خالی شد)
-	// — idle بین allocate و paint می‌نشیند و بازچینش قبل از رندر فریم تمام است.
-	// خارج از درگ ظرفیت در لحظهٔ تغییر محتوا از menu_height محاسبه می‌شود.
+	// Live relayout while dragging (on every motion, not only on release):
+	// a height allocation change during the drag = a capacity change -> schedule_resync,
+	// which runs as a high-priority idle (no delay, coalesced). Syncing directly inside
+	// size-allocate was tried and corrupts the model mid-allocation (the list emptied)
+	// — the idle sits between allocate and paint, so the relayout finishes before the frame renders.
+	// Outside a drag the capacity is computed from menu_height when the content changes.
 	connect(get_view()->get_widget(), "size-allocate",
 		[this](GtkWidget*, GdkRectangle*) -> gboolean
 		{
@@ -659,8 +659,8 @@ void FavoritesPage::view_created()
 			}
 			if (get_window()->is_resizing())
 			{
-				// بازچینش فقط با تغییر واقعی ظرفیت — نه هر فریمِ درگ. rebuildِ
-				// بی‌دلیل مدل را خالی-پر می‌کرد = چشمک آیتم‌ها (پیرپیر آیتم‌ها)
+				// Relayout only on a real capacity change — not on every drag frame. A needless
+				// rebuild emptied and refilled the model, making the items flicker
 				const int cap = get_window()->favorites_capacity_rows();
 				if (cap != m_built_capacity)
 				{

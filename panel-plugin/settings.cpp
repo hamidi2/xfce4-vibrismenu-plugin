@@ -404,8 +404,8 @@ void Settings::property_changed(const gchar* property, const GValue* value)
 			|| menu_opacity.load(property, value)
 			|| search_actions.load(property, value))
 	{
-		// تغییر ستون‌بندی/جهت favorites یا ارتفاع منو: ظرفیت ستون‌ها عوض می‌شود
-		// → بازچینش زندهٔ منو (ارتفاع = ظرفیت ردیف‌های هر ستون)
+		// Favorites column count/direction or menu height changed: column capacity changes
+		// -> live relayout of the menu (height = rows per column)
 		if ((g_strcmp0(property, "/favorites-columns") == 0)
 				|| (g_strcmp0(property, "/favorites-horizontal") == 0)
 				|| (g_strcmp0(property, "/menu-height") == 0))

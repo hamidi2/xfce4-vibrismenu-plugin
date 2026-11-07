@@ -69,7 +69,7 @@ LauncherIconView::LauncherIconView() :
 			nullptr);
 	gtk_cell_layout_pack_start(cell_layout, m_text_renderer, true);
 	gtk_cell_layout_set_attributes(cell_layout, m_text_renderer, "markup", COLUMN_TEXT, nullptr);
-	// لیست دوستونه: آیکون کنار متن (افقی) به‌جای زیرِ آن
+	// Column list: icon beside the text (horizontal) instead of above it
 	gtk_icon_view_set_item_orientation(m_view, GTK_ORIENTATION_HORIZONTAL);
 	gtk_icon_view_set_columns(m_view, 2);
 	gtk_icon_view_set_row_spacing(m_view, 0);
@@ -84,7 +84,7 @@ LauncherIconView::LauncherIconView() :
 	// Only allow up to one selected item
 	gtk_icon_view_set_selection_mode(m_view, GTK_SELECTION_SINGLE);
 
-	// ناوبری دابل‌کامندری: Down در ته ستون ← سر ستون بعدی؛ Up در سر ستون ← ته ستون قبلی
+	// Column-wise navigation: Down at a column's end -> top of the next column; Up at the top -> end of the previous
 	g_signal_connect(m_view, "key-press-event",
 		G_CALLBACK(+[](GtkWidget*, GdkEventKey* event, gpointer user_data) -> gboolean
 		{
@@ -398,8 +398,8 @@ gboolean LauncherIconView::wrap_navigation(GdkEventKey* event)
 	const bool up = (keyval == GDK_KEY_Up || keyval == GDK_KEY_KP_Up);
 	const bool right = (keyval == GDK_KEY_Right || keyval == GDK_KEY_KP_Right);
 	const bool left = (keyval == GDK_KEY_Left || keyval == GDK_KEY_KP_Left);
-	// چپ/راست: سلول بعدی/قبلیِ هم‌ردیف؛ اگر خالی (placeholder) یا بیرون
-	// ستون‌هاست، اصلاً حرکت نکن — caret روی هیچ خانهٔ خالی نمی‌ماند
+	// Left/Right: next/previous cell in the same row; if it is empty (placeholder) or
+	// outside the columns, do not move — the caret never rests on an empty cell
 	if (right || left)
 	{
 		GtkTreePath* cursor = nullptr;
@@ -444,15 +444,15 @@ gboolean LauncherIconView::wrap_navigation(GdkEventKey* event)
 		return FALSE;
 	}
 
-	// با یک ستون، ناوبری طبیعی GTK همان درست است
+	// With a single column GTK's own navigation is already right
 	const int cols = gtk_icon_view_get_columns(m_view);
 	if (cols < 2)
 	{
 		return FALSE;
 	}
 
-	// چیدمان سطری: آیتم‌های زوج ستون چپ، فرد ستون راست؛
-	// سلول‌های خالی (لانچر null) فقط ته ستون راست‌اند و نباید مقصد شوند
+	// Row-major layout: even items in the left column, odd in the right;
+	// empty cells (null launcher) are only at the end of the right column and are never targets
 	const int n = gtk_tree_model_iter_n_children(model, nullptr);
 
 	GtkTreePath* cursor = nullptr;
@@ -470,11 +470,11 @@ gboolean LauncherIconView::wrap_navigation(GdkEventKey* event)
 		int t = idx + cols;
 		if (t < n && !is_placeholder(t))
 		{
-			target = t; // پایین در همان ستون
+			target = t; // down in the same column
 		}
 		else if (col + 1 < cols && !is_placeholder(col + 1))
 		{
-			target = col + 1; // ته ستون → سر ستون بعدی
+			target = col + 1; // end of column -> top of the next column
 		}
 	}
 	else
@@ -482,7 +482,7 @@ gboolean LauncherIconView::wrap_navigation(GdkEventKey* event)
 		int t = idx - cols;
 		if (t >= 0 && !is_placeholder(t))
 		{
-			target = t; // بالا در همان ستون
+			target = t; // up in the same column
 		}
 		else if (col > 0)
 		{
@@ -491,7 +491,7 @@ gboolean LauncherIconView::wrap_navigation(GdkEventKey* event)
 				int c = r * cols + (col - 1);
 				if (c < n && !is_placeholder(c))
 				{
-					target = c; // سر ستون → ته ستون قبلی
+					target = c; // top of column -> end of the previous column
 					break;
 				}
 			}
@@ -500,13 +500,13 @@ gboolean LauncherIconView::wrap_navigation(GdkEventKey* event)
 	gtk_tree_path_free(cursor);
 	if (target < 0 || target >= n || is_placeholder(target))
 	{
-		return TRUE; // لبهٔ کلی — بمان
+		return TRUE; // outer edge — stay
 	}
 	GtkTreePath* path = gtk_tree_path_new_from_indices(target, -1);
 	gtk_icon_view_unselect_all(m_view);
 	gtk_icon_view_select_path(m_view, path);
 	gtk_icon_view_set_cursor(m_view, path, nullptr, FALSE);
-	// اسکرول فوری و حداقلی (بدون انیمیشن scroll_to_path)
+	// Immediate, minimal scroll (no scroll_to_path animation)
 	GdkRectangle rect = {0, 0, 0, 0};
 	if (gtk_icon_view_get_cell_rect(m_view, path, nullptr, &rect) && rect.height > 0)
 	{
@@ -521,7 +521,7 @@ gboolean LauncherIconView::wrap_navigation(GdkEventKey* event)
 		{
 			gtk_adjustment_set_value(vadj, v + (rect.y + rect.height - page));
 		}
-	} // فقط اگر پنهان است، حداقل اسکرول
+	} // only scroll, minimally, if it is hidden
 	gtk_tree_path_free(path);
 	return TRUE;
 }
@@ -550,8 +550,8 @@ void LauncherIconView::reload_icon_size()
 	// Reset padding to fix icon clipping
 	gtk_icon_view_set_item_padding(m_view, 0);
 
-	// اندازهٔ آیکون عوض شد → عرض سلول باید دوباره measure شود (نه کش کهنه؛
-	// s_item_width استاتیک است و بدون measure(true) عرض منو غلط می‌ماند)
+	// Icon size changed -> the cell width must be measured again (not the stale cache;
+	// s_item_width is static and without measure(true) the menu width stays wrong)
 	update_item_width(true);
 }
 

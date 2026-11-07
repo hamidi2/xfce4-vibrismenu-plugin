@@ -41,20 +41,6 @@ RecentPage::RecentPage(Window* window) :
 	{
 		wm_settings->recent.resize(wm_settings->recent_items_max);
 	}
-	view_created();
-}
-
-//-----------------------------------------------------------------------------
-
-void RecentPage::view_created()
-{
-	// the icon view defaults to two columns (favorites sets its own count);
-	// recently used is a plain one-column list, as in stock
-	GtkWidget* view = get_view()->get_widget();
-	if (GTK_IS_ICON_VIEW(view))
-	{
-		gtk_icon_view_set_columns(GTK_ICON_VIEW(view), 1);
-	}
 }
 
 //-----------------------------------------------------------------------------

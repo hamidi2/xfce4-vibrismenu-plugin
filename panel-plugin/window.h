@@ -96,8 +96,9 @@ public:
 	void set_loaded();
 	bool set_size(int width, int height);
 	void sync_width();
+	void schedule_page_width();
 	void update_min_h();
-	// ظرفیت ردیف‌های هر ستون favorites از ارتفاع فعلی منو (برای چیدمان تا-پر-شدن)
+	// Rows each favorites column can hold at the current menu height (fill-to-capacity layout)
 	int favorites_capacity_rows() const;
 	void unset_items();
 
@@ -142,20 +143,21 @@ private:
 	Resizer* m_resize[8];
 	Position m_position;
 	GdkRectangle m_workarea = {0, 0, 0, 0};
-	// پایینِ مجاز منو (لبهٔ بالای پنل = انتهای workarea)؛ حین درگِ resize رشد به پایین از این عبور نمی‌کند
+	// Lowest allowed menu bottom (top of the panel = end of workarea); a resize drag never grows past it
 	int m_max_bottom = 0;
-	// درگِ لبه: موشن‌ها فقط هدف را به‌روز می‌کنند؛ اعمال یک‌بار در هر چرخهٔ main-loop
-	// (coalesce) — اعمالِ re-entrant داخل هندلر = پیرپیر حین حرکت تند
+	// Edge drag: motion events only update the target; it is applied once per main-loop
+	// iteration (coalesced) — applying re-entrantly inside the handler flickers on fast moves
 	int m_target_x = 0;
 	int m_target_y = 0;
 	int m_target_w = 0;
 	int m_target_h = 0;
 	guint m_size_idle_id = 0;
-	// حداقل ارتفاعِ محتوای منو (یک‌بار در شروع درگ) — GTK کوچک‌تر از این را نمی‌پذیرد؛
-	// بدون لحاظ آن، y دنبال موس می‌رود و پایین از پنل رد می‌شود
+	guint m_page_width_id = 0;
+	// Minimum height of the menu content (taken at drag start) — GTK refuses smaller;
+	// ignoring it makes y follow the pointer while the bottom passes the panel
 	int m_min_h = 10;
-	// chrome واقعی آخرین فریم سازگار (win_alloc − view_alloc) — مبنای تخمین
-	// (mutable: favorites_capacity_rows const است و آن را به‌روز می‌کند)
+	// Real chrome of the last consistent frame (win_alloc - view_alloc) — basis of estimates
+	// (mutable: favorites_capacity_rows is const and updates it)
 	mutable int m_last_chrome = 0;
 	GdkRectangle m_monitor;
 
