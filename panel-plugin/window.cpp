@@ -38,6 +38,8 @@
 #endif
 
 #ifdef HAVE_GTK_LAYER_SHELL
+#include <algorithm>
+
 #include <gtk-layer-shell.h>
 #endif
 
@@ -275,16 +277,22 @@ WhiskerMenu::Window::Window(Plugin* plugin) :
 	gtk_box_pack_start(search_results, m_search_results->get_widget(), true, true, 0);
 	gtk_container_set_border_width(GTK_CONTAINER(search_results), 0);
 
-	// Create grid for packing resizers — only Top exists; the other cells stay empty
-	GtkGrid* grid = GTK_GRID(gtk_grid_new());
-	gtk_grid_attach(grid, m_resize[Resizer::Top]->get_widget(), 0, 0, 3, 1);
-	gtk_stack_add_named(m_window_stack, GTK_WIDGET(grid), "contents");
+	// The top resizer lies over the top gap of the contents (an overlay, not
+	// a row of its own), so the gap can shrink where the header icons bring
+	// their own transparent border
+	GtkOverlay* overlay = GTK_OVERLAY(gtk_overlay_new());
+	GtkWidget* top_grip = m_resize[Resizer::Top]->get_widget();
+	gtk_widget_set_valign(top_grip, GTK_ALIGN_START);
+	gtk_widget_set_hexpand(top_grip, true);
+	gtk_stack_add_named(m_window_stack, GTK_WIDGET(overlay), "contents");
 
 	// Create box for packing children
 	m_vbox = GTK_BOX(gtk_box_new(GTK_ORIENTATION_VERTICAL, 6));
 	gtk_container_set_border_width(GTK_CONTAINER(m_vbox), 0);
 	gtk_widget_set_margin_bottom(GTK_WIDGET(m_vbox), 6);
-	gtk_grid_attach(grid, GTK_WIDGET(m_vbox), 1, 1, 1, 1);
+	gtk_widget_set_margin_top(GTK_WIDGET(m_vbox), 6);
+	gtk_container_add(GTK_CONTAINER(overlay), GTK_WIDGET(m_vbox));
+	gtk_overlay_add_overlay(overlay, top_grip);
 
 	// Create box for packing commands
 	m_commands_box = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0));
@@ -312,13 +320,15 @@ WhiskerMenu::Window::Window(Plugin* plugin) :
 	gtk_box_pack_start(m_title_box, m_profile->get_picture(), false, false, 0);
 	gtk_box_pack_start(m_title_box, m_profile->get_username(), true, true, 0);
 	gtk_box_pack_start(m_title_box, GTK_WIDGET(m_commands_box), false, false, 0);
-	gtk_widget_set_margin_start(m_profile->get_picture(), 6);
+	// the avatar is drawn with a 2px inset (profile.cpp): 4 + 2 = 6 visible
+	gtk_widget_set_margin_start(m_profile->get_picture(), 4);
 	gtk_widget_set_margin_end(m_profile->get_picture(), 6);
 	// Both margins: in an RTL session margin_start flips sides. The icon
 	// glyphs carry their own transparent border inside the button, so the
 	// margin is smaller than 6 for the visible gap to the edge to be 6px
-	gtk_widget_set_margin_start(GTK_WIDGET(m_commands_box), 1);
-	gtk_widget_set_margin_end(GTK_WIDGET(m_commands_box), 1);
+	// (adjusted in show() for the transparent border of the icons)
+	gtk_widget_set_margin_start(GTK_WIDGET(m_commands_box), 6);
+	gtk_widget_set_margin_end(GTK_WIDGET(m_commands_box), 6);
 
 	// Add search to layout
 	m_search_box = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 6));
@@ -720,6 +730,8 @@ void WhiskerMenu::Window::show(const Position position)
 			sync_width();
 		}
 	}
+
+	update_header_gaps();
 
 	// Show window — but not before the layout reaches its final size:
 	// realize while hidden so the size-allocate cycle completes before it is seen,
@@ -2145,3 +2157,131 @@ void WhiskerMenu::Window::update_layout()
 }
 
 //-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+
+namespace
+{
+
+// Empty space between the edge of a command button and the visible pixels
+// of its icon: the button's CSS border plus the transparent border that the
+// icon theme draws around the glyph. Read from the icon itself, so every
+// icon and theme ends up with the same visible gap.
+struct Insets
+{
+	int left = 0, top = 0, right = 0;
+};
+
+Insets command_insets(GtkWidget* button)
+{
+	Insets insets;
+	GtkStyleContext* context = gtk_widget_get_style_context(button);
+	GtkBorder border = {0, 0, 0, 0};
+	gtk_style_context_get_border(context, gtk_style_context_get_state(context), &border);
+	insets.left = border.left;
+	insets.top = border.top;
+	insets.right = border.right;
+
+	GtkWidget* image = gtk_bin_get_child(GTK_BIN(button));
+	if (!GTK_IS_IMAGE(image) || (gtk_image_get_storage_type(GTK_IMAGE(image)) != GTK_IMAGE_ICON_NAME))
+	{
+		return insets;
+	}
+	const gchar* name = nullptr;
+	gtk_image_get_icon_name(GTK_IMAGE(image), &name, nullptr);
+	const int size = gtk_image_get_pixel_size(GTK_IMAGE(image));
+	const int scale = gtk_widget_get_scale_factor(button);
+	GdkPixbuf* pixbuf = name && (size > 0)
+			? gtk_icon_theme_load_icon_for_scale(gtk_icon_theme_get_default(), name, size, scale, GTK_ICON_LOOKUP_FORCE_SIZE, nullptr)
+			: nullptr;
+	if (!pixbuf)
+	{
+		return insets;
+	}
+	if (gdk_pixbuf_get_has_alpha(pixbuf) && (gdk_pixbuf_get_n_channels(pixbuf) == 4))
+	{
+		const int w = gdk_pixbuf_get_width(pixbuf);
+		const int h = gdk_pixbuf_get_height(pixbuf);
+		const int stride = gdk_pixbuf_get_rowstride(pixbuf);
+		const guchar* pixels = gdk_pixbuf_read_pixels(pixbuf);
+		int x0 = w, y0 = h, x1 = -1;
+		for (int y = 0; y < h; ++y)
+		{
+			for (int x = 0; x < w; ++x)
+			{
+				if (pixels[y * stride + x * 4 + 3] > 64)
+				{
+					x0 = std::min(x0, x);
+					x1 = std::max(x1, x);
+					y0 = std::min(y0, y);
+				}
+			}
+		}
+		if (x1 >= 0)
+		{
+			insets.left += x0 / scale;
+			insets.top += y0 / scale;
+			insets.right += (w - 1 - x1) / scale;
+		}
+	}
+	g_object_unref(pixbuf);
+	return insets;
+}
+
+}
+
+void WhiskerMenu::Window::update_header_gaps()
+{
+	const int gap = 6;
+
+	// Visible command buttons in the title area, in visual left-to-right order
+	std::vector<GtkWidget*> buttons;
+	if (gtk_widget_get_parent(GTK_WIDGET(m_commands_box)) == GTK_WIDGET(m_title_box))
+	{
+		GList* children = gtk_container_get_children(GTK_CONTAINER(m_commands_box));
+		for (GList* i = children; i; i = i->next)
+		{
+			GtkWidget* child = GTK_WIDGET(i->data);
+			for (int c = 0; c < 9; ++c)
+			{
+				if ((m_commands_button[c] == child) && wm_settings->command[c]->get_shown())
+				{
+					buttons.push_back(child);
+				}
+			}
+		}
+		g_list_free(children);
+		if (gtk_widget_get_direction(GTK_WIDGET(m_commands_box)) == GTK_TEXT_DIR_RTL)
+		{
+			std::reverse(buttons.begin(), buttons.end());
+		}
+	}
+
+	// Side gaps: the outer button's icon edge sits 6px from the menu edge
+	int start_inset = 0, end_inset = 0, top_inset = gap;
+	if (!buttons.empty())
+	{
+		const Insets first = command_insets(buttons.front());
+		const Insets last = command_insets(buttons.back());
+		const bool rtl = gtk_widget_get_direction(GTK_WIDGET(m_commands_box)) == GTK_TEXT_DIR_RTL;
+		// margin_start is the visual left in LTR and the visual right in RTL
+		start_inset = rtl ? last.right : first.left;
+		end_inset = rtl ? first.left : last.right;
+		for (GtkWidget* button : buttons)
+		{
+			top_inset = std::min(top_inset, command_insets(button).top);
+		}
+	}
+	gtk_widget_set_margin_start(GTK_WIDGET(m_commands_box), std::max(0, gap - start_inset));
+	gtk_widget_set_margin_end(GTK_WIDGET(m_commands_box), std::max(0, gap - end_inset));
+
+	// Top gap: 6px of empty space under the resize grip; when the header is
+	// the first row, the icons' own empty border is part of it
+	gint position = -1;
+	gtk_container_child_get(GTK_CONTAINER(m_vbox), GTK_WIDGET(m_title_box), "position", &position, nullptr);
+	const bool header_on_top = gtk_widget_get_visible(GTK_WIDGET(m_title_box)) && (position == 0);
+	const int top_margin = header_on_top && !buttons.empty() ? std::max(0, gap - top_inset) : (header_on_top ? 0 : gap);
+	gtk_widget_set_margin_top(GTK_WIDGET(m_vbox), top_margin);
+	// the avatar is drawn with a 2px inset (profile.cpp)
+	gtk_widget_set_margin_top(m_profile->get_picture(), header_on_top ? std::max(0, gap - 2 - top_margin) : 0);
+}

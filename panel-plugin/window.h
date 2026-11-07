@@ -180,6 +180,7 @@ private:
 	// category button that was active when the menu last closed (weak)
 	GtkWidget* m_last_category = nullptr;
 	void remember_category();
+	void update_header_gaps();
 	GtkSizeGroup* m_sidebar_size_group;
 
 	GdkRectangle m_geometry;
