@@ -254,9 +254,11 @@ void FavoritesPage::set_menu_items()
 			G_TYPE_STRING,
 			G_TYPE_STRING,
 			G_TYPE_POINTER);
+	bool missing = false;
 	for (const int slot : m_model_slots)
 	{
 		Launcher* launcher = slot >= 0 ? get_window()->get_applications()->find(fav[slot]) : nullptr;
+		missing |= (slot >= 0) && !launcher;
 		if (launcher)
 		{
 			gtk_list_store_insert_with_values(
@@ -287,7 +289,10 @@ void FavoritesPage::set_menu_items()
 	// (add / remove / rename / reload). Capacity relayouts — every drag
 	// step, every height change — reuse the stored value.
 	get_view()->update_item_width(m_content_dirty);
-	m_content_dirty = false;
+	// A relayout while the applications are being reloaded finds no launchers
+	// and builds empty cells; keep the content dirty so the rebuild after the
+	// reload fills the model again instead of seeing an unchanged layout
+	m_content_dirty = missing;
 
 	connect(model, "row-changed",
 		[this](GtkTreeModel* tree_model, GtkTreePath* path, GtkTreeIter* iter)
