@@ -2283,5 +2283,29 @@ void WhiskerMenu::Window::update_header_gaps()
 	const int top_margin = header_on_top && !buttons.empty() ? std::max(0, gap - top_inset) : (header_on_top ? 0 : gap);
 	gtk_widget_set_margin_top(GTK_WIDGET(m_vbox), top_margin);
 	// the avatar is drawn with a 2px inset (profile.cpp)
-	gtk_widget_set_margin_top(m_profile->get_picture(), header_on_top ? std::max(0, gap - 2 - top_margin) : 0);
+	const int picture_top = header_on_top ? std::max(0, gap - 2 - top_margin) : 0;
+	gtk_widget_set_margin_top(m_profile->get_picture(), picture_top);
+	// Center the name's visible letters (top of the ink down to the baseline;
+	// descenders ignored) on the avatar. Done with yalign, not margins: a
+	// margin would make the label taller and push the whole header down.
+	GtkWidget* name = m_profile->get_username();
+	gtk_widget_set_margin_top(name, 0);
+	if (GTK_IS_LABEL(name) && gtk_widget_get_visible(name))
+	{
+		PangoLayout* layout = gtk_label_get_layout(GTK_LABEL(name));
+		PangoRectangle ink, logical;
+		pango_layout_get_pixel_extents(layout, &ink, &logical);
+		const int baseline = PANGO_PIXELS(pango_layout_get_baseline(layout));
+		int row_h = 0, label_h = 0;
+		gtk_widget_get_preferred_height(GTK_WIDGET(m_title_box), nullptr, &row_h);
+		gtk_widget_get_preferred_height(name, nullptr, &label_h);
+		const double avatar_center = picture_top + (row_h - picture_top) / 2.0;
+		const double letters_center = (label_h - logical.height) / 2.0 + (ink.y + baseline) / 2.0;
+		float yalign = 0.5f;
+		if ((ink.height > 0) && (row_h > label_h))
+		{
+			yalign = std::min(1.0f, std::max(0.0f, float((avatar_center - letters_center) / (row_h - label_h))));
+		}
+		gtk_label_set_yalign(GTK_LABEL(name), yalign);
+	}
 }

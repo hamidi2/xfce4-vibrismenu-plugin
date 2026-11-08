@@ -223,7 +223,9 @@ void Profile::init_fallback()
 
 void Profile::set_username(const gchar* name)
 {
-	gchar* username = g_markup_printf_escaped("<b><big>%s</big></b>", name);
+	// A tight line box (the font's own one is taller than the avatar), so the
+	// window can center the letters on the avatar without growing the header
+	gchar* username = g_markup_printf_escaped("<span line_height=\"0.7\"><b><big>%s</big></b></span>", name);
 	gtk_label_set_markup(GTK_LABEL(m_username), username);
 	g_free(username);
 }
