@@ -999,17 +999,21 @@ void VibrisMenu::Window::freeze_until_resized()
 	{
 		return;
 	}
+	if (gdk_window_get_width(win) == m_geometry.width)
+	{
+		return; // nothing will be configured: painting now is already final
+	}
 	m_frozen = true;
 	gdk_window_freeze_updates(win);
-	m_thaw_alloc_id = g_signal_connect_swapped(m_window, "size-allocate", G_CALLBACK(+[](Window* window)
+	// thaw as soon as the X server reports the new size (whatever the WM
+	// granted); GTK lays the contents out at that size before the next paint
+	m_thaw_alloc_id = g_signal_connect_swapped(m_window, "configure-event", G_CALLBACK(+[](Window* window) -> gboolean
 		{
-			if (gtk_widget_get_allocated_width(GTK_WIDGET(window->m_window)) == window->m_geometry.width)
-			{
-				window->thaw();
-			}
+			window->thaw();
+			return GDK_EVENT_PROPAGATE;
 		}), this);
-	// safety net: never stay frozen if the WM refuses the size
-	m_thaw_id = g_timeout_add(250, +[](gpointer data) -> gboolean
+	// safety net: no configure at all (the X window already had this size)
+	m_thaw_id = g_timeout_add(100, +[](gpointer data) -> gboolean
 		{
 			auto window = static_cast<Window*>(data);
 			window->m_thaw_id = 0;
