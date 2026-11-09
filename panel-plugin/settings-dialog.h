@@ -88,6 +88,7 @@ private:
 	GtkWidget* m_icon;
 	GtkWidget* m_icon_button;
 	GtkWidget* m_button_single_row;
+	GtkWidget* m_button_tooltip;
 
 	// Behavior
 	GtkWidget* m_hover_switch_category;

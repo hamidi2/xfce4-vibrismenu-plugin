@@ -209,10 +209,7 @@ Plugin::Plugin(XfcePanelPlugin* plugin) :
 	{
 		gtk_widget_show(GTK_WIDGET(m_button_icon));
 	}
-	if (wm_settings->button_title_visible)
-	{
-		gtk_widget_set_has_tooltip(m_button, false);
-	}
+	update_tooltip();
 	gtk_widget_set_sensitive(GTK_WIDGET(m_button_icon), false);
 
 	m_button_label = GTK_LABEL(gtk_label_new(nullptr));
@@ -388,13 +385,12 @@ void Plugin::set_button_style(ButtonStyle style)
 	if (wm_settings->button_title_visible)
 	{
 		gtk_widget_show(GTK_WIDGET(m_button_label));
-		gtk_widget_set_has_tooltip(m_button, false);
 	}
 	else
 	{
 		gtk_widget_hide(GTK_WIDGET(m_button_label));
-		gtk_widget_set_has_tooltip(m_button, true);
 	}
+	update_tooltip();
 
 	update_size();
 }
@@ -406,8 +402,17 @@ void Plugin::set_button_title(const std::string& title)
 	wm_settings->button_title = title;
 	gtk_label_set_markup(m_button_label, wm_settings->button_title);
 	gtk_widget_set_tooltip_markup(m_button, wm_settings->button_title);
-	gtk_widget_set_has_tooltip(m_button, !wm_settings->button_title_visible);
+	update_tooltip();
 	update_size();
+}
+
+//-----------------------------------------------------------------------------
+
+void Plugin::update_tooltip()
+{
+	// The title as a tooltip only when it is not shown on the button and the
+	// user asked for it
+	gtk_widget_set_has_tooltip(m_button, wm_settings->button_tooltip && !wm_settings->button_title_visible);
 }
 
 //-----------------------------------------------------------------------------

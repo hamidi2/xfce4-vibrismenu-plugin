@@ -614,6 +614,7 @@ GtkWidget* SettingsDialog::init_appearance_tab()
 		{
 			m_plugin->set_button_style(Plugin::ButtonStyle(gtk_combo_box_get_active(combo) + 1));
 			gtk_widget_set_sensitive(m_button_single_row, gtk_combo_box_get_active(combo) == 0);
+			gtk_widget_set_sensitive(m_button_tooltip, gtk_combo_box_get_active(combo) == 0);
 		});
 
 	gtk_size_group_add_widget(label_size_group, label);
@@ -666,6 +667,18 @@ GtkWidget* SettingsDialog::init_appearance_tab()
 		{
 			wm_settings->button_single_row = gtk_toggle_button_get_active(button);
 			m_plugin->set_button_style(m_plugin->get_button_style());
+		});
+
+	m_button_tooltip = gtk_check_button_new_with_mnemonic(_("Show the title as a _tooltip on hover"));
+	gtk_grid_attach(panel_table, m_button_tooltip, 1, 4, 1, 1);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(m_button_tooltip), wm_settings->button_tooltip);
+	gtk_widget_set_sensitive(m_button_tooltip, gtk_combo_box_get_active(GTK_COMBO_BOX(m_button_style)) == 0);
+
+	connect(m_button_tooltip, "toggled",
+		[this](GtkToggleButton* button)
+		{
+			wm_settings->button_tooltip = gtk_toggle_button_get_active(button);
+			m_plugin->update_tooltip();
 		});
 
 	return GTK_WIDGET(page);

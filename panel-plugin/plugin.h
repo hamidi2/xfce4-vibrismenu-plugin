@@ -64,6 +64,7 @@ public:
 	void set_button_style(ButtonStyle style);
 	void set_button_title(const std::string& title);
 	void set_button_icon_name(const std::string& icon);
+	void update_tooltip();
 	void set_loaded(bool loaded);
 
 private:

@@ -55,6 +55,7 @@ Settings::Settings(Plugin* plugin) :
 	button_title_visible("/show-button-title", false),
 	button_icon_visible("/show-button-icon", true),
 	button_single_row("/button-single-row", false),
+	button_tooltip("/button-tooltip", false),
 
 	launcher_show_name("/launcher-show-name", true),
 	launcher_show_description("/launcher-show-description", true),
@@ -214,6 +215,7 @@ void Settings::load(const gchar* file, bool is_default)
 	button_title.load(rc, is_default);
 	button_icon_name.load(rc, is_default);
 	button_single_row.load(rc, is_default);
+	button_tooltip.load(rc, is_default);
 	button_title_visible.load(rc, is_default);
 	button_icon_visible.load(rc, is_default);
 
@@ -375,7 +377,8 @@ void Settings::property_changed(const gchar* property, const GValue* value)
 			|| button_icon_name.load(property, value)
 			|| button_title_visible.load(property, value)
 			|| button_icon_visible.load(property, value)
-			|| button_single_row.load(property, value))
+			|| button_single_row.load(property, value)
+			|| button_tooltip.load(property, value))
 	{
 		m_plugin->reload_button();
 	}

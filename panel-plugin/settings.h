@@ -302,6 +302,7 @@ public:
 	Boolean button_title_visible;
 	Boolean button_icon_visible;
 	Boolean button_single_row;
+	Boolean button_tooltip;
 
 	Boolean launcher_show_name;
 	Boolean launcher_show_description;
