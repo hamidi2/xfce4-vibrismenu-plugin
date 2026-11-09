@@ -939,17 +939,15 @@ void VibrisMenu::Window::resize(int delta_x, int delta_y, int delta_width, int d
 	{
 		if (m_size_idle_id == 0)
 		{
-			// High priority: applied before the paint of the same frame. If a
-			// newer motion is already waiting, this step is dropped and the
-			// work starts again from that motion — the pointer always wins,
-			// and no layout is computed for a height it has already left.
+			// High priority: applied before the paint of the same frame. Each
+			// motion only replaces the target, so this step always works on the
+			// latest pointer position — motions that arrived meanwhile are
+			// never laid out on their own. (Do not poll gdk_events_pending()
+			// here: GDK pauses event delivery while painting, so an event can
+			// stay pending and a re-queued step would spin forever.)
 			m_size_idle_id = g_idle_add_full(G_PRIORITY_HIGH_IDLE, +[](gpointer data) -> gint
 			{
 				auto window = static_cast<Window*>(data);
-				if (gdk_events_pending())
-				{
-					return G_SOURCE_CONTINUE;
-				}
 				window->m_size_idle_id = 0;
 				window->apply_target_size();
 				return G_SOURCE_REMOVE;
