@@ -156,6 +156,7 @@ private:
 	guint m_size_idle_id = 0;
 	guint m_page_width_id = 0;
 	guint m_thaw_id = 0;
+	GdkRectangle m_tall_painted = {0, 0, 0, 0};
 	gulong m_thaw_alloc_id = 0;
 	bool m_frozen = false;
 	// Minimum height of the menu content (taken at drag start) — GTK refuses smaller;

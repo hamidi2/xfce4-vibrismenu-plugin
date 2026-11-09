@@ -1503,7 +1503,21 @@ void VibrisMenu::Window::tall_apply()
 		gdk_window_input_shape_combine_region(win, region, 0, 0);
 		cairo_region_destroy(region);
 	}
-	gtk_widget_queue_draw(GTK_WIDGET(m_window));
+	// repaint only where the menu was and where it is now: the window spans
+	// the whole workarea, and repainting all of it (millions of transparent
+	// pixels) on every drag step made dragging sluggish
+	const GdkRectangle now = {left, margin, m_geometry.width, m_geometry.height};
+	if (m_tall_painted.width > 0)
+	{
+		GdkRectangle both;
+		gdk_rectangle_union(&m_tall_painted, &now, &both);
+		gtk_widget_queue_draw_area(GTK_WIDGET(m_window), both.x, both.y, both.width, both.height);
+	}
+	else
+	{
+		gtk_widget_queue_draw(GTK_WIDGET(m_window));
+	}
+	m_tall_painted = now;
 }
 
 //-----------------------------------------------------------------------------
@@ -1541,6 +1555,7 @@ void VibrisMenu::Window::tall_update_mode(bool at_button)
 	}
 	m_tall = tall;
 	m_tall_w = m_tall_bottom = m_tall_x = -1;
+	m_tall_painted = {0, 0, 0, 0};
 	m_tall_top = m_workarea.y;
 	// tall window: its TOP edge is the fixed one (workarea top) and it is
 	// only ever resized in width — NorthWest, or xfwm4 interprets every
