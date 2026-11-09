@@ -762,12 +762,9 @@ void VibrisMenu::Window::show(const Position position)
 	GtkRequisition size;
 	if (m_tall)
 	{
-		const int left = gtk_widget_get_margin_start(m_frame);
 		gtk_widget_set_margin_top(m_frame, 0);
-		gtk_widget_set_margin_start(m_frame, 0);
 		gtk_widget_get_preferred_size(m_frame, &size, nullptr);
 		gtk_widget_set_margin_top(m_frame, std::max(0, m_geometry.y - m_tall_top));
-		gtk_widget_set_margin_start(m_frame, left);
 	}
 	else
 	{
@@ -998,9 +995,9 @@ void VibrisMenu::Window::freeze_until_resized()
 	// laid the contents out at the new width: the user sees the old frame,
 	// then the finished new one, never the steps in between
 	GdkWindow* win = gtk_widget_get_window(GTK_WIDGET(m_window));
-	if (!win || m_frozen || m_tall)
+	if (!win || m_frozen)
 	{
-		return; // tall mode resizes without X: already a single frame
+		return;
 	}
 	if (gdk_window_get_width(win) == m_geometry.width)
 	{
@@ -1425,13 +1422,10 @@ void VibrisMenu::Window::menu_position(int* x, int* y)
 		return;
 	}
 	const int margin = gtk_widget_get_margin_top(m_frame);
-	const int left = gtk_widget_get_margin_start(m_frame);
 	gtk_widget_set_margin_top(m_frame, 0);
-	gtk_widget_set_margin_start(m_frame, 0);
 	gtk_widget_set_size_request(GTK_WIDGET(m_window), m_geometry.width, m_geometry.height);
 	m_plugin->get_menu_position(x, y);
 	gtk_widget_set_margin_top(m_frame, margin);
-	gtk_widget_set_margin_start(m_frame, left);
 	gtk_widget_set_size_request(GTK_WIDGET(m_window), m_tall_w > 0 ? m_tall_w : m_geometry.width,
 			m_tall_bottom > 0 ? m_tall_bottom - m_tall_top : m_geometry.height);
 }
@@ -1451,22 +1445,13 @@ void VibrisMenu::Window::tall_apply()
 	const int tall_h = bottom - m_tall_top;
 	const int margin = std::max(0, m_geometry.y - m_tall_top);
 	gtk_widget_set_margin_top(m_frame, margin);
-	// The same for the width: the X window spans the whole workarea width and
-	// the menu sits in it at its own x, as wide as its content. A width or x
-	// change (search results, favorites columns) is then only a GTK relayout
-	// painted in one frame — no X configure, no round trip to the WM, no
-	// frame drawn at the old size.
-	const int left = std::max(0, m_geometry.x - m_workarea.x);
-	gtk_widget_set_halign(m_frame, GTK_ALIGN_START);
-	gtk_widget_set_margin_start(m_frame, left);
-	gtk_widget_set_size_request(m_frame, m_geometry.width, -1);
 
 	GdkWindow* win = gtk_widget_get_window(GTK_WIDGET(m_window));
-	if ((m_tall_w != m_workarea.width) || (m_tall_bottom != bottom) || (m_tall_x != m_workarea.x))
+	if ((m_tall_w != m_geometry.width) || (m_tall_bottom != bottom) || (m_tall_x != m_geometry.x))
 	{
-		m_tall_w = m_workarea.width;
+		m_tall_w = m_geometry.width;
 		m_tall_bottom = bottom;
-		m_tall_x = m_workarea.x;
+		m_tall_x = m_geometry.x;
 		// Only GTK's own API here: direct gdk configures raced with GTK's
 		// (stale size hints, remembered size) and left the window misplaced.
 		// gtk_window_resize also stops GTK from re-sending the size it last
@@ -1474,9 +1459,9 @@ void VibrisMenu::Window::tall_apply()
 		// column). gtk_window_move takes the top-left corner even with a
 		// gravity set (the gravity only tells the WM how to treat its frame);
 		// GTK sends move+resize as one configure.
-		gtk_widget_set_size_request(GTK_WIDGET(m_window), m_tall_w, tall_h);
-		gtk_window_resize(m_window, m_tall_w, tall_h);
-		gtk_window_move(m_window, m_tall_x, m_tall_top);
+		gtk_widget_set_size_request(GTK_WIDGET(m_window), m_geometry.width, tall_h);
+		gtk_window_resize(m_window, m_geometry.width, tall_h);
+		gtk_window_move(m_window, m_geometry.x, m_tall_top);
 		// During show() several provisional geometries are requested before
 		// and right after the first map, and xfwm4 placed the window from one
 		// of them. Once GTK's layout pass has run (size hints current), check
@@ -1494,7 +1479,7 @@ void VibrisMenu::Window::tall_apply()
 	}
 	if (win)
 	{
-		const cairo_rectangle_int_t menu_rect = {left, margin, m_geometry.width, m_geometry.height};
+		const cairo_rectangle_int_t menu_rect = {0, margin, m_geometry.width, m_geometry.height};
 		cairo_region_t* region = cairo_region_create_rectangle(&menu_rect);
 		gdk_window_input_shape_combine_region(win, region, 0, 0);
 		cairo_region_destroy(region);
@@ -1546,9 +1531,6 @@ void VibrisMenu::Window::tall_update_mode(bool at_button)
 	if (!tall)
 	{
 		gtk_widget_set_margin_top(m_frame, 0);
-		gtk_widget_set_margin_start(m_frame, 0);
-		gtk_widget_set_halign(m_frame, GTK_ALIGN_FILL);
-		gtk_widget_set_size_request(m_frame, -1, -1);
 		GdkWindow* win = gtk_widget_get_window(GTK_WIDGET(m_window));
 		if (win)
 		{
@@ -1670,9 +1652,8 @@ gboolean VibrisMenu::Window::on_draw_event(GtkWidget* widget, cairo_t* cr)
 		cairo_paint(cr);
 		cairo_restore(cr);
 		const double top = gtk_widget_get_margin_top(m_frame);
-		const double left = gtk_widget_get_margin_start(m_frame);
 		cairo_push_group(cr);
-		gtk_render_background(context, cr, left, top, m_geometry.width, height - top);
+		gtk_render_background(context, cr, 0.0, top, width, height - top);
 		cairo_pop_group_to_source(cr);
 		cairo_paint_with_alpha(cr, wm_settings->menu_opacity / 100.0);
 	}
