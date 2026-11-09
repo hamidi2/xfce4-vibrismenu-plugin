@@ -415,7 +415,7 @@ gboolean Plugin::remote_event(const gchar* name, const GValue* value)
 void Plugin::show_about()
 {
 	const gchar* authors[] = {
-		"Hamidi (Vibris Menu)",
+		"hamidi (Vibris Menu)",
 		"Graeme Gott <graeme@gottcode.org> (original Whisker Menu)",
 		nullptr };
 
@@ -423,7 +423,7 @@ void Plugin::show_about()
 		(nullptr,
 		"authors", authors,
 		"comments", _("Alternate application launcher for Xfce"),
-		"copyright", "Copyright \302\251 2026 Hamidi\nBased on Whisker Menu, Copyright \302\251 2013-2025 Graeme Gott",
+		"copyright", "Copyright \302\251 2026 hamidi\nBased on Whisker Menu, Copyright \302\251 2013-2025 Graeme Gott",
 		"license", XFCE_LICENSE_GPL,
 		"logo-icon-name", "org.xfce.panel.vibrismenu",
 		"program-name", PACKAGE_NAME,

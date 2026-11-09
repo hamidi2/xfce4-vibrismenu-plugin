@@ -1,17 +1,17 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: xfce4-vibrismenu-plugin
-Upstream-Contact: Hamidi <hamidi@gmail.com>
+Upstream-Contact: hamidi <hamidi@gmail.com>
 Source: https://github.com/hamidi2/xfce4-vibrismenu-plugin
 Comment: Vibris Menu is a fork of Whisker Menu
  (https://gitlab.xfce.org/panel-plugins/xfce4-whiskermenu-plugin).
 
 Files: *
 Copyright: 2013-2025 Graeme Gott <graeme@gottcode.org>
-           2026 Hamidi <hamidi@gmail.com>
+           2026 hamidi <hamidi@gmail.com>
 License: GPL-2+
 
 Files: debian/*
-Copyright: 2026 Hamidi <hamidi@gmail.com>
+Copyright: 2026 hamidi <hamidi@gmail.com>
 License: GPL-2+
 
 License: GPL-2+

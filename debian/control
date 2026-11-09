@@ -1,7 +1,7 @@
 Source: xfce4-vibrismenu-plugin
 Section: xfce
 Priority: optional
-Maintainer: Hamidi <hamidi@gmail.com>
+Maintainer: hamidi <hamidi@gmail.com>
 Build-Depends: debhelper-compat (= 13),
                meson,
                libaccountsservice-dev,
