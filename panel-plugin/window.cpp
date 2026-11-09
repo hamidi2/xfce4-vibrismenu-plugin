@@ -985,6 +985,14 @@ void VibrisMenu::Window::sync_width()
 	// resize the window itself
 	if (set_size(10, m_geometry.height) && gtk_widget_get_visible(GTK_WIDGET(m_window)))
 	{
+		// keep the menu attached to its button: a button on the right
+		// grows the menu to the left and must take it back when it narrows
+		if (m_position == PositionAtButton)
+		{
+			int x = m_geometry.x, y = m_geometry.y;
+			menu_position(&x, &y);
+			m_geometry.x = x;
+		}
 		freeze_until_resized();
 		move_window();
 	}
@@ -1871,6 +1879,21 @@ bool VibrisMenu::Window::set_size(int width, int height)
 		{
 			width = content_w;
 		}
+		// never narrower than the menu's own minimum (the header row with
+		// its command buttons): in tall mode no window size clamps it, so a
+		// narrower value would leave part of the menu outside its background
+		// (measured on the frame's child: toggling the frame's own size
+		// request here would queue a relayout from inside a relayout)
+		gint frame_min = 0;
+		gtk_widget_get_preferred_width(gtk_bin_get_child(GTK_BIN(m_frame)), &frame_min, nullptr);
+		{
+			// plus what the frame adds around its child (border, shadow),
+			// taken from the last layout: exact, whatever the theme draws
+			GtkWidget* child = gtk_bin_get_child(GTK_BIN(m_frame));
+			const int extra = gtk_widget_get_allocated_width(m_frame) - gtk_widget_get_allocated_width(child);
+			frame_min += (extra > 0) ? extra : 2;
+		}
+		width = std::max(width, static_cast<int>(frame_min));
 	}
 	if ((m_geometry.width != width) || (m_geometry.height != height))
 	{
