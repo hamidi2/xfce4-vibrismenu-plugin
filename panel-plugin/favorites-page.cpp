@@ -473,16 +473,23 @@ void FavoritesPage::rebuild()
 
 //-----------------------------------------------------------------------------
 
-void FavoritesPage::on_height_changed()
+void FavoritesPage::relayout_if_capacity_changed()
 {
-	if (m_resync_source)
+	if (get_window()->favorites_capacity_rows() != m_built_capacity)
 	{
-		// the drag ended: run the pending relayout now (it also carries a
-		// pending favorite add), instead of after the wait
-		g_source_remove(m_resync_source);
-		m_resync_source = 0;
+		if (m_resync_source)
+		{
+			g_source_remove(m_resync_source);
+			m_resync_source = 0;
+		}
 		resync_now();
 	}
+}
+
+//-----------------------------------------------------------------------------
+
+void FavoritesPage::on_height_changed()
+{
 	// A menu height change = a column capacity change -> relayout; this is also a kind
 	// of content change and the only place the distribution may change after a resize
 	rebuild();
@@ -492,37 +499,33 @@ void FavoritesPage::on_height_changed()
 
 void FavoritesPage::schedule_resync()
 {
+	if (m_resync_source)
+	{
+		return; // coalesce: the pending idle runs with the latest state
+	}
 	if (get_window()->is_resizing())
 	{
-		// While dragging the user's hand comes first: the window follows the
-		// pointer at once, and the column relayout waits until the pointer
-		// rests. Every new capacity change cancels the pending relayout and
-		// starts the wait again, so no relayout is computed for a height the
-		// pointer has already left; resize_end() relayouts at once.
-		if (m_resync_source)
+		// While dragging: no delay — a high-priority idle runs before the paint of the same
+		// frame; later motions either reach the pending idle (which uses the new data) or
+		// create a new one. That is how a half-done relayout gets cancelled.
+		m_resync_source = g_idle_add_full(G_PRIORITY_HIGH_IDLE, +[](gpointer data) -> gint
 		{
-			g_source_remove(m_resync_source);
-		}
-		m_resync_source = g_timeout_add(80, +[](gpointer data) -> gint
+			auto page = static_cast<FavoritesPage*>(data);
+			page->m_resync_source = 0;
+			page->resync_now();
+			return G_SOURCE_REMOVE;
+		}, this, nullptr);
+	}
+	else
+	{
+		m_resync_source = g_timeout_add(400, +[](gpointer data) -> gint
 		{
 			auto page = static_cast<FavoritesPage*>(data);
 			page->m_resync_source = 0;
 			page->resync_now();
 			return G_SOURCE_REMOVE;
 		}, this);
-		return;
 	}
-	if (m_resync_source)
-	{
-		return; // coalesce: the pending timeout runs with the latest state
-	}
-	m_resync_source = g_timeout_add(400, +[](gpointer data) -> gint
-	{
-		auto page = static_cast<FavoritesPage*>(data);
-		page->m_resync_source = 0;
-		page->resync_now();
-		return G_SOURCE_REMOVE;
-	}, this);
 }
 
 //-----------------------------------------------------------------------------

@@ -939,13 +939,21 @@ void VibrisMenu::Window::resize(int delta_x, int delta_y, int delta_width, int d
 	{
 		if (m_size_idle_id == 0)
 		{
-			m_size_idle_id = g_idle_add(+[](gpointer data) -> gint
+			// High priority: applied before the paint of the same frame. If a
+			// newer motion is already waiting, this step is dropped and the
+			// work starts again from that motion — the pointer always wins,
+			// and no layout is computed for a height it has already left.
+			m_size_idle_id = g_idle_add_full(G_PRIORITY_HIGH_IDLE, +[](gpointer data) -> gint
 			{
 				auto window = static_cast<Window*>(data);
+				if (gdk_events_pending())
+				{
+					return G_SOURCE_CONTINUE;
+				}
 				window->m_size_idle_id = 0;
 				window->apply_target_size();
 				return G_SOURCE_REMOVE;
-			}, this);
+			}, this, nullptr);
 		}
 	}
 	else
@@ -1073,6 +1081,12 @@ void VibrisMenu::Window::apply_target_size()
 	m_geometry.y = m_target_y;
 	if (set_size(m_target_w, m_target_h))
 	{
+		// the new height and its column layout in the same turn, so they
+		// are painted together in one frame
+		if (m_resizing)
+		{
+			m_favorites->relayout_if_capacity_changed();
+		}
 		check_scrollbar_needed();
 	}
 	move_window();
@@ -1141,9 +1155,7 @@ void VibrisMenu::Window::resize_end()
 	// Allow menu to hide
 	m_resizing = false;
 	m_child_has_focus = false;
-	// One final relayout with the definite allocation (only a state fix, not
-	// compensation — the real work was done during the drag)
-	m_favorites->on_height_changed();
+	// nothing else: every drag step was already final
 }
 
 //-----------------------------------------------------------------------------

@@ -32,6 +32,11 @@ public:
 	// hover and hover-selection must stay out of the way
 	static bool drag_in_progress;
 public:
+	// Relayout now if the menu height changed the column capacity: called in
+	// the same main-loop turn as the height change, so both are painted in
+	// one frame (never the new height with the old columns or a scrollbar)
+	void relayout_if_capacity_changed();
+	void resync_now();
 	explicit FavoritesPage(Window* window);
 	~FavoritesPage();
 
@@ -69,7 +74,6 @@ private:
 	void sort_favorites();
 	void rebuild();
 	void schedule_resync();
-	void resync_now();
 	void view_created() override;
 	static bool scrollbar_overlay_effective();
 	void apply_scrollbar_mode();
