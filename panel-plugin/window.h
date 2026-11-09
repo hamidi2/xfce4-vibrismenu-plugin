@@ -96,6 +96,8 @@ public:
 	void set_loaded();
 	bool set_size(int width, int height);
 	void sync_width();
+	void freeze_until_resized();
+	void thaw();
 	void schedule_page_width();
 	void update_min_h();
 	// Rows each favorites column can hold at the current menu height (fill-to-capacity layout)
@@ -153,6 +155,9 @@ private:
 	int m_target_h = 0;
 	guint m_size_idle_id = 0;
 	guint m_page_width_id = 0;
+	guint m_thaw_id = 0;
+	gulong m_thaw_alloc_id = 0;
+	bool m_frozen = false;
 	// Minimum height of the menu content (taken at drag start) — GTK refuses smaller;
 	// ignoring it makes y follow the pointer while the bottom passes the panel
 	int m_min_h = 10;

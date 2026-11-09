@@ -457,6 +457,7 @@ VibrisMenu::Window::Window(Plugin* plugin) :
 
 VibrisMenu::Window::~Window()
 {
+	thaw();
 	if (m_last_category)
 	{
 		g_object_remove_weak_pointer(G_OBJECT(m_last_category), reinterpret_cast<gpointer*>(&m_last_category));
@@ -516,6 +517,7 @@ Page* VibrisMenu::Window::get_active_page()
 
 void VibrisMenu::Window::hide(bool lost_focus)
 {
+	thaw();
 	// Save settings
 	wm_settings->favorites.save();
 	wm_settings->recent.save();
@@ -980,7 +982,64 @@ void VibrisMenu::Window::sync_width()
 	// resize the window itself
 	if (set_size(10, m_geometry.height) && gtk_widget_get_visible(GTK_WIDGET(m_window)))
 	{
+		freeze_until_resized();
 		move_window();
+	}
+}
+
+//-----------------------------------------------------------------------------
+
+void VibrisMenu::Window::freeze_until_resized()
+{
+	// Nothing is painted between the size request and the moment GTK has
+	// laid the contents out at the new width: the user sees the old frame,
+	// then the finished new one, never the steps in between
+	GdkWindow* win = gtk_widget_get_window(GTK_WIDGET(m_window));
+	if (!win || m_frozen)
+	{
+		return;
+	}
+	m_frozen = true;
+	gdk_window_freeze_updates(win);
+	m_thaw_alloc_id = g_signal_connect_swapped(m_window, "size-allocate", G_CALLBACK(+[](Window* window)
+		{
+			if (gtk_widget_get_allocated_width(GTK_WIDGET(window->m_window)) == window->m_geometry.width)
+			{
+				window->thaw();
+			}
+		}), this);
+	// safety net: never stay frozen if the WM refuses the size
+	m_thaw_id = g_timeout_add(250, +[](gpointer data) -> gboolean
+		{
+			auto window = static_cast<Window*>(data);
+			window->m_thaw_id = 0;
+			window->thaw();
+			return G_SOURCE_REMOVE;
+		}, this);
+}
+
+//-----------------------------------------------------------------------------
+
+void VibrisMenu::Window::thaw()
+{
+	if (!m_frozen)
+	{
+		return;
+	}
+	m_frozen = false;
+	if (m_thaw_alloc_id)
+	{
+		g_signal_handler_disconnect(m_window, m_thaw_alloc_id);
+		m_thaw_alloc_id = 0;
+	}
+	if (m_thaw_id)
+	{
+		g_source_remove(m_thaw_id);
+		m_thaw_id = 0;
+	}
+	if (GdkWindow* win = gtk_widget_get_window(GTK_WIDGET(m_window)))
+	{
+		gdk_window_thaw_updates(win);
 	}
 }
 
@@ -1922,9 +1981,16 @@ void VibrisMenu::Window::search()
 		gtk_stack_set_visible_child_name(m_contents_stack, "contents");
 	}
 
-	// Apply filter
+	// Apply filter and fit the width in the same main-loop turn: an idle
+	// would run after GTK has already painted the old width (a scrollbar
+	// and a squeezed or stretched layout for one frame)
 	m_search_results->set_filter(text);
-	schedule_page_width();
+	if (m_page_width_id)
+	{
+		g_source_remove(m_page_width_id);
+		m_page_width_id = 0;
+	}
+	sync_width();
 }
 
 //-----------------------------------------------------------------------------
