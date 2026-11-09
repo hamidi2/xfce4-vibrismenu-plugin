@@ -975,7 +975,13 @@ void VibrisMenu::Window::sync_width()
 	// After any favorites relayout, menu width = width of the new content (height untouched);
 	// set_size takes the width from the widgets' natural size, so the input is only a cap —
 	// do not let a stale menu_width keep the menu from shrinking
-	set_size(10, m_geometry.height);
+	// GTK grows a toplevel to its new minimum but never shrinks it, so a
+	// narrower page (search narrowed to one column, back to favorites) must
+	// resize the window itself
+	if (set_size(10, m_geometry.height) && gtk_widget_get_visible(GTK_WIDGET(m_window)))
+	{
+		move_window();
+	}
 }
 
 //-----------------------------------------------------------------------------
