@@ -460,6 +460,18 @@ gboolean Plugin::size_changed(gint size)
 		const gint span_rows = std::min<gint>(xfce_panel_plugin_get_nrows(m_plugin), 2);
 		icon_size = (icon_size * span_rows * 3) / 4;
 	}
+	// Icon only: a square button with an even gap around the icon — 6px on a
+	// single row; on two or more rows the button spans two rows and both the
+	// icon and the gap double (12px)
+	gint button_side = -1;
+	if (!wm_settings->button_title_visible && wm_settings->button_icon_visible)
+	{
+		const gint rows = std::max<gint>(1, xfce_panel_plugin_get_nrows(m_plugin));
+		const gint span = wm_settings->button_single_row ? 1 : std::min<gint>(rows, 2);
+		const gint row_size = wm_settings->button_single_row ? size : size / rows;
+		button_side = row_size * span;
+		icon_size = std::max<gint>(8, button_side - (2 * 6 * span));
+	}
 	gtk_image_set_pixel_size(m_button_icon, icon_size);
 
 	// Load icon from absolute path
@@ -492,6 +504,10 @@ gboolean Plugin::size_changed(gint size)
 	if (!wm_settings->button_title_visible && (wm_settings->button_single_row || (xfce_panel_plugin_get_nrows(m_plugin) == 1)))
 	{
 		gtk_widget_set_size_request(m_button, size, size);
+	}
+	else if (button_side > 0)
+	{
+		gtk_widget_set_size_request(m_button, button_side, button_side);
 	}
 	else
 	{
