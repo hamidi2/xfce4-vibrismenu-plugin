@@ -224,6 +224,26 @@ Plugin::Plugin(XfcePanelPlugin* plugin) :
 	}
 	gtk_widget_set_sensitive(GTK_WIDGET(m_button_label), false);
 
+	// The default icon lights its three dimmed tiles while the pointer is
+	// over the button or the menu is open
+	connect(m_button, "state-flags-changed",
+		[this](GtkWidget* widget, GtkStateFlags) -> void
+		{
+			if (m_file_icon || (g_strcmp0(wm_settings->button_icon_name, "org.xfce.panel.vibrismenu") != 0))
+			{
+				return;
+			}
+			const GtkStateFlags flags = gtk_widget_get_state_flags(widget);
+			const bool lit = flags & (GTK_STATE_FLAG_PRELIGHT | GTK_STATE_FLAG_CHECKED | GTK_STATE_FLAG_ACTIVE);
+			const gchar* name = lit ? "org.xfce.panel.vibrismenu-hover" : "org.xfce.panel.vibrismenu";
+			const gchar* current = nullptr;
+			gtk_image_get_icon_name(m_button_icon, &current, nullptr);
+			if (g_strcmp0(current, name) != 0)
+			{
+				gtk_image_set_from_icon_name(m_button_icon, name, GTK_ICON_SIZE_BUTTON);
+			}
+		});
+
 	// Add plugin to panel
 	gtk_container_add(GTK_CONTAINER(plugin), m_button);
 	xfce_panel_plugin_add_action_widget(plugin, m_button);

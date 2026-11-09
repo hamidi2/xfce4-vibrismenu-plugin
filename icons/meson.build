@@ -13,3 +13,9 @@ install_data(
   rename: 'org.xfce.panel.vibrismenu.svg',
   install_dir: get_option('prefix') / get_option('datadir') / 'icons' / 'hicolor' / 'scalable' / 'apps',
 )
+
+install_data(
+  'hisc-app-vibrismenu-hover.svg',
+  rename: 'org.xfce.panel.vibrismenu-hover.svg',
+  install_dir: get_option('prefix') / get_option('datadir') / 'icons' / 'hicolor' / 'scalable' / 'apps',
+)
