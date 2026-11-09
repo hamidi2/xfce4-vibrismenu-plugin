@@ -30,8 +30,81 @@
 
 #include <glib/gstdio.h>
 #include <libxfce4ui/libxfce4ui.h>
+#include <xfconf/xfconf.h>
+
+#include <cstring>
+#include <string>
 
 using namespace VibrisMenu;
+
+//-----------------------------------------------------------------------------
+
+// First run of a Vibris plugin that has no settings yet: copy the settings of
+// a Whisker Menu plugin on the panel (same property names), so users who
+// switch keep their favorites, recent items and layout
+static void import_whisker_settings(const gchar* base)
+{
+	if (!base || !xfconf_init(nullptr))
+	{
+		return;
+	}
+	XfconfChannel* panel = xfconf_channel_get(xfce_panel_get_channel_name());
+
+	// Settings of our own already exist (the base key itself is always there)
+	GHashTable* own = xfconf_channel_get_properties(panel, base);
+	const guint own_count = own ? g_hash_table_size(own) : 0;
+	if (own)
+	{
+		g_hash_table_destroy(own);
+	}
+
+	// The Whisker Menu plugin with the lowest id
+	std::string source;
+	int source_id = -1;
+	GHashTable* plugins = own_count <= 1 ? xfconf_channel_get_properties(panel, "/plugins") : nullptr;
+	if (plugins)
+	{
+		GHashTableIter iter;
+		gpointer key, value;
+		g_hash_table_iter_init(&iter, plugins);
+		while (g_hash_table_iter_next(&iter, &key, &value))
+		{
+			const gchar* name = static_cast<const gchar*>(key);
+			const GValue* v = static_cast<const GValue*>(value);
+			int id = -1;
+			if (G_VALUE_HOLDS_STRING(v) && (g_strcmp0(g_value_get_string(v), "whiskermenu") == 0)
+					&& (sscanf(name, "/plugins/plugin-%d", &id) == 1)
+					&& (g_strcmp0(name, ("/plugins/plugin-" + std::to_string(id)).c_str()) == 0)
+					&& ((source_id < 0) || (id < source_id)))
+			{
+				source_id = id;
+				source = name;
+			}
+		}
+		g_hash_table_destroy(plugins);
+	}
+
+	GHashTable* props = source.empty() ? nullptr : xfconf_channel_get_properties(panel, source.c_str());
+	if (props)
+	{
+		const std::string prefix = source + "/";
+		GHashTableIter iter;
+		gpointer key, value;
+		g_hash_table_iter_init(&iter, props);
+		while (g_hash_table_iter_next(&iter, &key, &value))
+		{
+			const gchar* name = static_cast<const gchar*>(key);
+			if (strncmp(name, prefix.c_str(), prefix.size()) == 0)
+			{
+				const std::string target = std::string(base) + "/" + (name + prefix.size());
+				xfconf_channel_set_property(panel, target.c_str(), static_cast<const GValue*>(value));
+			}
+		}
+		g_hash_table_destroy(props);
+	}
+
+	xfconf_shutdown();
+}
 
 //-----------------------------------------------------------------------------
 
@@ -76,7 +149,8 @@ Plugin::Plugin(XfcePanelPlugin* plugin) :
 	}
 	g_free(rc_file);
 
-	// Load user settings
+	// Load user settings (taken over from Whisker Menu on the first run)
+	import_whisker_settings(xfce_panel_plugin_get_property_base(m_plugin));
 	wm_settings->load(xfce_panel_plugin_get_property_base(m_plugin));
 
 	// Migrate old user settings if they exist
