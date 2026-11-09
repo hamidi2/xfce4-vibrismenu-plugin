@@ -1,3 +1,9 @@
+1.0.1 (2026-11-09)
+======
+- Panel button: square icon-only button with an even gap around the icon
+  (6px on a single-row panel; icon and gap doubled on two or more rows)
+- User name in the menu header centered on the avatar
+
 1.0.0 (2026-11-09)
 ======
 First release of Vibris Menu, a fork of Whisker Menu 2.10.1.
