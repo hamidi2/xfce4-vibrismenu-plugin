@@ -138,6 +138,10 @@ LauncherIconView::~LauncherIconView()
 	}
 	gtk_widget_destroy(GTK_WIDGET(m_view));
 	g_object_unref(m_view);
+	if (m_model)
+	{
+		g_object_unref(m_model);
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -309,7 +313,17 @@ void LauncherIconView::set_width_authority()
 
 void LauncherIconView::set_model(GtkTreeModel* model)
 {
+	// keep our own reference: in column-major mode the icon view holds only
+	// the display copy, and callers drop theirs right after set_model()
+	if (model)
+	{
+		g_object_ref(model);
+	}
 	disconnect_model();
+	if (m_model)
+	{
+		g_object_unref(m_model);
+	}
 	m_model = model;
 	if (m_cm_cols > 1 && model)
 	{
@@ -328,8 +342,12 @@ void LauncherIconView::set_model(GtkTreeModel* model)
 void LauncherIconView::unset_model()
 {
 	disconnect_model();
-	m_model = nullptr;
 	gtk_icon_view_set_model(m_view, nullptr);
+	if (m_model)
+	{
+		g_object_unref(m_model);
+		m_model = nullptr;
+	}
 	m_to_model.clear();
 	m_to_display.clear();
 }
