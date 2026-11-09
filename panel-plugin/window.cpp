@@ -337,6 +337,9 @@ VibrisMenu::Window::Window(Plugin* plugin) :
 
 	// Create box for packing launcher pages and sidebar
 	m_contents_stack = GTK_STACK(gtk_stack_new());
+	// a hidden page must not hold the width: after a wide (multi-column)
+	// search, favorites shrink back to their own column count
+	gtk_stack_set_hhomogeneous(m_contents_stack, FALSE);
 	m_contents_box = GTK_GRID(gtk_grid_new());
 	gtk_grid_set_column_spacing(m_contents_box, 6);
 	gtk_grid_set_row_spacing(m_contents_box, 0);

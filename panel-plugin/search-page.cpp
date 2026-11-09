@@ -90,6 +90,7 @@ void SearchPage::set_filter(const gchar* filter)
 	{
 		m_query.clear();
 		m_matches.clear();
+		get_view()->unset_model();
 		return;
 	}
 
