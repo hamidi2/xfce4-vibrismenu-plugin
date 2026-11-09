@@ -27,13 +27,23 @@ To open and close the menu from the keyboard, bind the command
 'xfce4-popup-vibrismenu' to a key in the keyboard settings (Application
 Shortcuts). Add --pointer to show the menu at the mouse pointer.
 
-Building
---------
+Installation
+------------
+Ubuntu / Xubuntu (PPA):
+  sudo add-apt-repository ppa:hamidi/vibris
+  sudo apt install xfce4-vibrismenu-plugin
+
+Debian package: download the .deb from the latest release at
+https://github.com/hamidi2/xfce4-vibrismenu-plugin/releases and install it:
+  sudo apt install ./xfce4-vibrismenu-plugin_*_amd64.deb
+
+From source:
   meson setup build
   meson compile -C build
   sudo meson install -C build
 
-Then restart the panel (xfce4-panel -r) and add "Vibris Menu" to it.
+Then restart the panel (xfce4-panel -r) and add "Vibris Menu" to it
+(right-click the panel > Panel > Add New Items).
 
 Reporting bugs
 --------------

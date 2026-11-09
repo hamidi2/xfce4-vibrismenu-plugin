@@ -1,3 +1,9 @@
+1.0.2 (2026-11-09)
+======
+- Build with meson only (CMake build removed)
+- Debian packaging; Ubuntu PPA: ppa:hamidi/vibris
+- Author name spelled lowercase (hamidi)
+
 1.0.1 (2026-11-09)
 ======
 - Panel button: square icon-only button with an even gap around the icon
