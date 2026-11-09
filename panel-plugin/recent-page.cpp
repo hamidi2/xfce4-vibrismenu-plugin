@@ -29,7 +29,7 @@
 
 #include <glib/gi18n-lib.h>
 
-using namespace WhiskerMenu;
+using namespace VibrisMenu;
 
 //-----------------------------------------------------------------------------
 
@@ -144,7 +144,7 @@ void RecentPage::extend_context_menu(GtkWidget* menu)
 	GtkWidget* menuitem = gtk_separator_menu_item_new();
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
-	menuitem = whiskermenu_image_menu_item_new("edit-clear", _("Clear Recently Used"));
+	menuitem = vibrismenu_image_menu_item_new("edit-clear", _("Clear Recently Used"));
 	connect(menuitem, "activate",
 		[this](GtkMenuItem*)
 		{

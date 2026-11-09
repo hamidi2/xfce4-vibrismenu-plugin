@@ -15,14 +15,14 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WHISKERMENU_WINDOW_H
-#define WHISKERMENU_WINDOW_H
+#ifndef VIBRISMENU_WINDOW_H
+#define VIBRISMENU_WINDOW_H
 
 #include <vector>
 
 #include <gtk/gtk.h>
 
-namespace WhiskerMenu
+namespace VibrisMenu
 {
 
 class ApplicationsPage;
@@ -216,4 +216,4 @@ private:
 
 }
 
-#endif // WHISKERMENU_WINDOW_H
+#endif // VIBRISMENU_WINDOW_H

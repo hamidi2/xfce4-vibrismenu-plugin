@@ -1,18 +1,18 @@
-# Slovak translation of xfce4-whiskermenu-plugin.
+# Slovak translation of xfce4-vibrismenu-plugin.
 # Copyright (C) 2025 Graeme Gott
-# This file is distributed under the same license as the xfce4-whiskermenu-plugin package.
+# This file is distributed under the same license as the xfce4-vibrismenu-plugin package.
 # 
 # Translators:
 # Jose Riha <jose1711@gmail.com>, 2018-2019
 # Slavko <linux@slavino.sk>, 2013-2025
 msgid ""
 msgstr ""
-"Project-Id-Version: Whisker Menu\n"
+"Project-Id-Version: Vibris Menu\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-01-16 14:38-0500\n"
 "PO-Revision-Date: 2013-06-20 11:26+0000\n"
 "Last-Translator: Slavko <linux@slavino.sk>, 2013-2025\n"
-"Language-Team: Slovak (http://app.transifex.com/gottcode/xfce4-whiskermenu-plugin/language/sk/)\n"
+"Language-Team: Slovak (http://app.transifex.com/gottcode/xfce4-vibrismenu-plugin/language/sk/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -93,7 +93,7 @@ msgstr "P_ríkaz:"
 msgid "Categ_ory icon size:"
 msgstr "Veľkosť ikony _kategorie"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:109
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:109
 msgid "Choose which menu to popup by instance ID"
 msgstr "Zvoľte, ktoré menu zobraziť pomocou ID inštancie"
 
@@ -102,7 +102,7 @@ msgid "Clear Recently Used"
 msgstr "Vymazať nedávne"
 
 #: ../panel-plugin/plugin.cpp:419
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:128
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:128
 msgid "Copyright © 2013-2025 Graeme Gott"
 msgstr "Copyright © 2013-2025 Graeme Gott"
 
@@ -283,11 +283,11 @@ msgstr "Tlačidlo panela"
 msgid "Pattern"
 msgstr "Vzor"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:107
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:107
 msgid "Popup menu at center of screen"
 msgstr "Vyskakovacie menu v strede obrazovky"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:106
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:106
 msgid "Popup menu at current mouse position"
 msgstr "Zobraziť menu v aktuálnej pozícii kurzora"
 
@@ -317,11 +317,11 @@ msgstr "Umiestniť príkazy _vedľa položky hľadať"
 msgid "Position pro_file on bottom"
 msgstr "Umiestniť pro_fil dole"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:108
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:108
 msgid "Print available menu instance IDs"
 msgstr "Vypísať ID dostupných inštancií menu"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:110
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:110
 msgid "Print version information and exit"
 msgstr "Vypísať verziou a skončiť"
 
@@ -393,7 +393,7 @@ msgstr "Vyberte ikonu"
 msgid "Session Commands"
 msgstr "Príkazy relácie"
 
-#: ../panel-plugin/whiskermenu.desktop.in:5
+#: ../panel-plugin/vibrismenu.desktop.in:5
 msgid "Show a menu to easily access installed applications"
 msgstr "Zobrazí menu na jednoduché prechádzanie nainštalovanými aplikáciami"
 
@@ -528,9 +528,9 @@ msgid "Very Small"
 msgstr "Celkom malé"
 
 #: ../panel-plugin/settings-dialog.cpp:80
-#: ../panel-plugin/whiskermenu.desktop.in:4
-msgid "Whisker Menu"
-msgstr "Whisker Menu"
+#: ../panel-plugin/vibrismenu.desktop.in:4
+msgid "Vibris Menu"
+msgstr "Vibris Menu"
 
 #: ../panel-plugin/settings.cpp:93
 msgid "Wikipedia"

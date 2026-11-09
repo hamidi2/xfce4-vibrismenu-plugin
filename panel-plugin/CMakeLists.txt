@@ -4,7 +4,7 @@
 
 include(../cmake/AddVersionCompileDefinition.cmake)
 add_version_compile_definition(plugin.cpp VERSION_FULL)
-add_version_compile_definition(xfce4-popup-whiskermenu.cpp VERSION_FULL)
+add_version_compile_definition(xfce4-popup-vibrismenu.cpp VERSION_FULL)
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(gio REQUIRED IMPORTED_TARGET gio-2.0)
@@ -17,7 +17,7 @@ pkg_check_modules(libxfce4util REQUIRED IMPORTED_TARGET libxfce4util-1.0>=4.16)
 pkg_check_modules(libxfconf REQUIRED IMPORTED_TARGET libxfconf-0>=4.16)
 
 # plugin
-add_library(whiskermenu MODULE
+add_library(vibrismenu MODULE
 	applications-page.cpp
 	category.cpp
 	category-button.cpp
@@ -46,7 +46,7 @@ add_library(whiskermenu MODULE
 	slot.h
 	window.cpp)
 
-target_link_libraries(whiskermenu PRIVATE
+target_link_libraries(vibrismenu PRIVATE
 	PkgConfig::GTK3
 	PkgConfig::exo
 	PkgConfig::garcon
@@ -55,49 +55,49 @@ target_link_libraries(whiskermenu PRIVATE
 	PkgConfig::libxfce4util
 	PkgConfig::libxfconf)
 
-target_compile_options(whiskermenu PRIVATE -Wall -Wextra)
+target_compile_options(vibrismenu PRIVATE -Wall -Wextra)
 
-target_compile_definitions(whiskermenu PRIVATE
-	GETTEXT_PACKAGE="xfce4-whiskermenu-plugin"
+target_compile_definitions(vibrismenu PRIVATE
+	GETTEXT_PACKAGE="xfce4-vibrismenu-plugin"
 	PACKAGE_LOCALE_DIR="${CMAKE_INSTALL_FULL_LOCALEDIR}"
-	PACKAGE_NAME="xfce4-whiskermenu-plugin"
+	PACKAGE_NAME="xfce4-vibrismenu-plugin"
 	BINDIR="${CMAKE_INSTALL_FULL_BINDIR}"
 	DATADIR="${CMAKE_INSTALL_FULL_DATADIR}"
 	SETTINGS_MENUFILE="${CMAKE_INSTALL_FULL_SYSCONFDIR}/xdg/menus/xfce-settings-manager.menu"
-	G_LOG_DOMAIN="whiskermenu"
+	G_LOG_DOMAIN="vibrismenu"
 	COPYRIGHT_YEAR="2025"
 	GSEAL_ENABLE
 	GTK_MULTIHEAD_SAFE
 	$<$<NOT:$<CONFIG:Debug>>:G_DISABLE_ASSERT G_DISABLE_CAST_CHECKS>)
 
-target_compile_features(whiskermenu PRIVATE cxx_std_11)
+target_compile_features(vibrismenu PRIVATE cxx_std_11)
 
 if(ENABLE_ACCOUNTS_SERVICE)
 	pkg_check_modules(accountsservice REQUIRED IMPORTED_TARGET accountsservice>=0.6.45)
-	target_link_libraries(whiskermenu PRIVATE PkgConfig::accountsservice)
-	target_compile_definitions(whiskermenu PRIVATE HAVE_ACCOUNTS_SERVICE)
+	target_link_libraries(vibrismenu PRIVATE PkgConfig::accountsservice)
+	target_compile_definitions(vibrismenu PRIVATE HAVE_ACCOUNTS_SERVICE)
 endif()
 
 if(ENABLE_GTK_LAYER_SHELL)
 	pkg_check_modules(gtklayershell REQUIRED IMPORTED_TARGET gtk-layer-shell-0>=0.7)
-	target_link_libraries(whiskermenu PRIVATE PkgConfig::gtklayershell)
-	target_compile_definitions(whiskermenu PRIVATE HAVE_GTK_LAYER_SHELL)
+	target_link_libraries(vibrismenu PRIVATE PkgConfig::gtklayershell)
+	target_compile_definitions(vibrismenu PRIVATE HAVE_GTK_LAYER_SHELL)
 endif()
 
 # popup
-add_executable(xfce4-popup-whiskermenu xfce4-popup-whiskermenu.cpp)
+add_executable(xfce4-popup-vibrismenu xfce4-popup-vibrismenu.cpp)
 
-target_link_libraries(xfce4-popup-whiskermenu PRIVATE
+target_link_libraries(xfce4-popup-vibrismenu PRIVATE
 	PkgConfig::gio
 	PkgConfig::libxfconf)
 
-target_compile_options(xfce4-popup-whiskermenu PRIVATE -Wall -Wextra)
+target_compile_options(xfce4-popup-vibrismenu PRIVATE -Wall -Wextra)
 
-target_compile_definitions(xfce4-popup-whiskermenu PRIVATE
-	GETTEXT_PACKAGE="xfce4-whiskermenu-plugin"
+target_compile_definitions(xfce4-popup-vibrismenu PRIVATE
+	GETTEXT_PACKAGE="xfce4-vibrismenu-plugin"
 	PACKAGE_LOCALE_DIR="${CMAKE_INSTALL_FULL_LOCALEDIR}"
-	PACKAGE_NAME="xfce4-popup-whiskermenu"
-	G_LOG_DOMAIN="whiskermenu"
+	PACKAGE_NAME="xfce4-popup-vibrismenu"
+	G_LOG_DOMAIN="vibrismenu"
 	COPYRIGHT_YEAR="2025"
 	GSEAL_ENABLE
 	$<$<CONFIG:Release>:G_DISABLE_ASSERT G_DISABLE_CAST_CHECKS>
@@ -106,24 +106,24 @@ target_compile_definitions(xfce4-popup-whiskermenu PRIVATE
 
 # options
 if(ENABLE_VISIBILITY)
-	set_target_properties(whiskermenu PROPERTIES CXX_VISIBILITY_PRESET hidden)
+	set_target_properties(vibrismenu PROPERTIES CXX_VISIBILITY_PRESET hidden)
 endif()
 
 if(ENABLE_AS_NEEDED)
-	target_link_options(whiskermenu PRIVATE "LINKER:--as-needed")
+	target_link_options(vibrismenu PRIVATE "LINKER:--as-needed")
 endif()
 
 if(ENABLE_LINKER_OPTIMIZED_HASH_TABLES)
-	target_link_options(whiskermenu PRIVATE "LINKER:-O1")
+	target_link_options(vibrismenu PRIVATE "LINKER:-O1")
 endif()
 
 if(ENABLE_DEVELOPER_MODE)
-	target_link_options(whiskermenu PRIVATE "LINKER:-z,defs")
+	target_link_options(vibrismenu PRIVATE "LINKER:-z,defs")
 endif()
 
 if(ENABLE_DEVELOPER_MODE)
-	target_compile_options(whiskermenu PRIVATE -Werror)
-	target_compile_definitions(whiskermenu PRIVATE
+	target_compile_options(vibrismenu PRIVATE -Werror)
+	target_compile_definitions(vibrismenu PRIVATE
 		XFCE_DISABLE_DEPRECATED
 		G_DISABLE_DEPRECATED
 		GDK_DISABLE_DEPRECATED
@@ -132,8 +132,8 @@ if(ENABLE_DEVELOPER_MODE)
 		GDK_PIXBUF_DISABLE_SINGLE_INCLUDES
 		GTK_DISABLE_SINGLE_INCLUDES)
 
-	target_compile_options(xfce4-popup-whiskermenu PRIVATE -Werror)
-	target_compile_definitions(xfce4-popup-whiskermenu PRIVATE
+	target_compile_options(xfce4-popup-vibrismenu PRIVATE -Werror)
+	target_compile_definitions(xfce4-popup-vibrismenu PRIVATE
 		G_DISABLE_DEPRECATED)
 endif()
 
@@ -141,20 +141,20 @@ if(ENABLE_LINK_TIME_OPTIMIZATION)
 	include(CheckIPOSupported)
 	check_ipo_supported(RESULT result)
 	if(result)
-		set_target_properties(whiskermenu PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE)
+		set_target_properties(vibrismenu PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE)
 	endif()
 endif()
 
 if(ENABLE_STRIP)
-	add_custom_command(TARGET whiskermenu POST_BUILD
-		COMMAND ${CMAKE_STRIP} $<TARGET_FILE:whiskermenu>)
-	add_custom_command(TARGET xfce4-popup-whiskermenu POST_BUILD
-		COMMAND ${CMAKE_STRIP} $<TARGET_FILE:xfce4-popup-whiskermenu>)
+	add_custom_command(TARGET vibrismenu POST_BUILD
+		COMMAND ${CMAKE_STRIP} $<TARGET_FILE:vibrismenu>)
+	add_custom_command(TARGET xfce4-popup-vibrismenu POST_BUILD
+		COMMAND ${CMAKE_STRIP} $<TARGET_FILE:xfce4-popup-vibrismenu>)
 endif()
 
 # install plugin
-install(TARGETS whiskermenu LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/xfce4/panel/plugins)
+install(TARGETS vibrismenu LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/xfce4/panel/plugins)
 
 # install popup
-install(TARGETS xfce4-popup-whiskermenu RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
-install(FILES xfce4-popup-whiskermenu.1 DESTINATION ${CMAKE_INSTALL_MANDIR}/man1 COMPONENT doc)
+install(TARGETS xfce4-popup-vibrismenu RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(FILES xfce4-popup-vibrismenu.1 DESTINATION ${CMAKE_INSTALL_MANDIR}/man1 COMPONENT doc)

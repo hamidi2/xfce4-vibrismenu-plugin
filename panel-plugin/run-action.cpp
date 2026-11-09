@@ -20,7 +20,7 @@
 #include "query.h"
 #include "settings.h"
 
-using namespace WhiskerMenu;
+using namespace VibrisMenu;
 
 //-----------------------------------------------------------------------------
 

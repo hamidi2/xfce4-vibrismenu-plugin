@@ -15,14 +15,14 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WHISKERMENU_SEARCH_ACTION_H
-#define WHISKERMENU_SEARCH_ACTION_H
+#ifndef VIBRISMENU_SEARCH_ACTION_H
+#define VIBRISMENU_SEARCH_ACTION_H
 
 #include "element.h"
 
 #include <string>
 
-namespace WhiskerMenu
+namespace VibrisMenu
 {
 
 class SearchAction : public Element
@@ -80,4 +80,4 @@ private:
 
 }
 
-#endif // WHISKERMENU_SEARCH_ACTION_H
+#endif // VIBRISMENU_SEARCH_ACTION_H

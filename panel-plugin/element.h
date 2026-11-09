@@ -15,13 +15,13 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WHISKERMENU_ELEMENT_H
-#define WHISKERMENU_ELEMENT_H
+#ifndef VIBRISMENU_ELEMENT_H
+#define VIBRISMENU_ELEMENT_H
 
 #include <libxfce4ui/libxfce4ui.h>
 #include <gdk/gdk.h>
 
-namespace WhiskerMenu
+namespace VibrisMenu
 {
 
 class Query;
@@ -112,4 +112,4 @@ private:
 
 }
 
-#endif // WHISKERMENU_ELEMENT_H
+#endif // VIBRISMENU_ELEMENT_H

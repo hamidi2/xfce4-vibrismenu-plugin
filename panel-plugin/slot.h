@@ -15,12 +15,12 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WHISKERMENU_SLOT_H
-#define WHISKERMENU_SLOT_H
+#ifndef VIBRISMENU_SLOT_H
+#define VIBRISMENU_SLOT_H
 
 #include <glib-object.h>
 
-namespace WhiskerMenu
+namespace VibrisMenu
 {
 // Connect flags
 enum class Connect
@@ -72,4 +72,4 @@ gulong connect(Sender instance, const gchar* detailed_signal, Func func, Connect
 
 }
 
-#endif // WHISKERMENU_SLOT_H
+#endif // VIBRISMENU_SLOT_H

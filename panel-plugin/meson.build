@@ -31,11 +31,11 @@ plugin_sources = [
 plugin_install_subdir = 'xfce4' / 'panel' / 'plugins'
 
 plugin_lib = shared_module(
-  'whiskermenu',
+  'vibrismenu',
   plugin_sources,
   gnu_symbol_visibility: 'hidden',
   cpp_args: [
-    '-DG_LOG_DOMAIN="@0@"'.format('xfce4-whiskermenu-plugin'),
+    '-DG_LOG_DOMAIN="@0@"'.format('xfce4-vibrismenu-plugin'),
     '-DSETTINGS_MENUFILE="@0@"'.format(get_option('sysconfdir') / 'xdg' / 'menus' / 'xfce-settings-manager.menu'),
   ],
   include_directories: [
@@ -59,14 +59,14 @@ plugin_lib = shared_module(
   install_dir: get_option('prefix') / get_option('libdir') / plugin_install_subdir,
 )
 
-popup_whiskermenu_sources = [
-  'xfce4-popup-whiskermenu.cpp',
+popup_vibrismenu_sources = [
+  'xfce4-popup-vibrismenu.cpp',
   xfce_revision_h,
 ]
 
-popup_whiskermenu = executable(
-  'xfce4-popup-whiskermenu',
-  popup_whiskermenu_sources,
+popup_vibrismenu = executable(
+  'xfce4-popup-vibrismenu',
+  popup_vibrismenu_sources,
   dependencies: [
     gio,
     glib,
@@ -77,12 +77,12 @@ popup_whiskermenu = executable(
 )
 
 i18n.merge_file(
-  input: 'whiskermenu.desktop.in',
-  output: 'whiskermenu.desktop',
+  input: 'vibrismenu.desktop.in',
+  output: 'vibrismenu.desktop',
   po_dir: '..' / 'po',
   type: 'desktop',
   install: true,
   install_dir: get_option('prefix') / get_option('datadir') / plugin_install_subdir,
 )
 
-install_man('xfce4-popup-whiskermenu.1')
+install_man('xfce4-popup-vibrismenu.1')

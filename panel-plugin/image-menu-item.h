@@ -15,12 +15,12 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WHISKERMENU_IMAGE_MENU_ITEM_H
-#define WHISKERMENU_IMAGE_MENU_ITEM_H
+#ifndef VIBRISMENU_IMAGE_MENU_ITEM_H
+#define VIBRISMENU_IMAGE_MENU_ITEM_H
 
 #include <gtk/gtk.h>
 
-inline GtkWidget* whiskermenu_image_menu_item_new(const gchar* icon, const gchar* text)
+inline GtkWidget* vibrismenu_image_menu_item_new(const gchar* icon, const gchar* text)
 {
 	GtkWidget* image = gtk_image_new_from_icon_name(icon, GTK_ICON_SIZE_MENU);
 G_GNUC_BEGIN_IGNORE_DEPRECATIONS
@@ -30,7 +30,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
 	return menuitem;
 }
 
-inline GtkWidget* whiskermenu_image_menu_item_new_with_mnemonic(const gchar* icon, const gchar* text)
+inline GtkWidget* vibrismenu_image_menu_item_new_with_mnemonic(const gchar* icon, const gchar* text)
 {
 	GtkWidget* image = gtk_image_new_from_icon_name(icon, GTK_ICON_SIZE_MENU);
 G_GNUC_BEGIN_IGNORE_DEPRECATIONS

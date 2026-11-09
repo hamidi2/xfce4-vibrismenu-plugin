@@ -15,17 +15,17 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WHISKERMENU_PLUGIN_H
-#define WHISKERMENU_PLUGIN_H
+#ifndef VIBRISMENU_PLUGIN_H
+#define VIBRISMENU_PLUGIN_H
 
-#define PLUGIN_WEBSITE "https://docs.xfce.org/panel-plugins/xfce4-whiskermenu-plugin"
+#define PLUGIN_WEBSITE "https://github.com/hamidi2/xfce4-vibrismenu-plugin"
 
 #include <string>
 
 #include <gtk/gtk.h>
 #include <libxfce4panel/libxfce4panel.h>
 
-namespace WhiskerMenu
+namespace VibrisMenu
 {
 
 class SettingsDialog;
@@ -94,4 +94,4 @@ private:
 
 }
 
-#endif // WHISKERMENU_PLUGIN_H
+#endif // VIBRISMENU_PLUGIN_H

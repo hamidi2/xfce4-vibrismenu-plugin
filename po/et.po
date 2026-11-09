@@ -1,18 +1,18 @@
-# Estonian translation of xfce4-whiskermenu-plugin.
+# Estonian translation of xfce4-vibrismenu-plugin.
 # Copyright (C) 2025 Graeme Gott
-# This file is distributed under the same license as the xfce4-whiskermenu-plugin package.
+# This file is distributed under the same license as the xfce4-vibrismenu-plugin package.
 # 
 # Translators:
 # Kus Mis <kusmis@hot.ee>, 2013
 # Priit Jõerüüt <transifex@joeruut.com>, 2024-2025
 msgid ""
 msgstr ""
-"Project-Id-Version: Whisker Menu\n"
+"Project-Id-Version: Vibris Menu\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-01-16 14:38-0500\n"
 "PO-Revision-Date: 2013-06-20 11:26+0000\n"
 "Last-Translator: Priit Jõerüüt <transifex@joeruut.com>, 2024-2025\n"
-"Language-Team: Estonian (http://app.transifex.com/gottcode/xfce4-whiskermenu-plugin/language/et/)\n"
+"Language-Team: Estonian (http://app.transifex.com/gottcode/xfce4-vibrismenu-plugin/language/et/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -93,7 +93,7 @@ msgstr "_Käsk:"
 msgid "Categ_ory icon size:"
 msgstr "Kateg_ooria ikooni suurus:"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:109
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:109
 msgid "Choose which menu to popup by instance ID"
 msgstr "Vali missuguse menüüvariandi soovid käivitada ID alusel"
 
@@ -102,7 +102,7 @@ msgid "Clear Recently Used"
 msgstr "Puhasta hiljuti kasutatud"
 
 #: ../panel-plugin/plugin.cpp:419
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:128
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:128
 msgid "Copyright © 2013-2025 Graeme Gott"
 msgstr "Autoriõigused © 2013-2025 Graeme Gott"
 
@@ -283,11 +283,11 @@ msgstr "Käivitusnupp ribal"
 msgid "Pattern"
 msgstr "Muster"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:107
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:107
 msgid "Popup menu at center of screen"
 msgstr "Hüpikaken ekraani keskel"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:106
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:106
 msgid "Popup menu at current mouse position"
 msgstr "Hüpikaken hiirekursori viimases asukohas"
 
@@ -317,11 +317,11 @@ msgstr "Paiguta käsud otsingukasti kõrval_e"
 msgid "Position pro_file on bottom"
 msgstr "Paiguta pro_fiiliriba menüü alumisse äärde"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:108
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:108
 msgid "Print available menu instance IDs"
 msgstr "Väljasta menüüvariantide ID-d"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:110
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:110
 msgid "Print version information and exit"
 msgstr "Väljasta versiooniteave ja lõpeta töö"
 
@@ -393,7 +393,7 @@ msgstr "Vali ikoon"
 msgid "Session Commands"
 msgstr "Sessioonikäsud"
 
-#: ../panel-plugin/whiskermenu.desktop.in:5
+#: ../panel-plugin/vibrismenu.desktop.in:5
 msgid "Show a menu to easily access installed applications"
 msgstr "Menüü, mis võimaldab mugavat ligipääsu paigaldatud raendustele"
 
@@ -528,9 +528,9 @@ msgid "Very Small"
 msgstr "Väga väike"
 
 #: ../panel-plugin/settings-dialog.cpp:80
-#: ../panel-plugin/whiskermenu.desktop.in:4
-msgid "Whisker Menu"
-msgstr "Whisker Menüü"
+#: ../panel-plugin/vibrismenu.desktop.in:4
+msgid "Vibris Menu"
+msgstr "Vibris Menüü"
 
 #: ../panel-plugin/settings.cpp:93
 msgid "Wikipedia"

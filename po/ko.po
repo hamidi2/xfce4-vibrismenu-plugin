@@ -1,6 +1,6 @@
-# Korean translation of xfce4-whiskermenu-plugin.
+# Korean translation of xfce4-vibrismenu-plugin.
 # Copyright (C) 2025 Graeme Gott
-# This file is distributed under the same license as the xfce4-whiskermenu-plugin package.
+# This file is distributed under the same license as the xfce4-vibrismenu-plugin package.
 # 
 # Translators:
 # 1763f4a4329a2376c933c5e919a36cbc_341ca53 <1f851310383599d03339229d772e1290_119292>, 2015
@@ -9,12 +9,12 @@
 # Seok Chae <seok.chae@gmail.com>, 2020,2026
 msgid ""
 msgstr ""
-"Project-Id-Version: Whisker Menu\n"
+"Project-Id-Version: Vibris Menu\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-01-16 14:38-0500\n"
 "PO-Revision-Date: 2013-06-20 11:26+0000\n"
 "Last-Translator: Seok Chae <seok.chae@gmail.com>, 2020,2026\n"
-"Language-Team: Korean (http://app.transifex.com/gottcode/xfce4-whiskermenu-plugin/language/ko/)\n"
+"Language-Team: Korean (http://app.transifex.com/gottcode/xfce4-vibrismenu-plugin/language/ko/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -95,7 +95,7 @@ msgstr "명령어:"
 msgid "Categ_ory icon size:"
 msgstr "카테고리 아이콘 크기:"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:109
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:109
 msgid "Choose which menu to popup by instance ID"
 msgstr "인스턴스 ID로 팝업할 메뉴 선택"
 
@@ -104,7 +104,7 @@ msgid "Clear Recently Used"
 msgstr "최근 사용 기록 지우기"
 
 #: ../panel-plugin/plugin.cpp:419
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:128
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:128
 msgid "Copyright © 2013-2025 Graeme Gott"
 msgstr ""
 
@@ -285,11 +285,11 @@ msgstr "패널 버튼"
 msgid "Pattern"
 msgstr "패턴"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:107
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:107
 msgid "Popup menu at center of screen"
 msgstr "화면 중앙에 팝업 메뉴"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:106
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:106
 msgid "Popup menu at current mouse position"
 msgstr "현재 마우스 위치에 팝업 메뉴"
 
@@ -319,11 +319,11 @@ msgstr "검색 창 옆에 올 명령어 위치"
 msgid "Position pro_file on bottom"
 msgstr "프로필(_F)을 메뉴 하단에 배치"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:108
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:108
 msgid "Print available menu instance IDs"
 msgstr "사용 가능한 메뉴 인스턴스 ID 출력"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:110
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:110
 msgid "Print version information and exit"
 msgstr "버전 정보를 출력하고 종료"
 
@@ -395,7 +395,7 @@ msgstr "아이콘 선택"
 msgid "Session Commands"
 msgstr "세션 명령어"
 
-#: ../panel-plugin/whiskermenu.desktop.in:5
+#: ../panel-plugin/vibrismenu.desktop.in:5
 msgid "Show a menu to easily access installed applications"
 msgstr "설치된 프로그램에 쉽게 접근하도록 메뉴 보이기"
 
@@ -530,9 +530,9 @@ msgid "Very Small"
 msgstr "매우 작게"
 
 #: ../panel-plugin/settings-dialog.cpp:80
-#: ../panel-plugin/whiskermenu.desktop.in:4
-msgid "Whisker Menu"
-msgstr "휘스커 메뉴"
+#: ../panel-plugin/vibrismenu.desktop.in:4
+msgid "Vibris Menu"
+msgstr "Vibris 메뉴"
 
 #: ../panel-plugin/settings.cpp:93
 msgid "Wikipedia"

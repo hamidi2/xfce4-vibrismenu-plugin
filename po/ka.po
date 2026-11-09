@@ -1,6 +1,6 @@
-# Georgian translation of xfce4-whiskermenu-plugin.
+# Georgian translation of xfce4-vibrismenu-plugin.
 # Copyright (C) 2025 Graeme Gott
-# This file is distributed under the same license as the xfce4-whiskermenu-plugin package.
+# This file is distributed under the same license as the xfce4-vibrismenu-plugin package.
 # 
 # Translators:
 # Temuri Doghonadze <temuri.doghonadze@gmail.com>, 2024-2025
@@ -9,12 +9,12 @@
 # ზურაბი დავითაშვილი <zurabi@tuta.io>, 2021
 msgid ""
 msgstr ""
-"Project-Id-Version: Whisker Menu\n"
+"Project-Id-Version: Vibris Menu\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-01-16 14:38-0500\n"
 "PO-Revision-Date: 2013-06-20 11:26+0000\n"
 "Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>, 2024-2025\n"
-"Language-Team: Georgian (http://app.transifex.com/gottcode/xfce4-whiskermenu-plugin/language/ka/)\n"
+"Language-Team: Georgian (http://app.transifex.com/gottcode/xfce4-vibrismenu-plugin/language/ka/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -95,7 +95,7 @@ msgstr "ბრძანება:"
 msgid "Categ_ory icon size:"
 msgstr "კატეგორიის ხატულას ზომა:"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:109
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:109
 msgid "Choose which menu to popup by instance ID"
 msgstr "აირჩიეთ, რომელი მენიუ ამოხტება გაშვებული ასლის ID-ით"
 
@@ -104,7 +104,7 @@ msgid "Clear Recently Used"
 msgstr "ახლახანს გამოყენებულების გასუფთავება"
 
 #: ../panel-plugin/plugin.cpp:419
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:128
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:128
 msgid "Copyright © 2013-2025 Graeme Gott"
 msgstr "საავტორო უფლებები დაცულია © 2013-2025 Graeme Gott"
 
@@ -285,11 +285,11 @@ msgstr "პანელის ღილაკი"
 msgid "Pattern"
 msgstr "ნიმუში"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:107
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:107
 msgid "Popup menu at center of screen"
 msgstr "მხტუნარა მენიუ ეკრანის ცენტრში"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:106
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:106
 msgid "Popup menu at current mouse position"
 msgstr "მხტუნარა მენიუ თაგუნას მიმდინარე პოზიციაზე"
 
@@ -319,11 +319,11 @@ msgstr "ბრძანებების განთავსება სა�
 msgid "Position pro_file on bottom"
 msgstr "პრო_ფილის მოთავსება ქვემოთ"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:108
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:108
 msgid "Print available menu instance IDs"
 msgstr "ხელმისაწვდომი მენიუს გაშვებული ასლის ID-ების გამოტანა"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:110
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:110
 msgid "Print version information and exit"
 msgstr "ვერსიის ინფორმაციის გამოტანა და გასვლა"
 
@@ -395,7 +395,7 @@ msgstr "ხატულას არჩევა"
 msgid "Session Commands"
 msgstr "სესიის ბრძანებები"
 
-#: ../panel-plugin/whiskermenu.desktop.in:5
+#: ../panel-plugin/vibrismenu.desktop.in:5
 msgid "Show a menu to easily access installed applications"
 msgstr "დაყენებული პროგრამების ადვილად მისაწვდომად, მენიუს გამოჩენა"
 
@@ -530,9 +530,9 @@ msgid "Very Small"
 msgstr "ძალიან პატარა"
 
 #: ../panel-plugin/settings-dialog.cpp:80
-#: ../panel-plugin/whiskermenu.desktop.in:4
-msgid "Whisker Menu"
-msgstr "ვისკერ მენიუ"
+#: ../panel-plugin/vibrismenu.desktop.in:4
+msgid "Vibris Menu"
+msgstr "Vibris მენიუ"
 
 #: ../panel-plugin/settings.cpp:93
 msgid "Wikipedia"

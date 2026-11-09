@@ -1,59 +1,44 @@
-Website
-=======
+Vibris Menu
+===========
 
-https://docs.xfce.org/panel-plugins/xfce4-whiskermenu-plugin
+https://github.com/hamidi2/xfce4-vibrismenu-plugin
 
+Vibris Menu is an alternate application launcher for the Xfce panel. It
+shows favorites, recently used applications and every category as a grid
+of several columns, so a large menu fits on screen without scrolling.
 
-About
-=====
+Vibris Menu is a fork of Whisker Menu by Graeme Gott
+(https://gitlab.xfce.org/panel-plugins/xfce4-whiskermenu-plugin). Most of
+its code comes from Whisker Menu; thanks to Graeme Gott and to every
+contributor and translator of that project. Vibris Menu uses its own names
+(plugin, command, settings and icon), so both can be installed side by side.
 
-Whisker Menu is an alternate application launcher for Xfce. When you open
-it you are shown a list of applications you have marked as favorites. You
-can browse through all of your installed applications by clicking on the
-category buttons on the side. Top level categories make browsing fast,
-and simple to switch between. Additionally, Whisker Menu keeps a list of
-the last ten applications that you've launched from it.
+Features
+--------
+- Multi-column grid on every page, columns filled top to bottom
+- Configurable number of columns; the menu width follows the widest item
+- Resize by dragging any edge of the menu
+- Searching for applications, bookmarks, and running commands
+- Startup page setting, including "last used category"
 
-Favorites are easy to add and reorder. When browsing through your
-applications, right-click on any of them and select "Add to Favorites".
-Simply drag and drop your favorites list to arrange them to suit your
-needs. You can remove them at any time from another right-click option.
+Keyboard shortcut
+-----------------
+To open and close the menu from the keyboard, bind the command
+'xfce4-popup-vibrismenu' to a key in the keyboard settings (Application
+Shortcuts). Add --pointer to show the menu at the mouse pointer.
 
-If you're not sure exactly where a program is listed, instead of browsing
-through each category you can simply enter a search term. The search
-field is focused when opening the menu, so you can just start typing.
-Application descriptions as well as names are searched, which allows you
-to find a program by using a general word (such as "browser" to find all
-web browsers installed on your computer).
+Building
+--------
+  meson setup build
+  meson compile -C build
+  sudo meson install -C build
 
+Then restart the panel (xfce4-panel -r) and add "Vibris Menu" to it.
 
-Keyboard Shortcut
-=================
+Reporting bugs
+--------------
+https://github.com/hamidi2/xfce4-vibrismenu-plugin/issues
 
-A script to open and close Whisker Menu from the keyboard is included.
-To enable support, open the keyboard preferences
-['All Settings' -> 'Keyboard' -> 'Application Shortcuts']. Add a shortcut
-for the command 'xfce4-popup-whiskermenu' and bind it to the keyboard
-shortcut of your choice.
-
-
-Compiz Workaround
-=================
-
-To allow Whisker Menu to focus the search field when shown under compiz
-you will need to add it to the list of windows ignored by compiz's keyboard
-focus prevention. Open the focus prevention of the compiz settings
-manager [ccsm -> 'General Settings' -> 'Focus Prevention'].
-Add (title="Whisker Menu") to the exclude pattern to make compiz ignore
-Whisker Menu and allow it to focus when shown.
-
-
-How to report bugs?
-===================
-
-You can report bugs and feature requests at https://gitlab.xfce.org.
-Choose the product Panel Plugins and the component xfce4-whiskermenu-plugin.
-You will need to create an account for yourself.
-
-You can also join the Xfce development mailing-list:
-https://mail.xfce.org/mailman/listinfo/xfce4-dev
+License
+-------
+GNU General Public License, version 2 or later (see COPYING).

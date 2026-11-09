@@ -1,8 +1,8 @@
 project(
-  'xfce4-whiskermenu-plugin',
+  'xfce4-vibrismenu-plugin',
   'c',
   'cpp',
-version : '2.10.1',
+version : '1.0.0',
   license : 'GPL-2.0-or-later',
   meson_version : '>= 0.54.0',
   default_options : ['c_std=gnu11', 'cpp_std=gnu++11', 'buildtype=debugoptimized', 'warning_level=2']
@@ -121,7 +121,7 @@ extra_cflags += [
   '-DPACKAGE_DATADIR="@0@"'.format(pkgdatadir),
   '-DCOPYRIGHT_YEAR="@0@"'.format(copyright_year),
   '-DPACKAGE_LOCALE_DIR="@0@"'.format(get_option('prefix') / get_option('localedir')),
-  '-DPACKAGE_BUGREPORT="https://gitlab.xfce.org/@0@/@1@/-/issues"'.format(project_namespace, meson.project_name()),
+  '-DPACKAGE_BUGREPORT="https://github.com/hamidi2/xfce4-vibrismenu-plugin/issues"',
   '-DGETTEXT_PACKAGE="@0@"'.format(meson.project_name()),
   '-DPREFIX="@0@"'.format(get_option('prefix')),
   '-DBINDIR="@0@"'.format(get_option('prefix') / get_option('bindir')),

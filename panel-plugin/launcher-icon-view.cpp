@@ -26,21 +26,21 @@
 #include <algorithm>
 #include <stdio.h>
 
-using namespace WhiskerMenu;
+using namespace VibrisMenu;
 
 //-----------------------------------------------------------------------------
 
 LauncherIconView::LauncherIconView() :
+	m_authority(false),
+	m_width_pending(false),
 	m_icon_renderer(nullptr),
 	m_text_renderer(nullptr),
-	m_icon_size(-1),
-	m_authority(false),
-	m_width_pending(false)
+	m_icon_size(-1)
 {
 	// Create the view
 	m_view = GTK_ICON_VIEW(gtk_icon_view_new());
 
-	m_icon_renderer = whiskermenu_icon_renderer_new();
+	m_icon_renderer = vibrismenu_icon_renderer_new();
 	g_object_set(m_icon_renderer,
 			"stretch", true,
 			"xalign", 0.0,
@@ -785,13 +785,13 @@ void LauncherIconView::rebuild_display()
 			auto view = static_cast<LauncherIconView*>(data);
 			if (!view->m_rebuild_id)
 			{
-				view->m_rebuild_id = g_idle_add_full(G_PRIORITY_HIGH_IDLE, +[](gpointer data) -> gboolean
+				view->m_rebuild_id = g_idle_add_full(G_PRIORITY_HIGH_IDLE, +[](gpointer idle_data) -> gboolean
 				{
-					auto view = static_cast<LauncherIconView*>(data);
-					view->m_rebuild_id = 0;
-					if (view->m_cm_cols > 1)
+					auto idle_view = static_cast<LauncherIconView*>(idle_data);
+					idle_view->m_rebuild_id = 0;
+					if (idle_view->m_cm_cols > 1)
 					{
-						view->rebuild_display();
+						idle_view->rebuild_display();
 					}
 					return G_SOURCE_REMOVE;
 				}, view, nullptr);

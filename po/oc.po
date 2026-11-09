@@ -1,17 +1,17 @@
-# Occitan translation for xfce4-whiskermenu-plugin.
+# Occitan translation for xfce4-vibrismenu-plugin.
 # Copyright (C) 2025 Graeme Gott
-# This file is distributed under the same license as the xfce4-whiskermenu-plugin package.
+# This file is distributed under the same license as the xfce4-vibrismenu-plugin package.
 # 
 # Translators:
 # Quentin PAGÈS, 2025
 msgid ""
 msgstr ""
-"Project-Id-Version: Whisker Menu\n"
+"Project-Id-Version: Vibris Menu\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-01-16 14:38-0500\n"
 "PO-Revision-Date: 2013-06-20 11:26+0000\n"
 "Last-Translator: Quentin PAGÈS, 2025\n"
-"Language-Team: Occitan (post 1500) (http://app.transifex.com/gottcode/xfce4-whiskermenu-plugin/language/oc/)\n"
+"Language-Team: Occitan (post 1500) (http://app.transifex.com/gottcode/xfce4-vibrismenu-plugin/language/oc/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -92,7 +92,7 @@ msgstr "Co_manda :"
 msgid "Categ_ory icon size:"
 msgstr "Talha de las icònas de las categ_orias :"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:109
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:109
 msgid "Choose which menu to popup by instance ID"
 msgstr "Seleccionatz quin menú afichar per ID d'instància"
 
@@ -101,7 +101,7 @@ msgid "Clear Recently Used"
 msgstr "Escafar çò utilizat recentament"
 
 #: ../panel-plugin/plugin.cpp:419
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:128
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:128
 msgid "Copyright © 2013-2025 Graeme Gott"
 msgstr "Copyright © 2013-2025 Graeme Gott"
 
@@ -282,11 +282,11 @@ msgstr "Boton del tablèu de bòrd"
 msgid "Pattern"
 msgstr "Motiu"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:107
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:107
 msgid "Popup menu at center of screen"
 msgstr "Menú sorgissent al centre de l’ecran"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:106
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:106
 msgid "Popup menu at current mouse position"
 msgstr "Menú contextual a la posicion actuala de la mirga"
 
@@ -316,11 +316,11 @@ msgstr "Posicionar las comandas a costat de la _saisida de recèrca"
 msgid "Position pro_file on bottom"
 msgstr "Posicionar lo per_fil en bas"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:108
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:108
 msgid "Print available menu instance IDs"
 msgstr "Afichar los ID d'instància de menú disponiblas"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:110
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:110
 msgid "Print version information and exit"
 msgstr "Imprimir las informacions de version e quitar"
 
@@ -392,7 +392,7 @@ msgstr "Seleccionar una icòna"
 msgid "Session Commands"
 msgstr "Comandas de session"
 
-#: ../panel-plugin/whiskermenu.desktop.in:5
+#: ../panel-plugin/vibrismenu.desktop.in:5
 msgid "Show a menu to easily access installed applications"
 msgstr "Afichar un menú per accedir facilament a las aplicacions installadas"
 
@@ -527,9 +527,9 @@ msgid "Very Small"
 msgstr "Fòrça pichona"
 
 #: ../panel-plugin/settings-dialog.cpp:80
-#: ../panel-plugin/whiskermenu.desktop.in:4
-msgid "Whisker Menu"
-msgstr "Whisker Menu"
+#: ../panel-plugin/vibrismenu.desktop.in:4
+msgid "Vibris Menu"
+msgstr "Vibris Menu"
 
 #: ../panel-plugin/settings.cpp:93
 msgid "Wikipedia"

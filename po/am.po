@@ -1,17 +1,17 @@
-# Amharic translation of xfce4-whiskermenu-plugin.
+# Amharic translation of xfce4-vibrismenu-plugin.
 # Copyright (C) 2023 Graeme Gott
-# This file is distributed under the same license as the xfce4-whiskermenu-plugin package.
+# This file is distributed under the same license as the xfce4-vibrismenu-plugin package.
 # 
 # Translators:
 # samson <sambelet@yahoo.com>, 2016-2018
 msgid ""
 msgstr ""
-"Project-Id-Version: Whisker Menu\n"
+"Project-Id-Version: Vibris Menu\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-07-11 07:02-0400\n"
 "PO-Revision-Date: 2018-05-01 14:33+0000\n"
 "Last-Translator: samson <sambelet@yahoo.com>, 2016-2018\n"
-"Language-Team: Amharic (http://app.transifex.com/gottcode/xfce4-whiskermenu-plugin/language/am/)\n"
+"Language-Team: Amharic (http://app.transifex.com/gottcode/xfce4-vibrismenu-plugin/language/am/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -88,7 +88,7 @@ msgstr "ት_እዛዝ:"
 msgid "Categ_ory icon size:"
 msgstr "የ ምድ_ብ ምልክት መጠን:"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:107
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:107
 msgid "Choose which menu to popup by instance ID"
 msgstr ""
 
@@ -97,7 +97,7 @@ msgid "Clear Recently Used"
 msgstr "በ ቅርብ የተጠቀሙትን ማጽጃ"
 
 #: ../panel-plugin/plugin.cpp:414
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:126
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:126
 msgid "Copyright © 2013-2025 Graeme Gott"
 msgstr "Copyright © 2013-2025 Graeme Gott"
 
@@ -274,7 +274,7 @@ msgstr "የ ክፍል ቁልፍ"
 msgid "Pattern"
 msgstr "ድግግሞሽ"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:105
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:105
 msgid "Popup menu at current mouse position"
 msgstr ""
 
@@ -294,11 +294,11 @@ msgstr ""
 msgid "Position commands next to search _entry"
 msgstr "የ ትእዛዝ ቦታ ከ መፈለጊያ  አጠገብ _ማስገቢያ"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:106
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:106
 msgid "Print available menu instance IDs"
 msgstr ""
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:108
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:108
 msgid "Print version information and exit"
 msgstr "የ እትም መረጃ ማተሚያ እና መውጫ"
 
@@ -366,7 +366,7 @@ msgstr "ምልክት ይምረጡ"
 msgid "Session Commands"
 msgstr ""
 
-#: ../panel-plugin/whiskermenu.desktop.in:6
+#: ../panel-plugin/vibrismenu.desktop.in:6
 msgid "Show a menu to easily access installed applications"
 msgstr "የ ተገጠሙ መተግበሪያዎች በ ቀላሉ በ ዝርዝር ውስጥ ማሳያ"
 
@@ -501,9 +501,9 @@ msgid "Very Small"
 msgstr "በጣም ትንሽ"
 
 #: ../panel-plugin/settings-dialog.cpp:80
-#: ../panel-plugin/whiskermenu.desktop.in:5
-msgid "Whisker Menu"
-msgstr "የ ዊስከር ዝርዝር"
+#: ../panel-plugin/vibrismenu.desktop.in:5
+msgid "Vibris Menu"
+msgstr "Vibris ዝርዝር"
 
 #: ../panel-plugin/settings.cpp:99
 msgid "Wikipedia"

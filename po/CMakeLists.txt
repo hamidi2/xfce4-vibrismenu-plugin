@@ -21,7 +21,7 @@ foreach(_po_file ${_po_files})
 	install(
 		FILES ${_gmo_file}
 		DESTINATION ${CMAKE_INSTALL_LOCALEDIR}/${_lang}/LC_MESSAGES/
-		RENAME xfce4-whiskermenu-plugin.mo
+		RENAME xfce4-vibrismenu-plugin.mo
 	)
 endforeach()
 add_custom_target(translations ALL DEPENDS ${_gmo_files})
@@ -34,44 +34,44 @@ add_custom_command(
 	COMMENT "Generating LINGUAS"
 )
 add_custom_command(
-	OUTPUT whiskermenu.desktop
+	OUTPUT vibrismenu.desktop
 	COMMAND ${GETTEXT_MSGFMT_EXECUTABLE}
 		--desktop
-		--template=${PROJECT_SOURCE_DIR}/panel-plugin/whiskermenu.desktop.in
+		--template=${PROJECT_SOURCE_DIR}/panel-plugin/vibrismenu.desktop.in
 		-d ${CMAKE_CURRENT_SOURCE_DIR}
-		-o whiskermenu.desktop
+		-o vibrismenu.desktop
 	DEPENDS ${_po_files} ${CMAKE_CURRENT_SOURCE_DIR}/LINGUAS
 )
 install(
-	FILES ${CMAKE_CURRENT_BINARY_DIR}/whiskermenu.desktop
+	FILES ${CMAKE_CURRENT_BINARY_DIR}/vibrismenu.desktop
 	DESTINATION ${CMAKE_INSTALL_DATADIR}/xfce4/panel/plugins
 )
-add_custom_target(desktopfile ALL DEPENDS whiskermenu.desktop)
+add_custom_target(desktopfile ALL DEPENDS vibrismenu.desktop)
 
 # Generate translations template
 find_program(XGETTEXT_EXECUTABLE xgettext)
 if(XGETTEXT_EXECUTABLE)
 	add_custom_target(update_pot
 		COMMAND ${XGETTEXT_EXECUTABLE}
-			--output=xfce4-whiskermenu-plugin.pot
+			--output=xfce4-vibrismenu-plugin.pot
 			--from-code=UTF-8
 			--c++ --keyword=_
 			--sort-output
 			--no-wrap
-			--package-name='Whisker Menu'
+			--package-name='Vibris Menu'
 			--copyright-holder='Graeme Gott'
 			../panel-plugin/*.cpp ../panel-plugin/*.h
 		COMMAND ${XGETTEXT_EXECUTABLE}
-			--output=xfce4-whiskermenu-plugin.pot
+			--output=xfce4-vibrismenu-plugin.pot
 			--join-existing
 			--from-code=UTF-8
 			-k --keyword=Name --keyword=Comment
 			--sort-output
 			--no-wrap
-			--package-name='Whisker Menu'
+			--package-name='Vibris Menu'
 			--copyright-holder='Graeme Gott'
-			../panel-plugin/whiskermenu.desktop.in
+			../panel-plugin/vibrismenu.desktop.in
 		WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-		COMMENT "Generating xfce4-whiskermenu-plugin.pot"
+		COMMENT "Generating xfce4-vibrismenu-plugin.pot"
 	)
 endif()

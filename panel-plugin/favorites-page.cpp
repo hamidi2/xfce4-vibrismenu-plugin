@@ -30,7 +30,7 @@
 
 #include <glib/gi18n-lib.h>
 
-using namespace WhiskerMenu;
+using namespace VibrisMenu;
 
 int FavoritesPage::s_measured_pitch = 0;
 bool FavoritesPage::drag_in_progress = false;
@@ -618,7 +618,7 @@ void FavoritesPage::view_created()
 				GtkTreeIter it;
 				if (m && gtk_tree_model_get_iter(m, &it, static_cast<GtkTreePath*>(l->data)))
 				{
-					WhiskerMenu::Element* e = nullptr;
+					VibrisMenu::Element* e = nullptr;
 					gtk_tree_model_get(m, &it, LauncherView::COLUMN_LAUNCHER, &e, -1);
 					if (e)
 					{

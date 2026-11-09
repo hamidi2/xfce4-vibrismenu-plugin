@@ -15,8 +15,8 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WHISKERMENU_APPLICATIONS_PAGE_H
-#define WHISKERMENU_APPLICATIONS_PAGE_H
+#ifndef VIBRISMENU_APPLICATIONS_PAGE_H
+#define VIBRISMENU_APPLICATIONS_PAGE_H
 
 #include "page.h"
 
@@ -26,7 +26,7 @@
 
 #include <garcon/garcon.h>
 
-namespace WhiskerMenu
+namespace VibrisMenu
 {
 
 class Category;
@@ -72,4 +72,4 @@ private:
 
 }
 
-#endif // WHISKERMENU_APPLICATIONS_PAGE_H
+#endif // VIBRISMENU_APPLICATIONS_PAGE_H

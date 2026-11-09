@@ -1,3 +1,16 @@
+1.0.0 (unreleased)
+======
+First release of Vibris Menu, a fork of Whisker Menu 2.10.1.
+- Favorites, recently used and every category shown as a multi-column grid
+  (columns filled top to bottom); configurable column count
+- Menu width follows the widest item; drag any edge to resize
+- Startup page setting, including "last used category"
+- Even 6px spacing around the header, contents and search field
+- List and tree views removed
+
+Whisker Menu history (before the fork)
+======================================
+
 2.10.1 (2026-02-21)
 ======
 - Fix meson to make minsize an optimized build

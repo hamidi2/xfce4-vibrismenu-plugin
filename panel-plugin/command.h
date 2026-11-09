@@ -15,14 +15,14 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WHISKERMENU_COMMAND_H
-#define WHISKERMENU_COMMAND_H
+#ifndef VIBRISMENU_COMMAND_H
+#define VIBRISMENU_COMMAND_H
 
 #include "settings.h"
 
 #include <gtk/gtk.h>
 
-namespace WhiskerMenu
+namespace VibrisMenu
 {
 
 class Command
@@ -109,4 +109,4 @@ private:
 
 }
 
-#endif // WHISKERMENU_COMMAND_H
+#endif // VIBRISMENU_COMMAND_H

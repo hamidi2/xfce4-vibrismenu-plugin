@@ -23,7 +23,7 @@
 
 #include <libxfce4panel/libxfce4panel.h>
 
-using namespace WhiskerMenu;
+using namespace VibrisMenu;
 
 //-----------------------------------------------------------------------------
 
@@ -52,7 +52,7 @@ CategoryButton::CategoryButton(GIcon* icon, const gchar* text)
 		{
 			GtkToggleButton* button = GTK_TOGGLE_BUTTON(widget);
 			if (wm_settings->category_hover_activate && !gtk_toggle_button_get_active(button)
-					&& !WhiskerMenu::FavoritesPage::drag_in_progress)
+					&& !VibrisMenu::FavoritesPage::drag_in_progress)
 			{
 				g_timeout_add(150, &hover_timeout, button);
 			}
@@ -64,7 +64,7 @@ CategoryButton::CategoryButton(GIcon* icon, const gchar* text)
 		{
 			GtkToggleButton* button = GTK_TOGGLE_BUTTON(widget);
 			if (wm_settings->category_hover_activate && !gtk_toggle_button_get_active(button)
-					&& !WhiskerMenu::FavoritesPage::drag_in_progress)
+					&& !VibrisMenu::FavoritesPage::drag_in_progress)
 			{
 				gtk_toggle_button_set_active(button, true);
 				gtk_widget_grab_focus(widget);

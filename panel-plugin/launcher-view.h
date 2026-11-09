@@ -15,14 +15,14 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WHISKERMENU_LAUNCHER_VIEW_H
-#define WHISKERMENU_LAUNCHER_VIEW_H
+#ifndef VIBRISMENU_LAUNCHER_VIEW_H
+#define VIBRISMENU_LAUNCHER_VIEW_H
 
 #include "slot.h"
 
 #include <gtk/gtk.h>
 
-namespace WhiskerMenu
+namespace VibrisMenu
 {
 
 class LauncherView
@@ -139,4 +139,4 @@ private:
 
 }
 
-#endif // WHISKERMENU_LAUNCHER_VIEW_H
+#endif // VIBRISMENU_LAUNCHER_VIEW_H

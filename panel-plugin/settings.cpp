@@ -26,11 +26,11 @@
 
 #include <cstdio>
 
-using namespace WhiskerMenu;
+using namespace VibrisMenu;
 
 //-----------------------------------------------------------------------------
 
-Settings* WhiskerMenu::wm_settings = nullptr;
+Settings* VibrisMenu::wm_settings = nullptr;
 
 //-----------------------------------------------------------------------------
 
@@ -51,7 +51,7 @@ Settings::Settings(Plugin* plugin) :
 	custom_menu_file("/custom-menu-file"),
 
 	button_title("/button-title", m_button_title_default),
-	button_icon_name("/button-icon", "org.xfce.panel.whiskermenu"),
+	button_icon_name("/button-icon", "org.xfce.panel.vibrismenu"),
 	button_title_visible("/show-button-title", false),
 	button_icon_visible("/show-button-icon", true),
 	button_single_row("/button-single-row", false),

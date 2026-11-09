@@ -1,18 +1,18 @@
-# Icelandic translation of xfce4-whiskermenu-plugin.
+# Icelandic translation of xfce4-vibrismenu-plugin.
 # Copyright (C) 2023 Graeme Gott
-# This file is distributed under the same license as the xfce4-whiskermenu-plugin package.
+# This file is distributed under the same license as the xfce4-vibrismenu-plugin package.
 # 
 # Translators:
 # Kristján Magnússon, 2016-2017
 # Sveinn í Felli <sv1@fellsnet.is>, 2019-2020
 msgid ""
 msgstr ""
-"Project-Id-Version: Whisker Menu\n"
+"Project-Id-Version: Vibris Menu\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-07-11 07:02-0400\n"
 "PO-Revision-Date: 2020-06-22 09:15+0000\n"
 "Last-Translator: Sveinn í Felli <sv1@fellsnet.is>, 2019-2020\n"
-"Language-Team: Icelandic (http://app.transifex.com/gottcode/xfce4-whiskermenu-plugin/language/is/)\n"
+"Language-Team: Icelandic (http://app.transifex.com/gottcode/xfce4-vibrismenu-plugin/language/is/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -89,7 +89,7 @@ msgstr "S_kipun:"
 msgid "Categ_ory icon size:"
 msgstr "Stærð táknmynda fyrir fl_okk:"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:107
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:107
 msgid "Choose which menu to popup by instance ID"
 msgstr ""
 
@@ -98,7 +98,7 @@ msgid "Clear Recently Used"
 msgstr "Hreinsa nýlega notað"
 
 #: ../panel-plugin/plugin.cpp:414
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:126
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:126
 msgid "Copyright © 2013-2025 Graeme Gott"
 msgstr "Höfundarréttur © 2013-2025 Graeme Gott"
 
@@ -275,7 +275,7 @@ msgstr "Skjástikuhnappur"
 msgid "Pattern"
 msgstr "Mynstur"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:105
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:105
 msgid "Popup menu at current mouse position"
 msgstr "Sprettvalmynd við staðsetningu músarbendils"
 
@@ -295,11 +295,11 @@ msgstr ""
 msgid "Position commands next to search _entry"
 msgstr "Staðs_etja skipanir við hlið leitarfærslu"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:106
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:106
 msgid "Print available menu instance IDs"
 msgstr ""
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:108
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:108
 msgid "Print version information and exit"
 msgstr "Prenta upplýsingar um útgáfu og hætta"
 
@@ -367,7 +367,7 @@ msgstr "Veldu táknmynd"
 msgid "Session Commands"
 msgstr "Skipanir í setu"
 
-#: ../panel-plugin/whiskermenu.desktop.in:6
+#: ../panel-plugin/vibrismenu.desktop.in:6
 msgid "Show a menu to easily access installed applications"
 msgstr "Sýna valmynd til að auðvelda aðgang að uppsettum forritum"
 
@@ -502,9 +502,9 @@ msgid "Very Small"
 msgstr "Mjög lítil"
 
 #: ../panel-plugin/settings-dialog.cpp:80
-#: ../panel-plugin/whiskermenu.desktop.in:5
-msgid "Whisker Menu"
-msgstr "Whisker-valmynd"
+#: ../panel-plugin/vibrismenu.desktop.in:5
+msgid "Vibris Menu"
+msgstr "Vibris-valmynd"
 
 #: ../panel-plugin/settings.cpp:99
 msgid "Wikipedia"

@@ -15,11 +15,11 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WHISKERMENU_ICON_RENDERER_H
-#define WHISKERMENU_ICON_RENDERER_H
+#ifndef VIBRISMENU_ICON_RENDERER_H
+#define VIBRISMENU_ICON_RENDERER_H
 
 #include <gtk/gtk.h>
 
-GtkCellRenderer* whiskermenu_icon_renderer_new();
+GtkCellRenderer* vibrismenu_icon_renderer_new();
 
 #endif

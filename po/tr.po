@@ -1,6 +1,6 @@
-# Turkish translation of xfce4-whiskermenu-plugin.
+# Turkish translation of xfce4-vibrismenu-plugin.
 # Copyright (C) 2025 Graeme Gott
-# This file is distributed under the same license as the xfce4-whiskermenu-plugin package.
+# This file is distributed under the same license as the xfce4-vibrismenu-plugin package.
 # 
 # Translators:
 # Ercan PEKER <bahadiroglu33@gmail.com>, 2013,2017
@@ -11,12 +11,12 @@
 # Yusuf Faruk DOĞAN <yfdogan@gmail.com>, 2013
 msgid ""
 msgstr ""
-"Project-Id-Version: Whisker Menu\n"
+"Project-Id-Version: Vibris Menu\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-01-16 14:38-0500\n"
 "PO-Revision-Date: 2013-06-20 11:26+0000\n"
 "Last-Translator: Demiray Muhterem <mdemiray@msn.com>, 2013-2025\n"
-"Language-Team: Turkish (http://app.transifex.com/gottcode/xfce4-whiskermenu-plugin/language/tr/)\n"
+"Language-Team: Turkish (http://app.transifex.com/gottcode/xfce4-vibrismenu-plugin/language/tr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -97,7 +97,7 @@ msgstr "K_omut:"
 msgid "Categ_ory icon size:"
 msgstr "Kategori simge boyutu:"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:109
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:109
 msgid "Choose which menu to popup by instance ID"
 msgstr "Örnek kimliğine göre hangi menünün açılacağını seçin"
 
@@ -106,7 +106,7 @@ msgid "Clear Recently Used"
 msgstr "Son Kullanılanları Temizle"
 
 #: ../panel-plugin/plugin.cpp:419
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:128
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:128
 msgid "Copyright © 2013-2025 Graeme Gott"
 msgstr "Telif Hakkı © 2013-2025 Graeme Gott"
 
@@ -287,11 +287,11 @@ msgstr "Panel Düğmesi"
 msgid "Pattern"
 msgstr "Desen"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:107
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:107
 msgid "Popup menu at center of screen"
 msgstr "Ekranın ortasında açılır menü"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:106
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:106
 msgid "Popup menu at current mouse position"
 msgstr "Geçerli fare konumunda açılır menü"
 
@@ -321,11 +321,11 @@ msgstr "Komutlar, arama _kutusunun yanında konumlansın"
 msgid "Position pro_file on bottom"
 msgstr "_Profil altta konumlansın"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:108
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:108
 msgid "Print available menu instance IDs"
 msgstr "Kullanılabilir menü örnek kimliklerini yazdır"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:110
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:110
 msgid "Print version information and exit"
 msgstr "Sürüm bilgilerini yazdır ve çık"
 
@@ -397,7 +397,7 @@ msgstr "Simge Seç"
 msgid "Session Commands"
 msgstr "Oturum Komutları"
 
-#: ../panel-plugin/whiskermenu.desktop.in:5
+#: ../panel-plugin/vibrismenu.desktop.in:5
 msgid "Show a menu to easily access installed applications"
 msgstr "Kurulu uygulamalara kolayca erişmek için bir menü göster"
 
@@ -532,9 +532,9 @@ msgid "Very Small"
 msgstr "Çok Küçük"
 
 #: ../panel-plugin/settings-dialog.cpp:80
-#: ../panel-plugin/whiskermenu.desktop.in:4
-msgid "Whisker Menu"
-msgstr "Whisker Menü"
+#: ../panel-plugin/vibrismenu.desktop.in:4
+msgid "Vibris Menu"
+msgstr "Vibris Menü"
 
 #: ../panel-plugin/settings.cpp:93
 msgid "Wikipedia"

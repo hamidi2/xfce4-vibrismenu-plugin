@@ -1,6 +1,6 @@
-# Chinese (Taiwan) translation of xfce4-whiskermenu-plugin.
+# Chinese (Taiwan) translation of xfce4-vibrismenu-plugin.
 # Copyright (C) 2025 Graeme Gott
-# This file is distributed under the same license as the xfce4-whiskermenu-plugin package.
+# This file is distributed under the same license as the xfce4-vibrismenu-plugin package.
 # 
 # Translators:
 # 黃柏諺 <s8321414@gmail.com>, 2014-2019
@@ -9,12 +9,12 @@
 # 黃柏諺 <s8321414@gmail.com>, 2019-2025
 msgid ""
 msgstr ""
-"Project-Id-Version: Whisker Menu\n"
+"Project-Id-Version: Vibris Menu\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-01-16 14:38-0500\n"
 "PO-Revision-Date: 2013-06-20 11:26+0000\n"
 "Last-Translator: 黃柏諺 <s8321414@gmail.com>, 2019-2025\n"
-"Language-Team: Chinese (Taiwan) (http://app.transifex.com/gottcode/xfce4-whiskermenu-plugin/language/zh_TW/)\n"
+"Language-Team: Chinese (Taiwan) (http://app.transifex.com/gottcode/xfce4-vibrismenu-plugin/language/zh_TW/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -95,7 +95,7 @@ msgstr "指令(_O)："
 msgid "Categ_ory icon size:"
 msgstr "分類圖示大小(_O)："
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:109
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:109
 msgid "Choose which menu to popup by instance ID"
 msgstr "透過實體 ID 選擇要彈出的選單"
 
@@ -104,7 +104,7 @@ msgid "Clear Recently Used"
 msgstr "清除最近使用"
 
 #: ../panel-plugin/plugin.cpp:419
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:128
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:128
 msgid "Copyright © 2013-2025 Graeme Gott"
 msgstr "Copyright © 2013-2025 Graeme Gott"
 
@@ -285,11 +285,11 @@ msgstr "面板按鈕"
 msgid "Pattern"
 msgstr "圖案"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:107
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:107
 msgid "Popup menu at center of screen"
 msgstr "畫面中央的彈出式選單"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:106
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:106
 msgid "Popup menu at current mouse position"
 msgstr "目前滑鼠位置的彈出式選單"
 
@@ -319,11 +319,11 @@ msgstr "下一個指令的搜尋結果(_E)"
 msgid "Position pro_file on bottom"
 msgstr "將設定檔置於底部(_F)"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:108
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:108
 msgid "Print available menu instance IDs"
 msgstr "印出可用的選單實體 ID"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:110
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:110
 msgid "Print version information and exit"
 msgstr "印出版本資訊然後結束"
 
@@ -395,7 +395,7 @@ msgstr "選取圖示"
 msgid "Session Commands"
 msgstr "工作階段指令"
 
-#: ../panel-plugin/whiskermenu.desktop.in:5
+#: ../panel-plugin/vibrismenu.desktop.in:5
 msgid "Show a menu to easily access installed applications"
 msgstr "顯示選單以方便開啟已安裝的應用程式"
 
@@ -530,9 +530,9 @@ msgid "Very Small"
 msgstr "非常小"
 
 #: ../panel-plugin/settings-dialog.cpp:80
-#: ../panel-plugin/whiskermenu.desktop.in:4
-msgid "Whisker Menu"
-msgstr "Whisker 選單"
+#: ../panel-plugin/vibrismenu.desktop.in:4
+msgid "Vibris Menu"
+msgstr "Vibris 選單"
 
 #: ../panel-plugin/settings.cpp:93
 msgid "Wikipedia"

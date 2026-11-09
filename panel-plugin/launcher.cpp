@@ -23,7 +23,7 @@
 #include <libxfce4ui/libxfce4ui.h>
 #include <glib/gstdio.h>
 
-using namespace WhiskerMenu;
+using namespace VibrisMenu;
 
 //-----------------------------------------------------------------------------
 

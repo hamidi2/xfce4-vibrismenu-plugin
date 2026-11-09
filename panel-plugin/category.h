@@ -15,8 +15,8 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WHISKERMENU_CATEGORY_H
-#define WHISKERMENU_CATEGORY_H
+#ifndef VIBRISMENU_CATEGORY_H
+#define VIBRISMENU_CATEGORY_H
 
 #include "launcher.h"
 
@@ -25,7 +25,7 @@
 #include <garcon/garcon.h>
 #include <gtk/gtk.h>
 
-namespace WhiskerMenu
+namespace VibrisMenu
 {
 
 class CategoryButton;
@@ -87,4 +87,4 @@ private:
 
 }
 
-#endif // WHISKERMENU_CATEGORY_H
+#endif // VIBRISMENU_CATEGORY_H

@@ -15,12 +15,12 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WHISKERMENU_RECENT_PAGE_H
-#define WHISKERMENU_RECENT_PAGE_H
+#ifndef VIBRISMENU_RECENT_PAGE_H
+#define VIBRISMENU_RECENT_PAGE_H
 
 #include "page.h"
 
-namespace WhiskerMenu
+namespace VibrisMenu
 {
 
 class RecentPage : public Page
@@ -40,4 +40,4 @@ private:
 
 }
 
-#endif // WHISKERMENU_RECENT_PAGE_H
+#endif // VIBRISMENU_RECENT_PAGE_H

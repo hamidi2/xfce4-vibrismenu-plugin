@@ -15,12 +15,12 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WHISKERMENU_CATEGORY_BUTTON_H
-#define WHISKERMENU_CATEGORY_BUTTON_H
+#ifndef VIBRISMENU_CATEGORY_BUTTON_H
+#define VIBRISMENU_CATEGORY_BUTTON_H
 
 #include <gtk/gtk.h>
 
-namespace WhiskerMenu
+namespace VibrisMenu
 {
 
 class CategoryButton
@@ -65,4 +65,4 @@ private:
 
 }
 
-#endif // WHISKERMENU_CATEGORY_BUTTON_H
+#endif // VIBRISMENU_CATEGORY_BUTTON_H

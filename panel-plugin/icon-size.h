@@ -15,8 +15,8 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WHISKERMENU_ICON_SIZE_H
-#define WHISKERMENU_ICON_SIZE_H
+#ifndef VIBRISMENU_ICON_SIZE_H
+#define VIBRISMENU_ICON_SIZE_H
 
 #include <string>
 #include <vector>
@@ -28,7 +28,7 @@ extern "C"
 #include <libxfce4util/libxfce4util.h>
 }
 
-namespace WhiskerMenu
+namespace VibrisMenu
 {
 
 class IconSize
@@ -77,4 +77,4 @@ private:
 
 }
 
-#endif // WHISKERMENU_ICON_SIZE_H
+#endif // VIBRISMENU_ICON_SIZE_H

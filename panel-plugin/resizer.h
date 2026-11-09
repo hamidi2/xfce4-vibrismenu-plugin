@@ -15,12 +15,12 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WHISKERMENU_RESIZER_H
-#define WHISKERMENU_RESIZER_H
+#ifndef VIBRISMENU_RESIZER_H
+#define VIBRISMENU_RESIZER_H
 
 #include <gtk/gtk.h>
 
-namespace WhiskerMenu
+namespace VibrisMenu
 {
 
 class Window;
@@ -73,4 +73,4 @@ private:
 
 }
 
-#endif // WHISKERMENU_RESIZER_H
+#endif // VIBRISMENU_RESIZER_H

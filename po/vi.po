@@ -1,6 +1,6 @@
-# Vietnamese translation of xfce4-whiskermenu-plugin.
+# Vietnamese translation of xfce4-vibrismenu-plugin.
 # Copyright (C) 2023 Graeme Gott
-# This file is distributed under the same license as the xfce4-whiskermenu-plugin package.
+# This file is distributed under the same license as the xfce4-vibrismenu-plugin package.
 # 
 # Translators:
 # Anh Phan <vietnamesel10n@gmail.com>, 2013
@@ -8,12 +8,12 @@
 # Anh Phan <vietnamesel10n@gmail.com>, 2013
 msgid ""
 msgstr ""
-"Project-Id-Version: Whisker Menu\n"
+"Project-Id-Version: Vibris Menu\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-07-11 07:02-0400\n"
 "PO-Revision-Date: 2014-05-05 02:44+0000\n"
 "Last-Translator: Anh Phan <vietnamesel10n@gmail.com>, 2013\n"
-"Language-Team: Vietnamese (http://app.transifex.com/gottcode/xfce4-whiskermenu-plugin/language/vi/)\n"
+"Language-Team: Vietnamese (http://app.transifex.com/gottcode/xfce4-vibrismenu-plugin/language/vi/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -90,7 +90,7 @@ msgstr "Lệnh"
 msgid "Categ_ory icon size:"
 msgstr "Kích thước biểu tượng phân l_oại:"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:107
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:107
 msgid "Choose which menu to popup by instance ID"
 msgstr ""
 
@@ -99,7 +99,7 @@ msgid "Clear Recently Used"
 msgstr "Dọn danh sách được dùng gần đây"
 
 #: ../panel-plugin/plugin.cpp:414
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:126
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:126
 msgid "Copyright © 2013-2025 Graeme Gott"
 msgstr ""
 
@@ -276,13 +276,13 @@ msgstr "Nút điều khiển"
 msgid "Pattern"
 msgstr "Mẫu"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:105
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:105
 msgid "Popup menu at current mouse position"
 msgstr ""
 
 #: ../panel-plugin/settings-dialog.cpp:640
 msgid "Position _search entry next to panel button"
-msgstr "Đặt ô tìm kiếm gần biểu tượng Whisker"
+msgstr "Đặt ô tìm kiếm gần biểu tượng Vibris"
 
 #: ../panel-plugin/settings-dialog.cpp:629
 msgid "Position cate_gories next to panel button"
@@ -296,11 +296,11 @@ msgstr ""
 msgid "Position commands next to search _entry"
 msgstr "Đặt các nút lệnh cạnh ô tìm kiếm"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:106
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:106
 msgid "Print available menu instance IDs"
 msgstr ""
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:108
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:108
 msgid "Print version information and exit"
 msgstr "In thông tin phiên bản và thoát"
 
@@ -368,7 +368,7 @@ msgstr "Chọn biểu tượng"
 msgid "Session Commands"
 msgstr ""
 
-#: ../panel-plugin/whiskermenu.desktop.in:6
+#: ../panel-plugin/vibrismenu.desktop.in:6
 msgid "Show a menu to easily access installed applications"
 msgstr "Hiển thị thực đơn để chạy ứng dụng dễ dàng"
 
@@ -503,9 +503,9 @@ msgid "Very Small"
 msgstr "Rất nhỏ"
 
 #: ../panel-plugin/settings-dialog.cpp:80
-#: ../panel-plugin/whiskermenu.desktop.in:5
-msgid "Whisker Menu"
-msgstr "Thực đơn Whisker"
+#: ../panel-plugin/vibrismenu.desktop.in:5
+msgid "Vibris Menu"
+msgstr "Thực đơn Vibris"
 
 #: ../panel-plugin/settings.cpp:99
 msgid "Wikipedia"

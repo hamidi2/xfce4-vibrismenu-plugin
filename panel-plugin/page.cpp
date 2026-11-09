@@ -31,7 +31,7 @@
 
 #include <glib/gstdio.h>
 
-using namespace WhiskerMenu;
+using namespace VibrisMenu;
 
 //-----------------------------------------------------------------------------
 
@@ -424,7 +424,7 @@ void Page::create_context_menu(GtkTreePath* path, GdkEvent* event)
 	{
 		for (auto action : actions)
 		{
-			menuitem = whiskermenu_image_menu_item_new(action->get_icon(), action->get_name());
+			menuitem = vibrismenu_image_menu_item_new(action->get_icon(), action->get_name());
 			connect(menuitem, "activate",
 				[this, action](GtkMenuItem* action_menuitem)
 				{
@@ -439,7 +439,7 @@ void Page::create_context_menu(GtkTreePath* path, GdkEvent* event)
 
 	if (!m_window->get_favorites()->contains(m_selected_launcher))
 	{
-		menuitem = whiskermenu_image_menu_item_new("bookmark-new", _("Add to Favorites"));
+		menuitem = vibrismenu_image_menu_item_new("bookmark-new", _("Add to Favorites"));
 		connect(menuitem, "activate",
 			[this](GtkMenuItem*)
 			{
@@ -450,7 +450,7 @@ void Page::create_context_menu(GtkTreePath* path, GdkEvent* event)
 	}
 	else
 	{
-		menuitem = whiskermenu_image_menu_item_new("list-remove", _("Remove from Favorites"));
+		menuitem = vibrismenu_image_menu_item_new("list-remove", _("Remove from Favorites"));
 		connect(menuitem, "activate",
 			[this](GtkMenuItem*)
 			{
@@ -460,7 +460,7 @@ void Page::create_context_menu(GtkTreePath* path, GdkEvent* event)
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 	}
 
-	menuitem = whiskermenu_image_menu_item_new("list-add", _("Add to Desktop"));
+	menuitem = vibrismenu_image_menu_item_new("list-add", _("Add to Desktop"));
 	connect(menuitem, "activate",
 		[this](GtkMenuItem*)
 		{
@@ -468,7 +468,7 @@ void Page::create_context_menu(GtkTreePath* path, GdkEvent* event)
 		});
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
-	menuitem = whiskermenu_image_menu_item_new("list-add", _("Add to Panel"));
+	menuitem = vibrismenu_image_menu_item_new("list-add", _("Add to Panel"));
 	connect(menuitem, "activate",
 		[this](GtkMenuItem*)
 		{
@@ -478,7 +478,7 @@ void Page::create_context_menu(GtkTreePath* path, GdkEvent* event)
 
 	if (!m_selected_launcher->has_auto_start())
 	{
-		menuitem = whiskermenu_image_menu_item_new("list-add", _("Add to Autostart"));
+		menuitem = vibrismenu_image_menu_item_new("list-add", _("Add to Autostart"));
 		connect(menuitem, "activate",
 			[this](GtkMenuItem*)
 			{
@@ -489,7 +489,7 @@ void Page::create_context_menu(GtkTreePath* path, GdkEvent* event)
 	}
 	else
 	{
-		menuitem = whiskermenu_image_menu_item_new("list-remove", _("Remove from Autostart"));
+		menuitem = vibrismenu_image_menu_item_new("list-remove", _("Remove from Autostart"));
 		connect(menuitem, "activate",
 			[this](GtkMenuItem*)
 			{
@@ -502,7 +502,7 @@ void Page::create_context_menu(GtkTreePath* path, GdkEvent* event)
 	menuitem = gtk_separator_menu_item_new();
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
-	menuitem = whiskermenu_image_menu_item_new("gtk-edit", _("Edit Application..."));
+	menuitem = vibrismenu_image_menu_item_new("gtk-edit", _("Edit Application..."));
 	connect(menuitem, "activate",
 		[this](GtkMenuItem*)
 		{
@@ -510,7 +510,7 @@ void Page::create_context_menu(GtkTreePath* path, GdkEvent* event)
 		});
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
-	menuitem = whiskermenu_image_menu_item_new("edit-delete", _("Hide Application"));
+	menuitem = vibrismenu_image_menu_item_new("edit-delete", _("Hide Application"));
 	connect(menuitem, "activate",
 		[this](GtkMenuItem*)
 		{

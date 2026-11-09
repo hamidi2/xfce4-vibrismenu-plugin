@@ -45,11 +45,11 @@
 
 #include <ctime>
 
-using namespace WhiskerMenu;
+using namespace VibrisMenu;
 
 //-----------------------------------------------------------------------------
 
-WhiskerMenu::Window::Window(Plugin* plugin) :
+VibrisMenu::Window::Window(Plugin* plugin) :
 	m_plugin(plugin),
 	m_window(nullptr),
 	m_position(PositionAtButton),
@@ -68,7 +68,7 @@ WhiskerMenu::Window::Window(Plugin* plugin) :
 {
 	// Create the window
 	m_window = GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL));
-	gtk_widget_set_name(GTK_WIDGET(m_window), "whiskermenu-window");
+	gtk_widget_set_name(GTK_WIDGET(m_window), "vibrismenu-window");
 	// Untranslated window title to allow window managers to identify it; not visible to users.
 	gtk_window_set_title(m_window, "Vibris Menu");
 #ifdef HAVE_GTK_LAYER_SHELL
@@ -396,7 +396,7 @@ WhiskerMenu::Window::Window(Plugin* plugin) :
 	reset_default_button();
 
 	// Add CSS classes
-	gtk_style_context_add_class(gtk_widget_get_style_context(GTK_WIDGET(m_window)), "whiskermenu");
+	gtk_style_context_add_class(gtk_widget_get_style_context(GTK_WIDGET(m_window)), "vibrismenu");
 	gtk_style_context_add_class(gtk_widget_get_style_context(GTK_WIDGET(m_search_box)), "search-area");
 	gtk_style_context_add_class(gtk_widget_get_style_context(GTK_WIDGET(m_title_box)), "title-area");
 	gtk_style_context_add_class(gtk_widget_get_style_context(GTK_WIDGET(m_commands_box)), "commands-area");
@@ -452,7 +452,7 @@ WhiskerMenu::Window::Window(Plugin* plugin) :
 
 //-----------------------------------------------------------------------------
 
-WhiskerMenu::Window::~Window()
+VibrisMenu::Window::~Window()
 {
 	if (m_last_category)
 	{
@@ -487,7 +487,7 @@ WhiskerMenu::Window::~Window()
 
 //-----------------------------------------------------------------------------
 
-Page* WhiskerMenu::Window::get_active_page()
+Page* VibrisMenu::Window::get_active_page()
 {
 	Page* page = nullptr;
 	if (g_strcmp0(gtk_stack_get_visible_child_name(m_contents_stack), "search") == 0)
@@ -511,7 +511,7 @@ Page* WhiskerMenu::Window::get_active_page()
 
 //-----------------------------------------------------------------------------
 
-void WhiskerMenu::Window::hide(bool lost_focus)
+void VibrisMenu::Window::hide(bool lost_focus)
 {
 	// Save settings
 	wm_settings->favorites.save();
@@ -563,7 +563,7 @@ static void wm_dump_walk(GtkWidget* w, int depth, FILE* f)
 
 //-----------------------------------------------------------------------------
 
-void WhiskerMenu::Window::show(const Position position)
+void VibrisMenu::Window::show(const Position position)
 {
 	m_position = position;
 
@@ -792,7 +792,7 @@ void WhiskerMenu::Window::show(const Position position)
 
 //-----------------------------------------------------------------------------
 
-int WhiskerMenu::Window::favorites_capacity_rows() const
+int VibrisMenu::Window::favorites_capacity_rows() const
 {
 	// Column capacity — computed when the content changes, without needing a show:
 	// pitch = tallest cell content (icon or text) + row-spacing; all computed in memory
@@ -886,7 +886,7 @@ int WhiskerMenu::Window::favorites_capacity_rows() const
 
 //-----------------------------------------------------------------------------
 
-void WhiskerMenu::Window::resize(int delta_x, int delta_y, int delta_width, int delta_height)
+void VibrisMenu::Window::resize(int delta_x, int delta_y, int delta_width, int delta_height)
 {
 	// Solve the target under three constraints: top limit (workarea), minimum content height,
 	// bottom on the panel. y and h are solved together, otherwise the edges leave an empty gap or cross the panel.
@@ -948,7 +948,7 @@ void WhiskerMenu::Window::resize(int delta_x, int delta_y, int delta_width, int 
 
 //-----------------------------------------------------------------------------
 
-void WhiskerMenu::Window::schedule_page_width()
+void VibrisMenu::Window::schedule_page_width()
 {
 	// the visible page or its rows changed: recompute its column count and the
 	// menu width once the models have settled
@@ -967,7 +967,7 @@ void WhiskerMenu::Window::schedule_page_width()
 
 //-----------------------------------------------------------------------------
 
-void WhiskerMenu::Window::sync_width()
+void VibrisMenu::Window::sync_width()
 {
 	// After any favorites relayout, menu width = width of the new content (height untouched);
 	// set_size takes the width from the widgets' natural size, so the input is only a cap —
@@ -977,7 +977,7 @@ void WhiskerMenu::Window::sync_width()
 
 //-----------------------------------------------------------------------------
 
-void WhiskerMenu::Window::update_min_h()
+void VibrisMenu::Window::update_min_h()
 {
 	// During a live drag, refresh the minimum content height after each relayout — otherwise
 	// the previous tall (one-column) layout clamps min_h and makes dragging down feel stuck
@@ -988,7 +988,7 @@ void WhiskerMenu::Window::update_min_h()
 
 //-----------------------------------------------------------------------------
 
-void WhiskerMenu::Window::apply_target_size()
+void VibrisMenu::Window::apply_target_size()
 {
 	m_geometry.x = m_target_x;
 	m_geometry.y = m_target_y;
@@ -1024,7 +1024,7 @@ void WhiskerMenu::Window::apply_target_size()
 
 //-----------------------------------------------------------------------------
 
-void WhiskerMenu::Window::resize_start()
+void VibrisMenu::Window::resize_start()
 {
 	m_resizing = true;
 	pin_fixed_edge();
@@ -1040,7 +1040,7 @@ void WhiskerMenu::Window::resize_start()
 
 //-----------------------------------------------------------------------------
 
-void WhiskerMenu::Window::resize_end()
+void VibrisMenu::Window::resize_end()
 {
 	// If the last motion has not been applied yet, sync now so the stored size is right
 	if (m_size_idle_id)
@@ -1069,14 +1069,14 @@ void WhiskerMenu::Window::resize_end()
 
 //-----------------------------------------------------------------------------
 
-void WhiskerMenu::Window::set_child_has_focus()
+void VibrisMenu::Window::set_child_has_focus()
 {
 	m_child_has_focus = true;
 }
 
 //-----------------------------------------------------------------------------
 
-void WhiskerMenu::Window::set_categories(const std::vector<CategoryButton*>& categories)
+void VibrisMenu::Window::set_categories(const std::vector<CategoryButton*>& categories)
 {
 	CategoryButton* last_button = m_applications->get_button();
 	for (auto button : categories)
@@ -1096,7 +1096,7 @@ void WhiskerMenu::Window::set_categories(const std::vector<CategoryButton*>& cat
 
 //-----------------------------------------------------------------------------
 
-void WhiskerMenu::Window::set_items()
+void VibrisMenu::Window::set_items()
 {
 	m_search_results->set_menu_items();
 	m_favorites->set_menu_items();
@@ -1114,7 +1114,7 @@ void WhiskerMenu::Window::set_items()
 
 //-----------------------------------------------------------------------------
 
-void WhiskerMenu::Window::set_loaded()
+void VibrisMenu::Window::set_loaded()
 {
 	// Hide loading spinner
 	gtk_spinner_stop(m_window_load_spinner);
@@ -1132,7 +1132,7 @@ void WhiskerMenu::Window::set_loaded()
 
 //-----------------------------------------------------------------------------
 
-void WhiskerMenu::Window::unset_items()
+void VibrisMenu::Window::unset_items()
 {
 	m_search_results->unset_menu_items();
 	m_favorites->unset_menu_items();
@@ -1141,7 +1141,7 @@ void WhiskerMenu::Window::unset_items()
 
 //-----------------------------------------------------------------------------
 
-GtkWidget* WhiskerMenu::Window::get_active_category_button()
+GtkWidget* VibrisMenu::Window::get_active_category_button()
 {
 	GtkWidget* widget = m_default_button->get_widget();
 
@@ -1162,7 +1162,7 @@ GtkWidget* WhiskerMenu::Window::get_active_category_button()
 
 //-----------------------------------------------------------------------------
 
-gboolean WhiskerMenu::Window::on_key_press_event(GtkWidget* widget, GdkEventKey* key_event)
+gboolean VibrisMenu::Window::on_key_press_event(GtkWidget* widget, GdkEventKey* key_event)
 {
 	if (key_event->keyval == GDK_KEY_Escape)
 	{
@@ -1277,7 +1277,7 @@ gboolean WhiskerMenu::Window::on_key_press_event(GtkWidget* widget, GdkEventKey*
 
 //-----------------------------------------------------------------------------
 
-gboolean WhiskerMenu::Window::on_key_press_event_after(GtkWidget* widget, GdkEventKey* key_event)
+gboolean VibrisMenu::Window::on_key_press_event_after(GtkWidget* widget, GdkEventKey* key_event)
 {
 	// Pass unhandled key presses to search entry
 	GtkWidget* search_entry = GTK_WIDGET(m_search_entry);
@@ -1296,7 +1296,7 @@ gboolean WhiskerMenu::Window::on_key_press_event_after(GtkWidget* widget, GdkEve
 
 //-----------------------------------------------------------------------------
 
-gboolean WhiskerMenu::Window::on_map_event()
+gboolean VibrisMenu::Window::on_map_event()
 {
 	gtk_window_set_keep_above(m_window, true);
 
@@ -1308,7 +1308,7 @@ gboolean WhiskerMenu::Window::on_map_event()
 
 //-----------------------------------------------------------------------------
 
-bool WhiskerMenu::Window::tall_supported() const
+bool VibrisMenu::Window::tall_supported() const
 {
 	if (!m_supports_alpha || !m_frame || g_getenv("VIBRIS_NO_TALL"))
 	{
@@ -1340,7 +1340,7 @@ bool WhiskerMenu::Window::tall_supported() const
 
 //-----------------------------------------------------------------------------
 
-void WhiskerMenu::Window::menu_position(int* x, int* y)
+void VibrisMenu::Window::menu_position(int* x, int* y)
 {
 	// xfce_panel_plugin_position_widget() places the window by its size
 	// request; in tall mode that is the tall window, so let it see the menu
@@ -1360,7 +1360,7 @@ void WhiskerMenu::Window::menu_position(int* x, int* y)
 
 //-----------------------------------------------------------------------------
 
-void WhiskerMenu::Window::tall_apply()
+void VibrisMenu::Window::tall_apply()
 {
 	// While the menu is shown (composited, above a bottom panel) the X window
 	// spans from the top of the workarea to the menu's bottom edge. The menu
@@ -1417,7 +1417,7 @@ void WhiskerMenu::Window::tall_apply()
 
 //-----------------------------------------------------------------------------
 
-void WhiskerMenu::Window::tall_settle()
+void VibrisMenu::Window::tall_settle()
 {
 	GdkWindow* win = gtk_widget_get_window(GTK_WIDGET(m_window));
 	if (!m_tall || !win || !gtk_widget_get_mapped(GTK_WIDGET(m_window)) || (m_tall_bottom < 0))
@@ -1436,7 +1436,7 @@ void WhiskerMenu::Window::tall_settle()
 
 //-----------------------------------------------------------------------------
 
-void WhiskerMenu::Window::tall_update_mode(bool at_button)
+void VibrisMenu::Window::tall_update_mode(bool at_button)
 {
 	// decided on every show (compositor / panel position may have changed)
 	const bool tall = at_button && tall_supported();
@@ -1471,7 +1471,7 @@ void WhiskerMenu::Window::tall_update_mode(bool at_button)
 
 //-----------------------------------------------------------------------------
 
-void WhiskerMenu::Window::pin_fixed_edge()
+void VibrisMenu::Window::pin_fixed_edge()
 {
 	// Root cause of the bottom-edge jitter while dragging the top edge.
 	//
@@ -1526,7 +1526,7 @@ void WhiskerMenu::Window::pin_fixed_edge()
 
 //-----------------------------------------------------------------------------
 
-void WhiskerMenu::Window::on_state_flags_changed(GtkWidget* widget)
+void VibrisMenu::Window::on_state_flags_changed(GtkWidget* widget)
 {
 	// Refocus and raise window if visible
 	if (gtk_widget_get_visible(widget))
@@ -1537,7 +1537,7 @@ void WhiskerMenu::Window::on_state_flags_changed(GtkWidget* widget)
 
 //-----------------------------------------------------------------------------
 
-void WhiskerMenu::Window::on_screen_changed(GtkWidget* widget)
+void VibrisMenu::Window::on_screen_changed(GtkWidget* widget)
 {
 	GdkScreen* screen = gtk_widget_get_screen(widget);
 	GdkVisual* visual = gdk_screen_get_rgba_visual(screen);
@@ -1557,7 +1557,7 @@ void WhiskerMenu::Window::on_screen_changed(GtkWidget* widget)
 
 //-----------------------------------------------------------------------------
 
-gboolean WhiskerMenu::Window::on_draw_event(GtkWidget* widget, cairo_t* cr)
+gboolean VibrisMenu::Window::on_draw_event(GtkWidget* widget, cairo_t* cr)
 {
 	if (!gtk_widget_get_realized(widget))
 	{
@@ -1609,7 +1609,7 @@ gboolean WhiskerMenu::Window::on_draw_event(GtkWidget* widget, cairo_t* cr)
 
 //-----------------------------------------------------------------------------
 
-void WhiskerMenu::Window::check_scrollbar_needed()
+void VibrisMenu::Window::check_scrollbar_needed()
 {
 	// Find height of sidebar and buttons
 	int buttons_height = 0;
@@ -1631,7 +1631,7 @@ void WhiskerMenu::Window::check_scrollbar_needed()
 
 //-----------------------------------------------------------------------------
 
-void WhiskerMenu::Window::favorites_toggled()
+void VibrisMenu::Window::favorites_toggled()
 {
 	m_favorites->reset_selection();
 	gtk_stack_set_visible_child_name(m_panels_stack, "favorites");
@@ -1641,7 +1641,7 @@ void WhiskerMenu::Window::favorites_toggled()
 
 //-----------------------------------------------------------------------------
 
-void WhiskerMenu::Window::recent_toggled()
+void VibrisMenu::Window::recent_toggled()
 {
 	m_recent->reset_selection();
 	gtk_stack_set_visible_child_name(m_panels_stack, "recent");
@@ -1651,7 +1651,7 @@ void WhiskerMenu::Window::recent_toggled()
 
 //-----------------------------------------------------------------------------
 
-void WhiskerMenu::Window::category_toggled()
+void VibrisMenu::Window::category_toggled()
 {
 	m_applications->reset_selection();
 	gtk_stack_set_visible_child_name(m_panels_stack, "applications");
@@ -1661,7 +1661,7 @@ void WhiskerMenu::Window::category_toggled()
 
 //-----------------------------------------------------------------------------
 
-void WhiskerMenu::Window::center_window()
+void VibrisMenu::Window::center_window()
 {
 	m_geometry.x = (m_monitor.width - m_geometry.width) / 2;
 	m_geometry.y = (m_monitor.height - m_geometry.height) / 2;
@@ -1669,7 +1669,7 @@ void WhiskerMenu::Window::center_window()
 
 //-----------------------------------------------------------------------------
 
-void WhiskerMenu::Window::move_window()
+void VibrisMenu::Window::move_window()
 {
 	// Prevent window from leaving screen
 	m_geometry.x = CLAMP(m_geometry.x, m_monitor.x, m_monitor.x + m_monitor.width - m_geometry.width);
@@ -1717,7 +1717,7 @@ void WhiskerMenu::Window::move_window()
 
 //-----------------------------------------------------------------------------
 
-bool WhiskerMenu::Window::set_size(int width, int height)
+bool VibrisMenu::Window::set_size(int width, int height)
 {
 	bool resized = false;
 	width = CLAMP(width, 10, m_monitor.width);
@@ -1808,7 +1808,7 @@ bool WhiskerMenu::Window::set_size(int width, int height)
 
 //-----------------------------------------------------------------------------
 
-void WhiskerMenu::Window::reset_default_button()
+void VibrisMenu::Window::reset_default_button()
 {
 	switch (wm_settings->default_category)
 	{
@@ -1837,7 +1837,7 @@ void WhiskerMenu::Window::reset_default_button()
 
 //-----------------------------------------------------------------------------
 
-void WhiskerMenu::Window::show_favorites()
+void VibrisMenu::Window::show_favorites()
 {
 	// Switch to favorites panel
 	m_favorites->get_button()->set_active(true);
@@ -1849,7 +1849,7 @@ void WhiskerMenu::Window::show_favorites()
 
 //-----------------------------------------------------------------------------
 
-void WhiskerMenu::Window::remember_category()
+void VibrisMenu::Window::remember_category()
 {
 	if (m_last_category)
 	{
@@ -1872,7 +1872,7 @@ void WhiskerMenu::Window::remember_category()
 
 //-----------------------------------------------------------------------------
 
-void WhiskerMenu::Window::show_default_page()
+void VibrisMenu::Window::show_default_page()
 {
 	// Switch to the default panel, or back to the last one used
 	if ((wm_settings->default_category == Settings::CategoryLast)
@@ -1893,7 +1893,7 @@ void WhiskerMenu::Window::show_default_page()
 
 //-----------------------------------------------------------------------------
 
-void WhiskerMenu::Window::search()
+void VibrisMenu::Window::search()
 {
 	// Fetch search string
 	const gchar* text = gtk_entry_get_text(m_search_entry);
@@ -1920,7 +1920,7 @@ void WhiskerMenu::Window::search()
 
 //-----------------------------------------------------------------------------
 
-void WhiskerMenu::Window::update_layout()
+void VibrisMenu::Window::update_layout()
 {
 	// Set vertical position of commands
 	g_object_ref(m_commands_box);
@@ -2230,7 +2230,7 @@ Insets command_insets(GtkWidget* button)
 
 }
 
-void WhiskerMenu::Window::update_header_gaps()
+void VibrisMenu::Window::update_header_gaps()
 {
 	const int gap = 6;
 

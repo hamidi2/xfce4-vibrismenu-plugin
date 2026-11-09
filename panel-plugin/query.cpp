@@ -21,7 +21,7 @@
 
 #include <glib.h>
 
-using namespace WhiskerMenu;
+using namespace VibrisMenu;
 
 //-----------------------------------------------------------------------------
 

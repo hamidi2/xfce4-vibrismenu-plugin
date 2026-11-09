@@ -1,6 +1,6 @@
-# Italian translation of xfce4-whiskermenu-plugin.
+# Italian translation of xfce4-vibrismenu-plugin.
 # Copyright (C) 2023 Graeme Gott
-# This file is distributed under the same license as the xfce4-whiskermenu-plugin package.
+# This file is distributed under the same license as the xfce4-vibrismenu-plugin package.
 # 
 # Translators:
 # Bernardo Miguel Savone <bmsavone@gmail.com>, 2013-2015
@@ -10,12 +10,12 @@
 # Pierluigi Mario <pierluigimariomail@gmail.com>, 2020-2021
 msgid ""
 msgstr ""
-"Project-Id-Version: Whisker Menu\n"
+"Project-Id-Version: Vibris Menu\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-07-11 07:02-0400\n"
 "PO-Revision-Date: 2013-06-20 11:26+0000\n"
 "Last-Translator: Italang, 2020,2022-2023\n"
-"Language-Team: Italian (http://app.transifex.com/gottcode/xfce4-whiskermenu-plugin/language/it/)\n"
+"Language-Team: Italian (http://app.transifex.com/gottcode/xfce4-vibrismenu-plugin/language/it/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -92,7 +92,7 @@ msgstr "C_omando:"
 msgid "Categ_ory icon size:"
 msgstr "Dimensione icona Categ_oria:"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:107
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:107
 msgid "Choose which menu to popup by instance ID"
 msgstr "Scegli che menù mostrare per ID istanza"
 
@@ -101,7 +101,7 @@ msgid "Clear Recently Used"
 msgstr "Cancella Usati di recente"
 
 #: ../panel-plugin/plugin.cpp:414
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:126
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:126
 msgid "Copyright © 2013-2025 Graeme Gott"
 msgstr "Copyright © 2013-2025 Graeme Gott"
 
@@ -278,7 +278,7 @@ msgstr "Pulsante del pannello"
 msgid "Pattern"
 msgstr "Motivo"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:105
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:105
 msgid "Popup menu at current mouse position"
 msgstr "Mostra menù nella posizione corrente del mouse"
 
@@ -298,11 +298,11 @@ msgstr "Posiziona categorie _orizzontalmente"
 msgid "Position commands next to search _entry"
 msgstr "Posiziona c_omandi  accanto al campo Cerca"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:106
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:106
 msgid "Print available menu instance IDs"
 msgstr ""
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:108
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:108
 msgid "Print version information and exit"
 msgstr "Stampa informazioni versione ed esci"
 
@@ -370,7 +370,7 @@ msgstr "Seleziona un'icona"
 msgid "Session Commands"
 msgstr "Comandi di Sessione"
 
-#: ../panel-plugin/whiskermenu.desktop.in:6
+#: ../panel-plugin/vibrismenu.desktop.in:6
 msgid "Show a menu to easily access installed applications"
 msgstr "Mostra un menu per accedere facilmente alle applicazioni installate"
 
@@ -505,9 +505,9 @@ msgid "Very Small"
 msgstr "Molto piccolo"
 
 #: ../panel-plugin/settings-dialog.cpp:80
-#: ../panel-plugin/whiskermenu.desktop.in:5
-msgid "Whisker Menu"
-msgstr "Menu Whisker"
+#: ../panel-plugin/vibrismenu.desktop.in:5
+msgid "Vibris Menu"
+msgstr "Menu Vibris"
 
 #: ../panel-plugin/settings.cpp:99
 msgid "Wikipedia"

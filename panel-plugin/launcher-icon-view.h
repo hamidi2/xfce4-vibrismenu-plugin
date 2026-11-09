@@ -15,15 +15,15 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WHISKERMENU_LAUNCHER_ICON_VIEW_H
-#define WHISKERMENU_LAUNCHER_ICON_VIEW_H
+#ifndef VIBRISMENU_LAUNCHER_ICON_VIEW_H
+#define VIBRISMENU_LAUNCHER_ICON_VIEW_H
 
 #include "launcher-view.h"
 
 #include <string>
 #include <vector>
 
-namespace WhiskerMenu
+namespace VibrisMenu
 {
 
 class LauncherIconView : public LauncherView
@@ -105,4 +105,4 @@ private:
 
 }
 
-#endif // WHISKERMENU_LAUNCHER_ICON_VIEW_H
+#endif // VIBRISMENU_LAUNCHER_ICON_VIEW_H

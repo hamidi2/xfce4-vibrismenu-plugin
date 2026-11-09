@@ -15,14 +15,14 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WHISKERMENU_SETTINGS_H
-#define WHISKERMENU_SETTINGS_H
+#ifndef VIBRISMENU_SETTINGS_H
+#define VIBRISMENU_SETTINGS_H
 
 #include "icon-size.h"
 
 #include <xfconf/xfconf.h>
 
-namespace WhiskerMenu
+namespace VibrisMenu
 {
 
 class Command;
@@ -373,4 +373,4 @@ extern Settings* wm_settings;
 
 }
 
-#endif // WHISKERMENU_SETTINGS_H
+#endif // VIBRISMENU_SETTINGS_H

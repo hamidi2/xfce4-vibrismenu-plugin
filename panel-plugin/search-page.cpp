@@ -30,7 +30,7 @@
 #include <libxfce4ui/libxfce4ui.h>
 #include <gdk/gdkkeysyms.h>
 
-using namespace WhiskerMenu;
+using namespace VibrisMenu;
 
 //-----------------------------------------------------------------------------
 

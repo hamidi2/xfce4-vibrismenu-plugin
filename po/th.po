@@ -1,18 +1,18 @@
-# Thai translation of xfce4-whiskermenu-plugin.
+# Thai translation of xfce4-vibrismenu-plugin.
 # Copyright (C) 2025 Graeme Gott
-# This file is distributed under the same license as the xfce4-whiskermenu-plugin package.
+# This file is distributed under the same license as the xfce4-vibrismenu-plugin package.
 # 
 # Translators:
 # Warut Bunprasert <warut.b@disroot.org>, 2025
 # Warut Bunprasert <warut.b@disroot.org>, 2021
 msgid ""
 msgstr ""
-"Project-Id-Version: Whisker Menu\n"
+"Project-Id-Version: Vibris Menu\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-01-16 14:38-0500\n"
 "PO-Revision-Date: 2013-06-20 11:26+0000\n"
 "Last-Translator: Warut Bunprasert <warut.b@disroot.org>, 2025\n"
-"Language-Team: Thai (http://app.transifex.com/gottcode/xfce4-whiskermenu-plugin/language/th/)\n"
+"Language-Team: Thai (http://app.transifex.com/gottcode/xfce4-vibrismenu-plugin/language/th/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -93,7 +93,7 @@ msgstr "_คำสั่ง:"
 msgid "Categ_ory icon size:"
 msgstr "_ขนาดไอคอนหมวดหมู่:"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:109
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:109
 msgid "Choose which menu to popup by instance ID"
 msgstr "เลือกเมนูที่จะป๊อปอัปโดย ID อินสแตนซ์"
 
@@ -102,7 +102,7 @@ msgid "Clear Recently Used"
 msgstr "ล้างการใช้งานล่าสุด"
 
 #: ../panel-plugin/plugin.cpp:419
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:128
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:128
 msgid "Copyright © 2013-2025 Graeme Gott"
 msgstr "ลิขสิทธิ์ © 2013-2025 Graeme Gott"
 
@@ -283,11 +283,11 @@ msgstr "ปุ่มพาเนล"
 msgid "Pattern"
 msgstr "รูปแบบ"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:107
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:107
 msgid "Popup menu at center of screen"
 msgstr "เมนูป๊อปอัปตรงกลางหน้าจอ"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:106
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:106
 msgid "Popup menu at current mouse position"
 msgstr "เมนูป๊อปอัปที่ตำแหน่งเมาส์ปัจจุบัน"
 
@@ -317,11 +317,11 @@ msgstr "ตำแหน่งบรรทัดคำสั่งถัดจา
 msgid "Position pro_file on bottom"
 msgstr "ตำแหน่งโ_ปรไฟล์ที่ด้านล่าง"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:108
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:108
 msgid "Print available menu instance IDs"
 msgstr "แสดงเมนูอินสแตนซ์ ID ที่มี"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:110
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:110
 msgid "Print version information and exit"
 msgstr "แสดงข้อมูลเวอร์ชันและออกจากโปรแกรม"
 
@@ -393,7 +393,7 @@ msgstr "เลือกไอคอน"
 msgid "Session Commands"
 msgstr "คำสั่งวาระ"
 
-#: ../panel-plugin/whiskermenu.desktop.in:5
+#: ../panel-plugin/vibrismenu.desktop.in:5
 msgid "Show a menu to easily access installed applications"
 msgstr "แสดงเมนูสำหรับการติดตั้งโปรแกรมแบบที่เข้าถึงง่าย"
 
@@ -528,9 +528,9 @@ msgid "Very Small"
 msgstr "เล็กมาก"
 
 #: ../panel-plugin/settings-dialog.cpp:80
-#: ../panel-plugin/whiskermenu.desktop.in:4
-msgid "Whisker Menu"
-msgstr "เมนู Whisker"
+#: ../panel-plugin/vibrismenu.desktop.in:4
+msgid "Vibris Menu"
+msgstr "เมนู Vibris"
 
 #: ../panel-plugin/settings.cpp:93
 msgid "Wikipedia"

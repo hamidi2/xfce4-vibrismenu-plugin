@@ -1,6 +1,6 @@
-# Croatian translation of xfce4-whiskermenu-plugin.
+# Croatian translation of xfce4-vibrismenu-plugin.
 # Copyright (C) 2023 Graeme Gott
-# This file is distributed under the same license as the xfce4-whiskermenu-plugin package.
+# This file is distributed under the same license as the xfce4-vibrismenu-plugin package.
 # 
 # Translators:
 # Ante Grubišić Čabo <ante.gc@gmail.com>, 2016
@@ -9,12 +9,12 @@
 # Ilija Ćulap <ilija.culap14@gmail.com>, 2013-2015,2018,2020
 msgid ""
 msgstr ""
-"Project-Id-Version: Whisker Menu\n"
+"Project-Id-Version: Vibris Menu\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-07-11 07:02-0400\n"
 "PO-Revision-Date: 2020-02-12 20:16+0000\n"
 "Last-Translator: dmanthing <dmanthing@gmail.com>, 2018\n"
-"Language-Team: Croatian (http://app.transifex.com/gottcode/xfce4-whiskermenu-plugin/language/hr/)\n"
+"Language-Team: Croatian (http://app.transifex.com/gottcode/xfce4-vibrismenu-plugin/language/hr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -91,7 +91,7 @@ msgstr "N_aredba:"
 msgid "Categ_ory icon size:"
 msgstr "Veličin_a ikone kategorije:"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:107
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:107
 msgid "Choose which menu to popup by instance ID"
 msgstr ""
 
@@ -100,7 +100,7 @@ msgid "Clear Recently Used"
 msgstr "Očisti kategoriju Najčešće korišteno"
 
 #: ../panel-plugin/plugin.cpp:414
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:126
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:126
 msgid "Copyright © 2013-2025 Graeme Gott"
 msgstr "Copyright © 2013-2025 Graeme Gott"
 
@@ -277,7 +277,7 @@ msgstr "Gumb na ploči"
 msgid "Pattern"
 msgstr "Uzorak"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:105
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:105
 msgid "Popup menu at current mouse position"
 msgstr "Skočni prozor na trenutnoj poziciji miša"
 
@@ -297,11 +297,11 @@ msgstr ""
 msgid "Position commands next to search _entry"
 msgstr "Postavi komande kraj pret_raživanja"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:106
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:106
 msgid "Print available menu instance IDs"
 msgstr ""
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:108
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:108
 msgid "Print version information and exit"
 msgstr "Ispiši informaciju o verziji i izađi"
 
@@ -369,7 +369,7 @@ msgstr "Izaberi ikonu"
 msgid "Session Commands"
 msgstr "Komande sesije"
 
-#: ../panel-plugin/whiskermenu.desktop.in:6
+#: ../panel-plugin/vibrismenu.desktop.in:6
 msgid "Show a menu to easily access installed applications"
 msgstr "Prikaži izbornik da bi lakše pristupili instaliranim aplikacijama"
 
@@ -504,9 +504,9 @@ msgid "Very Small"
 msgstr "Jako malo"
 
 #: ../panel-plugin/settings-dialog.cpp:80
-#: ../panel-plugin/whiskermenu.desktop.in:5
-msgid "Whisker Menu"
-msgstr "Whisker Izbornik"
+#: ../panel-plugin/vibrismenu.desktop.in:5
+msgid "Vibris Menu"
+msgstr "Vibris Izbornik"
 
 #: ../panel-plugin/settings.cpp:99
 msgid "Wikipedia"

@@ -1,17 +1,17 @@
-# Latvian translation of xfce4-whiskermenu-plugin.
+# Latvian translation of xfce4-vibrismenu-plugin.
 # Copyright (C) 2023 Graeme Gott
-# This file is distributed under the same license as the xfce4-whiskermenu-plugin package.
+# This file is distributed under the same license as the xfce4-vibrismenu-plugin package.
 # 
 # Translators:
 # Gatis Kalniņš <>, 2014
 msgid ""
 msgstr ""
-"Project-Id-Version: Whisker Menu\n"
+"Project-Id-Version: Vibris Menu\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-07-11 07:02-0400\n"
 "PO-Revision-Date: 2014-02-10 13:41+0000\n"
 "Last-Translator: Gatis Kalniņš <>, 2014\n"
-"Language-Team: Latvian (http://app.transifex.com/gottcode/xfce4-whiskermenu-plugin/language/lv/)\n"
+"Language-Team: Latvian (http://app.transifex.com/gottcode/xfce4-vibrismenu-plugin/language/lv/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -88,7 +88,7 @@ msgstr "Komanda:"
 msgid "Categ_ory icon size:"
 msgstr "Grupas ikonas izmērs:"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:107
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:107
 msgid "Choose which menu to popup by instance ID"
 msgstr ""
 
@@ -97,7 +97,7 @@ msgid "Clear Recently Used"
 msgstr "Dzēst nesen lietotos"
 
 #: ../panel-plugin/plugin.cpp:414
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:126
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:126
 msgid "Copyright © 2013-2025 Graeme Gott"
 msgstr ""
 
@@ -274,7 +274,7 @@ msgstr "Paneļa poga"
 msgid "Pattern"
 msgstr "Šablons"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:105
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:105
 msgid "Popup menu at current mouse position"
 msgstr ""
 
@@ -294,11 +294,11 @@ msgstr ""
 msgid "Position commands next to search _entry"
 msgstr "Rādīt komandas blakus meklēšanas laukam"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:106
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:106
 msgid "Print available menu instance IDs"
 msgstr ""
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:108
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:108
 msgid "Print version information and exit"
 msgstr "Izdrukāt versijas informāciju un iziet"
 
@@ -366,7 +366,7 @@ msgstr "Izvēlēties ikonu"
 msgid "Session Commands"
 msgstr ""
 
-#: ../panel-plugin/whiskermenu.desktop.in:6
+#: ../panel-plugin/vibrismenu.desktop.in:6
 msgid "Show a menu to easily access installed applications"
 msgstr "Rādīt izvēlni ērtākai piekļuvei programmām"
 
@@ -501,9 +501,9 @@ msgid "Very Small"
 msgstr "Ļoti mazs"
 
 #: ../panel-plugin/settings-dialog.cpp:80
-#: ../panel-plugin/whiskermenu.desktop.in:5
-msgid "Whisker Menu"
-msgstr "Whisker izvēlne"
+#: ../panel-plugin/vibrismenu.desktop.in:5
+msgid "Vibris Menu"
+msgstr "Vibris izvēlne"
 
 #: ../panel-plugin/settings.cpp:99
 msgid "Wikipedia"

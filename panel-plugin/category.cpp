@@ -25,7 +25,7 @@
 #include <libxfce4ui/libxfce4ui.h>
 #include <glib/gi18n-lib.h>
 
-using namespace WhiskerMenu;
+using namespace VibrisMenu;
 
 //-----------------------------------------------------------------------------
 

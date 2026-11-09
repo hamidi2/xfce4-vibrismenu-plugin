@@ -15,13 +15,13 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WHISKERMENU_QUERY_H
-#define WHISKERMENU_QUERY_H
+#ifndef VIBRISMENU_QUERY_H
+#define VIBRISMENU_QUERY_H
 
 #include <string>
 #include <vector>
 
-namespace WhiskerMenu
+namespace VibrisMenu
 {
 
 class Query
@@ -60,4 +60,4 @@ private:
 
 }
 
-#endif // WHISKERMENU_QUERY_H
+#endif // VIBRISMENU_QUERY_H

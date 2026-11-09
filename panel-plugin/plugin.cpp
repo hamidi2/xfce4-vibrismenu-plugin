@@ -31,7 +31,7 @@
 #include <glib/gstdio.h>
 #include <libxfce4ui/libxfce4ui.h>
 
-using namespace WhiskerMenu;
+using namespace VibrisMenu;
 
 //-----------------------------------------------------------------------------
 
@@ -40,7 +40,7 @@ extern "C"
 
 #include "register-plugin.h"
 
-void whiskermenu_construct(XfcePanelPlugin* plugin)
+void vibrismenu_construct(XfcePanelPlugin* plugin)
 {
 	xfce_textdomain(GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR, "UTF-8");
 	new Plugin(plugin);
@@ -64,7 +64,7 @@ Plugin::Plugin(XfcePanelPlugin* plugin) :
 	wm_settings = new Settings(this);
 
 	// Load default settings
-	gchar* defaults_file = xfce_resource_lookup(XFCE_RESOURCE_CONFIG, "xfce4/whiskermenu/defaults.rc");
+	gchar* defaults_file = xfce_resource_lookup(XFCE_RESOURCE_CONFIG, "xfce4/vibrismenu/defaults.rc");
 	wm_settings->load(defaults_file, true);
 	g_free(defaults_file);
 
@@ -90,15 +90,15 @@ Plugin::Plugin(XfcePanelPlugin* plugin) :
 	m_opacity = wm_settings->menu_opacity;
 
 	// Switch to new icon only if theme is missing old icon
-	if ((wm_settings->button_icon_name == "xfce4-whiskermenu")
-			&& !gtk_icon_theme_has_icon(gtk_icon_theme_get_default(), "xfce4-whiskermenu"))
+	if ((wm_settings->button_icon_name == "xfce4-vibrismenu")
+			&& !gtk_icon_theme_has_icon(gtk_icon_theme_get_default(), "xfce4-vibrismenu"))
 	{
-		wm_settings->button_icon_name = "org.xfce.panel.whiskermenu";
+		wm_settings->button_icon_name = "org.xfce.panel.vibrismenu";
 	}
 
 	// Create toggle button
 	m_button = xfce_panel_create_toggle_button();
-	gtk_widget_set_name(m_button, "whiskermenu-button");
+	gtk_widget_set_name(m_button, "vibrismenu-button");
 	connect(m_button, "button-press-event",
 		[this](GtkWidget* widget, GdkEvent* event) -> gboolean
 		{
@@ -415,16 +415,17 @@ gboolean Plugin::remote_event(const gchar* name, const GValue* value)
 void Plugin::show_about()
 {
 	const gchar* authors[] = {
-		"Graeme Gott <graeme@gottcode.org>",
+		"Hamidi (Vibris Menu)",
+		"Graeme Gott <graeme@gottcode.org> (original Whisker Menu)",
 		nullptr };
 
 	gtk_show_about_dialog
 		(nullptr,
 		"authors", authors,
 		"comments", _("Alternate application launcher for Xfce"),
-		"copyright", "Copyright \302\251 2013-" COPYRIGHT_YEAR " Graeme Gott",
+		"copyright", "Copyright \302\251 2026 Hamidi\nBased on Whisker Menu, Copyright \302\251 2013-2025 Graeme Gott",
 		"license", XFCE_LICENSE_GPL,
-		"logo-icon-name", "org.xfce.panel.whiskermenu",
+		"logo-icon-name", "org.xfce.panel.vibrismenu",
 		"program-name", PACKAGE_NAME,
 		"translator-credits", _("translator-credits"),
 		"version", VERSION_FULL,

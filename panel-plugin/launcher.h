@@ -15,8 +15,8 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WHISKERMENU_LAUNCHER_H
-#define WHISKERMENU_LAUNCHER_H
+#ifndef VIBRISMENU_LAUNCHER_H
+#define VIBRISMENU_LAUNCHER_H
 
 #include "element.h"
 
@@ -25,7 +25,7 @@
 
 #include <garcon/garcon.h>
 
-namespace WhiskerMenu
+namespace VibrisMenu
 {
 
 class DesktopAction
@@ -111,4 +111,4 @@ private:
 
 }
 
-#endif // WHISKERMENU_LAUNCHER_H
+#endif // VIBRISMENU_LAUNCHER_H

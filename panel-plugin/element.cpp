@@ -19,7 +19,7 @@
 
 #include <libxfce4ui/libxfce4ui.h>
 
-using namespace WhiskerMenu;
+using namespace VibrisMenu;
 
 //-----------------------------------------------------------------------------
 

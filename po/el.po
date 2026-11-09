@@ -1,6 +1,6 @@
-# Greek translation of xfce4-whiskermenu-plugin.
+# Greek translation of xfce4-vibrismenu-plugin.
 # Copyright (C) 2025 Graeme Gott
-# This file is distributed under the same license as the xfce4-whiskermenu-plugin package.
+# This file is distributed under the same license as the xfce4-vibrismenu-plugin package.
 # 
 # Translators:
 # angel_solomos, 2013
@@ -15,12 +15,12 @@
 # Πέτρος Σαμαράς <psamaras1@gmail.com>, 2016
 msgid ""
 msgstr ""
-"Project-Id-Version: Whisker Menu\n"
+"Project-Id-Version: Vibris Menu\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-01-16 14:38-0500\n"
 "PO-Revision-Date: 2013-06-20 11:26+0000\n"
 "Last-Translator: Ioannis LM, 2016,2018-2025\n"
-"Language-Team: Greek (http://app.transifex.com/gottcode/xfce4-whiskermenu-plugin/language/el/)\n"
+"Language-Team: Greek (http://app.transifex.com/gottcode/xfce4-vibrismenu-plugin/language/el/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -101,7 +101,7 @@ msgstr "Εντο_λή:"
 msgid "Categ_ory icon size:"
 msgstr "Μέγεθος εικονιδίων κα_τηγοριών:"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:109
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:109
 msgid "Choose which menu to popup by instance ID"
 msgstr "Επιλογή αναδυόμενου μενού από το αναγνωριστικό διεργασίας"
 
@@ -110,7 +110,7 @@ msgid "Clear Recently Used"
 msgstr "Εκκαθάριση πρόσφατα χρησιμοποιημένων"
 
 #: ../panel-plugin/plugin.cpp:419
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:128
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:128
 msgid "Copyright © 2013-2025 Graeme Gott"
 msgstr "Πνευματικά δικαιώματα © 2013-2025 Graeme Gott"
 
@@ -291,11 +291,11 @@ msgstr "Κουμπί ταμπλό"
 msgid "Pattern"
 msgstr "Σχέδιο"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:107
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:107
 msgid "Popup menu at center of screen"
 msgstr "Αναδυόμενο μενού στο κέντρο της οθόνης"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:106
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:106
 msgid "Popup menu at current mouse position"
 msgstr "Αναδυόμενο μενού στην τρέχουσα θέση του ποντικιού"
 
@@ -325,11 +325,11 @@ msgstr "Τοποθέτηση των εντολών δίπλα στο πεδίο 
 msgid "Position pro_file on bottom"
 msgstr "Τοποθέτηση του προφίλ _κάτω"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:108
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:108
 msgid "Print available menu instance IDs"
 msgstr "Εμφάνιση διαθέσιμων μενού από τα αναγνωριστικά διεργασίας"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:110
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:110
 msgid "Print version information and exit"
 msgstr "Εμφάνιση πληροφοριών έκδοσης και έξοδος"
 
@@ -401,7 +401,7 @@ msgstr "Επιλογή εικονιδίου"
 msgid "Session Commands"
 msgstr "Εντολές συνεδρίας"
 
-#: ../panel-plugin/whiskermenu.desktop.in:5
+#: ../panel-plugin/vibrismenu.desktop.in:5
 msgid "Show a menu to easily access installed applications"
 msgstr "Εμφάνιση μενού για εύκολη πρόσβαση στις εγκατεστημένες εφαρμογές"
 
@@ -536,9 +536,9 @@ msgid "Very Small"
 msgstr "Πολύ μικρά"
 
 #: ../panel-plugin/settings-dialog.cpp:80
-#: ../panel-plugin/whiskermenu.desktop.in:4
-msgid "Whisker Menu"
-msgstr "Μενού Whisker"
+#: ../panel-plugin/vibrismenu.desktop.in:4
+msgid "Vibris Menu"
+msgstr "Μενού Vibris"
 
 #: ../panel-plugin/settings.cpp:93
 msgid "Wikipedia"

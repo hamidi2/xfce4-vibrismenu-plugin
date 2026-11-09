@@ -1,18 +1,18 @@
-# Nepali translation of xfce4-whiskermenu-plugin.
+# Nepali translation of xfce4-vibrismenu-plugin.
 # Copyright (C) 2023 Graeme Gott
-# This file is distributed under the same license as the xfce4-whiskermenu-plugin package.
+# This file is distributed under the same license as the xfce4-vibrismenu-plugin package.
 # 
 # Translators:
 # starryprabin <mr.prabin@gmail.com>, 2013-2020
 # Prabin Gautam <PRABINGAUTAM@gmail.com>, 2013-2014
 msgid ""
 msgstr ""
-"Project-Id-Version: Whisker Menu\n"
+"Project-Id-Version: Vibris Menu\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-07-11 07:02-0400\n"
 "PO-Revision-Date: 2020-02-17 13:39+0000\n"
 "Last-Translator: starryprabin <mr.prabin@gmail.com>, 2013-2020\n"
-"Language-Team: Nepali (http://app.transifex.com/gottcode/xfce4-whiskermenu-plugin/language/ne/)\n"
+"Language-Team: Nepali (http://app.transifex.com/gottcode/xfce4-vibrismenu-plugin/language/ne/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -89,7 +89,7 @@ msgstr "आदेश:"
 msgid "Categ_ory icon size:"
 msgstr "वर्गमूर्तिको आकार: "
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:107
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:107
 msgid "Choose which menu to popup by instance ID"
 msgstr ""
 
@@ -98,7 +98,7 @@ msgid "Clear Recently Used"
 msgstr "हालसालै प्रयोग भएकालाई सफा गर्नुहोस् "
 
 #: ../panel-plugin/plugin.cpp:414
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:126
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:126
 msgid "Copyright © 2013-2025 Graeme Gott"
 msgstr "प्रतिलिपि अधिकार © 2013-2025 Graeme Gott"
 
@@ -275,7 +275,7 @@ msgstr "पट्टीको बटन"
 msgid "Pattern"
 msgstr "ढाँचा"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:105
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:105
 msgid "Popup menu at current mouse position"
 msgstr ""
 
@@ -295,11 +295,11 @@ msgstr ""
 msgid "Position commands next to search _entry"
 msgstr "खोजको नजिक आदेशहरुलाई स्थानाङ्कित गर्नुहोस् "
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:106
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:106
 msgid "Print available menu instance IDs"
 msgstr ""
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:108
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:108
 msgid "Print version information and exit"
 msgstr ""
 
@@ -367,7 +367,7 @@ msgstr "मूर्ति चयन गर्नुहोस् "
 msgid "Session Commands"
 msgstr "सत्र आदेशहरू"
 
-#: ../panel-plugin/whiskermenu.desktop.in:6
+#: ../panel-plugin/vibrismenu.desktop.in:6
 msgid "Show a menu to easily access installed applications"
 msgstr "स्थापित अनुप्रयोगहरुको सहज पहुचको लागी एक मेन्यू देखाउनुहोस्"
 
@@ -502,9 +502,9 @@ msgid "Very Small"
 msgstr "अत्यन्त सानो "
 
 #: ../panel-plugin/settings-dialog.cpp:80
-#: ../panel-plugin/whiskermenu.desktop.in:5
-msgid "Whisker Menu"
-msgstr "विस्कर मेन्यू"
+#: ../panel-plugin/vibrismenu.desktop.in:5
+msgid "Vibris Menu"
+msgstr "Vibris मेन्यू"
 
 #: ../panel-plugin/settings.cpp:99
 msgid "Wikipedia"

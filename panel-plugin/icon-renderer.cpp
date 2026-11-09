@@ -21,7 +21,7 @@
 
 //-----------------------------------------------------------------------------
 
-struct _WhiskerMenuIconRenderer
+struct _VibrisMenuIconRenderer
 {
 	GtkCellRenderer parent;
 
@@ -31,10 +31,10 @@ struct _WhiskerMenuIconRenderer
 	bool stretch;
 };
 
-#define WHISKERMENU_TYPE_ICON_RENDERER whiskermenu_icon_renderer_get_type()
-G_DECLARE_FINAL_TYPE(WhiskerMenuIconRenderer, whiskermenu_icon_renderer, WHISKERMENU, ICON_RENDERER, GtkCellRenderer)
+#define VIBRISMENU_TYPE_ICON_RENDERER vibrismenu_icon_renderer_get_type()
+G_DECLARE_FINAL_TYPE(VibrisMenuIconRenderer, vibrismenu_icon_renderer, VIBRISMENU, ICON_RENDERER, GtkCellRenderer)
 
-G_DEFINE_TYPE(WhiskerMenuIconRenderer, whiskermenu_icon_renderer, GTK_TYPE_CELL_RENDERER)
+G_DEFINE_TYPE(VibrisMenuIconRenderer, vibrismenu_icon_renderer, GTK_TYPE_CELL_RENDERER)
 
 enum
 {
@@ -47,9 +47,9 @@ enum
 
 //-----------------------------------------------------------------------------
 
-static void whiskermenu_icon_renderer_get_preferred_width(GtkCellRenderer* renderer, GtkWidget*, gint* minimum, gint* natural)
+static void vibrismenu_icon_renderer_get_preferred_width(GtkCellRenderer* renderer, GtkWidget*, gint* minimum, gint* natural)
 {
-	WhiskerMenuIconRenderer* icon_renderer = WHISKERMENU_ICON_RENDERER(renderer);
+	VibrisMenuIconRenderer* icon_renderer = VIBRISMENU_ICON_RENDERER(renderer);
 
 	gint pad;
 	gtk_cell_renderer_get_padding(renderer, &pad, nullptr);
@@ -67,9 +67,9 @@ static void whiskermenu_icon_renderer_get_preferred_width(GtkCellRenderer* rende
 
 //-----------------------------------------------------------------------------
 
-static void whiskermenu_icon_renderer_get_preferred_height(GtkCellRenderer* renderer, GtkWidget*, gint* minimum, gint* natural)
+static void vibrismenu_icon_renderer_get_preferred_height(GtkCellRenderer* renderer, GtkWidget*, gint* minimum, gint* natural)
 {
-	WhiskerMenuIconRenderer* icon_renderer = WHISKERMENU_ICON_RENDERER(renderer);
+	VibrisMenuIconRenderer* icon_renderer = VIBRISMENU_ICON_RENDERER(renderer);
 
 	gint pad;
 	gtk_cell_renderer_get_padding(renderer, nullptr, &pad);
@@ -87,10 +87,10 @@ static void whiskermenu_icon_renderer_get_preferred_height(GtkCellRenderer* rend
 
 //-----------------------------------------------------------------------------
 
-static void whiskermenu_icon_renderer_render(GtkCellRenderer* renderer, cairo_t* cr, GtkWidget* widget,
+static void vibrismenu_icon_renderer_render(GtkCellRenderer* renderer, cairo_t* cr, GtkWidget* widget,
 		const GdkRectangle*, const GdkRectangle* cell_area, GtkCellRendererState)
 {
-	WhiskerMenuIconRenderer* icon_renderer = WHISKERMENU_ICON_RENDERER(renderer);
+	VibrisMenuIconRenderer* icon_renderer = VIBRISMENU_ICON_RENDERER(renderer);
 
 	if (!icon_renderer->gicon)
 	{
@@ -158,9 +158,9 @@ static void whiskermenu_icon_renderer_render(GtkCellRenderer* renderer, cairo_t*
 
 //-----------------------------------------------------------------------------
 
-static void whiskermenu_icon_renderer_get_property(GObject* object, guint prop_id, GValue* value, GParamSpec* pspec)
+static void vibrismenu_icon_renderer_get_property(GObject* object, guint prop_id, GValue* value, GParamSpec* pspec)
 {
-	WhiskerMenuIconRenderer* icon_renderer = WHISKERMENU_ICON_RENDERER(object);
+	VibrisMenuIconRenderer* icon_renderer = VIBRISMENU_ICON_RENDERER(object);
 
 	switch(prop_id)
 	{
@@ -188,9 +188,9 @@ static void whiskermenu_icon_renderer_get_property(GObject* object, guint prop_i
 
 //-----------------------------------------------------------------------------
 
-static void whiskermenu_icon_renderer_set_property(GObject* object, guint prop_id, const GValue* value, GParamSpec* pspec)
+static void vibrismenu_icon_renderer_set_property(GObject* object, guint prop_id, const GValue* value, GParamSpec* pspec)
 {
-	WhiskerMenuIconRenderer* icon_renderer = WHISKERMENU_ICON_RENDERER(object);
+	VibrisMenuIconRenderer* icon_renderer = VIBRISMENU_ICON_RENDERER(object);
 
 	switch(prop_id)
 	{
@@ -222,31 +222,31 @@ static void whiskermenu_icon_renderer_set_property(GObject* object, guint prop_i
 
 //-----------------------------------------------------------------------------
 
-static void whiskermenu_icon_renderer_finalize(GObject* object)
+static void vibrismenu_icon_renderer_finalize(GObject* object)
 {
-	WhiskerMenuIconRenderer* icon_renderer = WHISKERMENU_ICON_RENDERER(object);
+	VibrisMenuIconRenderer* icon_renderer = VIBRISMENU_ICON_RENDERER(object);
 
 	if (icon_renderer->gicon)
 	{
 		g_object_unref(icon_renderer->gicon);
 	}
 
-	G_OBJECT_CLASS(whiskermenu_icon_renderer_parent_class)->finalize(object);
+	G_OBJECT_CLASS(vibrismenu_icon_renderer_parent_class)->finalize(object);
 }
 
 //-----------------------------------------------------------------------------
 
-static void whiskermenu_icon_renderer_class_init(WhiskerMenuIconRendererClass* klass)
+static void vibrismenu_icon_renderer_class_init(VibrisMenuIconRendererClass* klass)
 {
 	GObjectClass* gobject_class = G_OBJECT_CLASS(klass);
-	gobject_class->finalize = &whiskermenu_icon_renderer_finalize;
-	gobject_class->get_property = &whiskermenu_icon_renderer_get_property;
-	gobject_class->set_property = &whiskermenu_icon_renderer_set_property;
+	gobject_class->finalize = &vibrismenu_icon_renderer_finalize;
+	gobject_class->get_property = &vibrismenu_icon_renderer_get_property;
+	gobject_class->set_property = &vibrismenu_icon_renderer_set_property;
 
 	GtkCellRendererClass* renderer_class = GTK_CELL_RENDERER_CLASS(klass);
-	renderer_class->get_preferred_width = &whiskermenu_icon_renderer_get_preferred_width;
-	renderer_class->get_preferred_height = &whiskermenu_icon_renderer_get_preferred_height;
-	renderer_class->render = &whiskermenu_icon_renderer_render;
+	renderer_class->get_preferred_width = &vibrismenu_icon_renderer_get_preferred_width;
+	renderer_class->get_preferred_height = &vibrismenu_icon_renderer_get_preferred_height;
+	renderer_class->render = &vibrismenu_icon_renderer_render;
 
 	g_object_class_install_property(gobject_class,
 			PROP_LAUNCHER,
@@ -274,15 +274,15 @@ static void whiskermenu_icon_renderer_class_init(WhiskerMenuIconRendererClass* k
 
 //-----------------------------------------------------------------------------
 
-static void whiskermenu_icon_renderer_init(WhiskerMenuIconRenderer*)
+static void vibrismenu_icon_renderer_init(VibrisMenuIconRenderer*)
 {
 }
 
 //-----------------------------------------------------------------------------
 
-GtkCellRenderer* whiskermenu_icon_renderer_new()
+GtkCellRenderer* vibrismenu_icon_renderer_new()
 {
-	return GTK_CELL_RENDERER(g_object_new(WHISKERMENU_TYPE_ICON_RENDERER, nullptr));
+	return GTK_CELL_RENDERER(g_object_new(VIBRISMENU_TYPE_ICON_RENDERER, nullptr));
 }
 
 //-----------------------------------------------------------------------------

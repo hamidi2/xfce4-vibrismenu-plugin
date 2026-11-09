@@ -15,14 +15,14 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WHISKERMENU_FAVORITES_PAGE_H
-#define WHISKERMENU_FAVORITES_PAGE_H
+#ifndef VIBRISMENU_FAVORITES_PAGE_H
+#define VIBRISMENU_FAVORITES_PAGE_H
 
 #include "page.h"
 
 #include <vector>
 
-namespace WhiskerMenu
+namespace VibrisMenu
 {
 
 class FavoritesPage : public Page
@@ -94,4 +94,4 @@ private:
 
 }
 
-#endif // WHISKERMENU_FAVORITES_PAGE_H
+#endif // VIBRISMENU_FAVORITES_PAGE_H

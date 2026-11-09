@@ -27,7 +27,7 @@
 
 #include <algorithm>
 
-using namespace WhiskerMenu;
+using namespace VibrisMenu;
 
 //-----------------------------------------------------------------------------
 

@@ -1,6 +1,6 @@
-# Asturian translation of xfce4-whiskermenu-plugin.
+# Asturian translation of xfce4-vibrismenu-plugin.
 # Copyright (C) 2025 Graeme Gott
-# This file is distributed under the same license as the xfce4-whiskermenu-plugin package.
+# This file is distributed under the same license as the xfce4-vibrismenu-plugin package.
 # 
 # Translators:
 # enolp <enolp@softastur.org>, 2015-2016,2020
@@ -9,12 +9,12 @@
 # Ḷḷumex03, 2014
 msgid ""
 msgstr ""
-"Project-Id-Version: Whisker Menu\n"
+"Project-Id-Version: Vibris Menu\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-01-16 14:38-0500\n"
 "PO-Revision-Date: 2013-06-20 11:26+0000\n"
 "Last-Translator: enolp <enolp@softastur.org>, 2015-2016,2020\n"
-"Language-Team: Asturian (http://app.transifex.com/gottcode/xfce4-whiskermenu-plugin/language/ast/)\n"
+"Language-Team: Asturian (http://app.transifex.com/gottcode/xfce4-vibrismenu-plugin/language/ast/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -95,7 +95,7 @@ msgstr "C_omandu:"
 msgid "Categ_ory icon size:"
 msgstr "Tamañ_u d'iconu d'estaya:"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:109
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:109
 msgid "Choose which menu to popup by instance ID"
 msgstr ""
 
@@ -104,7 +104,7 @@ msgid "Clear Recently Used"
 msgstr "Llimpiar Usáo apocayá"
 
 #: ../panel-plugin/plugin.cpp:419
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:128
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:128
 msgid "Copyright © 2013-2025 Graeme Gott"
 msgstr "Copyright © 2013-2025 Graeme Gott"
 
@@ -285,11 +285,11 @@ msgstr "Botón del panel"
 msgid "Pattern"
 msgstr "Patrón"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:107
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:107
 msgid "Popup menu at center of screen"
 msgstr ""
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:106
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:106
 msgid "Popup menu at current mouse position"
 msgstr "Menú del ventanu emerxente na posición d'anguaño'l mur"
 
@@ -319,11 +319,11 @@ msgstr "Allugar los comandos co la caxa de gueta"
 msgid "Position pro_file on bottom"
 msgstr ""
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:108
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:108
 msgid "Print available menu instance IDs"
 msgstr ""
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:110
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:110
 msgid "Print version information and exit"
 msgstr "Amuesa la información de la versión y cola"
 
@@ -395,7 +395,7 @@ msgstr "Esbilla un iconu"
 msgid "Session Commands"
 msgstr ""
 
-#: ../panel-plugin/whiskermenu.desktop.in:5
+#: ../panel-plugin/vibrismenu.desktop.in:5
 msgid "Show a menu to easily access installed applications"
 msgstr "Amuesa un menú p'acceder cenciellamente a les aplicaiones instalaes"
 
@@ -530,9 +530,9 @@ msgid "Very Small"
 msgstr "Perpequeñu"
 
 #: ../panel-plugin/settings-dialog.cpp:80
-#: ../panel-plugin/whiskermenu.desktop.in:4
-msgid "Whisker Menu"
-msgstr "Menú Whisker"
+#: ../panel-plugin/vibrismenu.desktop.in:4
+msgid "Vibris Menu"
+msgstr "Menú Vibris"
 
 #: ../panel-plugin/settings.cpp:93
 msgid "Wikipedia"

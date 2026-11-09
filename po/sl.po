@@ -1,6 +1,6 @@
-# Slovenian translation of xfce4-whiskermenu-plugin.
+# Slovenian translation of xfce4-vibrismenu-plugin.
 # Copyright (C) 2025 Graeme Gott
-# This file is distributed under the same license as the xfce4-whiskermenu-plugin package.
+# This file is distributed under the same license as the xfce4-vibrismenu-plugin package.
 # 
 # Translators:
 # Dejweed, 2022,2024-2025
@@ -11,12 +11,12 @@
 # Kernc, 2017
 msgid ""
 msgstr ""
-"Project-Id-Version: Whisker Menu\n"
+"Project-Id-Version: Vibris Menu\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-01-16 14:38-0500\n"
 "PO-Revision-Date: 2013-06-20 11:26+0000\n"
 "Last-Translator: Dejweed, 2022,2024-2025\n"
-"Language-Team: Slovenian (http://app.transifex.com/gottcode/xfce4-whiskermenu-plugin/language/sl/)\n"
+"Language-Team: Slovenian (http://app.transifex.com/gottcode/xfce4-vibrismenu-plugin/language/sl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -97,7 +97,7 @@ msgstr "_Ukaz:"
 msgid "Categ_ory icon size:"
 msgstr "Velikost ikon kateg_orij:"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:109
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:109
 msgid "Choose which menu to popup by instance ID"
 msgstr "Kateri primerek menija naj se pojavi na podlagi ID-ja"
 
@@ -106,7 +106,7 @@ msgid "Clear Recently Used"
 msgstr "Počisti nedavno uporabljene"
 
 #: ../panel-plugin/plugin.cpp:419
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:128
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:128
 msgid "Copyright © 2013-2025 Graeme Gott"
 msgstr "Copyright © 2013-2025 Graeme Gott"
 
@@ -287,11 +287,11 @@ msgstr "Gumb pulta"
 msgid "Pattern"
 msgstr "Vzorec"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:107
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:107
 msgid "Popup menu at center of screen"
 msgstr "Pojavni meni na sredini zaslona"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:106
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:106
 msgid "Popup menu at current mouse position"
 msgstr "Pojavni meni pri trenutnem položaju miške"
 
@@ -321,11 +321,11 @@ msgstr "Postavi d_ejanja ob iskalno polje"
 msgid "Position pro_file on bottom"
 msgstr "Postavi pro_fil na dno"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:108
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:108
 msgid "Print available menu instance IDs"
 msgstr "Izpiši ID razpoložljivih primerkov"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:110
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:110
 msgid "Print version information and exit"
 msgstr "Izpiši informacijo o verziji in končaj"
 
@@ -397,7 +397,7 @@ msgstr "Izbira ikone"
 msgid "Session Commands"
 msgstr "Dejanja seje"
 
-#: ../panel-plugin/whiskermenu.desktop.in:5
+#: ../panel-plugin/vibrismenu.desktop.in:5
 msgid "Show a menu to easily access installed applications"
 msgstr "Prikaži meni za preprost dostop do nameščenih programov"
 
@@ -532,9 +532,9 @@ msgid "Very Small"
 msgstr "Najmanjša"
 
 #: ../panel-plugin/settings-dialog.cpp:80
-#: ../panel-plugin/whiskermenu.desktop.in:4
-msgid "Whisker Menu"
-msgstr "Whisker meni"
+#: ../panel-plugin/vibrismenu.desktop.in:4
+msgid "Vibris Menu"
+msgstr "Vibris meni"
 
 #: ../panel-plugin/settings.cpp:93
 msgid "Wikipedia"

@@ -1,17 +1,17 @@
-# Dutch translation of xfce4-whiskermenu-plugin.
+# Dutch translation of xfce4-vibrismenu-plugin.
 # Copyright (C) 2025 Graeme Gott
-# This file is distributed under the same license as the xfce4-whiskermenu-plugin package.
+# This file is distributed under the same license as the xfce4-vibrismenu-plugin package.
 # 
 # Translators:
 # Pjotr <pjotrvertaalt@gmail.com>, 2013-2025
 msgid ""
 msgstr ""
-"Project-Id-Version: Whisker Menu\n"
+"Project-Id-Version: Vibris Menu\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-01-16 14:38-0500\n"
 "PO-Revision-Date: 2013-06-20 11:26+0000\n"
 "Last-Translator: Pjotr <pjotrvertaalt@gmail.com>, 2013-2025\n"
-"Language-Team: Dutch (http://app.transifex.com/gottcode/xfce4-whiskermenu-plugin/language/nl/)\n"
+"Language-Team: Dutch (http://app.transifex.com/gottcode/xfce4-vibrismenu-plugin/language/nl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -92,7 +92,7 @@ msgstr "_Opdracht:"
 msgid "Categ_ory icon size:"
 msgstr "Grootte van categoriepictogram:"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:109
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:109
 msgid "Choose which menu to popup by instance ID"
 msgstr "Kies welk menu er moet opduiken per instantie-ID"
 
@@ -101,7 +101,7 @@ msgid "Clear Recently Used"
 msgstr "Verwijder 'onlangs gebruikt'"
 
 #: ../panel-plugin/plugin.cpp:419
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:128
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:128
 msgid "Copyright © 2013-2025 Graeme Gott"
 msgstr "Auteursrecht © 2013-2025 Graeme Gott"
 
@@ -282,11 +282,11 @@ msgstr "Werkbalkknop"
 msgid "Pattern"
 msgstr "Patroon"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:107
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:107
 msgid "Popup menu at center of screen"
 msgstr "Opduikmenu in het midden van het scherm"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:106
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:106
 msgid "Popup menu at current mouse position"
 msgstr "Opduikmenu bij huidige muispositie"
 
@@ -316,11 +316,11 @@ msgstr "Plaats opdrachten naast zoekvak"
 msgid "Position pro_file on bottom"
 msgstr "Plaats profiel onderaan"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:108
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:108
 msgid "Print available menu instance IDs"
 msgstr "Toon beschikbare instantie-ID's voor het menu"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:110
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:110
 msgid "Print version information and exit"
 msgstr "Toon versie-informatie en sluit af"
 
@@ -392,7 +392,7 @@ msgstr "Kies een pictogram"
 msgid "Session Commands"
 msgstr "Sessie-opdrachten"
 
-#: ../panel-plugin/whiskermenu.desktop.in:5
+#: ../panel-plugin/vibrismenu.desktop.in:5
 msgid "Show a menu to easily access installed applications"
 msgstr "Toon een menu om geïnstalleerde toepassingen eenvoudig op te starten"
 
@@ -527,9 +527,9 @@ msgid "Very Small"
 msgstr "Heel klein"
 
 #: ../panel-plugin/settings-dialog.cpp:80
-#: ../panel-plugin/whiskermenu.desktop.in:4
-msgid "Whisker Menu"
-msgstr "Whiskermenu"
+#: ../panel-plugin/vibrismenu.desktop.in:4
+msgid "Vibris Menu"
+msgstr "Vibrismenu"
 
 #: ../panel-plugin/settings.cpp:93
 msgid "Wikipedia"

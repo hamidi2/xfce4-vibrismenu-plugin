@@ -15,8 +15,8 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WHISKERMENU_PROFILE_H
-#define WHISKERMENU_PROFILE_H
+#ifndef VIBRISMENU_PROFILE_H
+#define VIBRISMENU_PROFILE_H
 
 #include <gtk/gtk.h>
 
@@ -27,7 +27,7 @@ extern "C"
 }
 #endif
 
-namespace WhiskerMenu
+namespace VibrisMenu
 {
 
 class Window;
@@ -79,4 +79,4 @@ private:
 
 }
 
-#endif // WHISKERMENU_PROFILE_H
+#endif // VIBRISMENU_PROFILE_H

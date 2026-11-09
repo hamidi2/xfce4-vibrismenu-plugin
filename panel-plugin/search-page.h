@@ -15,8 +15,8 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WHISKERMENU_SEARCH_PAGE_H
-#define WHISKERMENU_SEARCH_PAGE_H
+#ifndef VIBRISMENU_SEARCH_PAGE_H
+#define VIBRISMENU_SEARCH_PAGE_H
 
 #include "page.h"
 #include "query.h"
@@ -25,7 +25,7 @@
 #include <string>
 #include <vector>
 
-namespace WhiskerMenu
+namespace VibrisMenu
 {
 
 class SearchPage : public Page
@@ -98,4 +98,4 @@ private:
 
 }
 
-#endif // WHISKERMENU_SEARCH_PAGE_H
+#endif // VIBRISMENU_SEARCH_PAGE_H

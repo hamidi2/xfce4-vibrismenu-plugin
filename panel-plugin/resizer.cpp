@@ -20,7 +20,7 @@
 #include "slot.h"
 #include "window.h"
 
-using namespace WhiskerMenu;
+using namespace VibrisMenu;
 
 //-----------------------------------------------------------------------------
 

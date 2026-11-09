@@ -1,6 +1,6 @@
-# Hungarian translation of xfce4-whiskermenu-plugin.
+# Hungarian translation of xfce4-vibrismenu-plugin.
 # Copyright (C) 2023 Graeme Gott
-# This file is distributed under the same license as the xfce4-whiskermenu-plugin package.
+# This file is distributed under the same license as the xfce4-vibrismenu-plugin package.
 # 
 # Translators:
 # Gábor Horváth <xazax.hun@gmail.com>, 2013,2016,2018
@@ -13,12 +13,12 @@
 # user14 <nleknh@gmail.com>, 2016
 msgid ""
 msgstr ""
-"Project-Id-Version: Whisker Menu\n"
+"Project-Id-Version: Vibris Menu\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-08-17 11:38-0400\n"
 "PO-Revision-Date: 2013-06-20 11:26+0000\n"
 "Last-Translator: Kisbenedek Márton <kmarton815@gmail.com>, 2016,2020,2023\n"
-"Language-Team: Hungarian (http://app.transifex.com/gottcode/xfce4-whiskermenu-plugin/language/hu/)\n"
+"Language-Team: Hungarian (http://app.transifex.com/gottcode/xfce4-vibrismenu-plugin/language/hu/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -95,7 +95,7 @@ msgstr "P_arancs:"
 msgid "Categ_ory icon size:"
 msgstr "_Kategória ikon méret:"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:109
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:109
 msgid "Choose which menu to popup by instance ID"
 msgstr ""
 
@@ -104,7 +104,7 @@ msgid "Clear Recently Used"
 msgstr "Előzmények törlése"
 
 #: ../panel-plugin/plugin.cpp:414
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:128
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:128
 msgid "Copyright © 2013-2025 Graeme Gott"
 msgstr "Minden jog fenntartva © 2013-2025 Graeme Gott"
 
@@ -281,11 +281,11 @@ msgstr "Panel gomb"
 msgid "Pattern"
 msgstr "Minta"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:107
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:107
 msgid "Popup menu at center of screen"
 msgstr "Felugró ablak a képernyő közepén"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:106
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:106
 msgid "Popup menu at current mouse position"
 msgstr "Felugró ablak az egér pozíciójában"
 
@@ -315,11 +315,11 @@ msgstr "Parancsok elhelyezése a kereső_mező mellé"
 msgid "Position pro_file on bottom"
 msgstr "Profil elhelyezése alul"
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:108
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:108
 msgid "Print available menu instance IDs"
 msgstr ""
 
-#: ../panel-plugin/xfce4-popup-whiskermenu.cpp:110
+#: ../panel-plugin/xfce4-popup-vibrismenu.cpp:110
 msgid "Print version information and exit"
 msgstr "Verzió információ kiírása és kilépés"
 
@@ -387,7 +387,7 @@ msgstr "Válasszon egy ikont"
 msgid "Session Commands"
 msgstr "Munkamenet parancsok"
 
-#: ../panel-plugin/whiskermenu.desktop.in:6
+#: ../panel-plugin/vibrismenu.desktop.in:6
 msgid "Show a menu to easily access installed applications"
 msgstr "menü megjelenítése a telepített alkalmazások könnyű eléréséhez"
 
@@ -522,9 +522,9 @@ msgid "Very Small"
 msgstr "Nagyon Kicsi"
 
 #: ../panel-plugin/settings-dialog.cpp:80
-#: ../panel-plugin/whiskermenu.desktop.in:5
-msgid "Whisker Menu"
-msgstr "Whisker Menü"
+#: ../panel-plugin/vibrismenu.desktop.in:5
+msgid "Vibris Menu"
+msgstr "Vibris Menü"
 
 #: ../panel-plugin/settings.cpp:100
 msgid "Wikipedia"

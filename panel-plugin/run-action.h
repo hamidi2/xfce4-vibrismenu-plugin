@@ -15,14 +15,14 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WHISKERMENU_RUN_ACTION_H
-#define WHISKERMENU_RUN_ACTION_H
+#ifndef VIBRISMENU_RUN_ACTION_H
+#define VIBRISMENU_RUN_ACTION_H
 
 #include "element.h"
 
 #include <string>
 
-namespace WhiskerMenu
+namespace VibrisMenu
 {
 
 class RunAction : public Element
@@ -39,4 +39,4 @@ private:
 
 }
 
-#endif // WHISKERMENU_RUN_ACTION_H
+#endif // VIBRISMENU_RUN_ACTION_H

@@ -22,7 +22,7 @@
 
 #include <libxfce4ui/libxfce4ui.h>
 
-using namespace WhiskerMenu;
+using namespace VibrisMenu;
 
 //-----------------------------------------------------------------------------
 
@@ -128,7 +128,7 @@ GtkWidget* Command::get_menuitem()
 		return m_menuitem;
 	}
 
-	m_menuitem = whiskermenu_image_menu_item_new_with_mnemonic(m_icon, m_mnemonic);
+	m_menuitem = vibrismenu_image_menu_item_new_with_mnemonic(m_icon, m_mnemonic);
 
 	connect(m_menuitem, "activate",
 		[this](GtkMenuItem*)
