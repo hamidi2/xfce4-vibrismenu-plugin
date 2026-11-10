@@ -1902,8 +1902,15 @@ bool VibrisMenu::Window::set_size(int width, int height)
 			}
 			gtk_widget_get_preferred_width(v, &lav_mn, &lav_nt);
 		}
-		gtk_widget_get_preferred_width(GTK_WIDGET(m_category_buttons), &cat_mn, &cat_nt);
-		int content_w = (int)lav_nt + (int)cat_nt + 26 + 12;
+		// The categories sit beside the list (plus the gap between them),
+		// or above it when horizontal; search results show no categories
+		int content_w = (int)lav_nt;
+		if (page != m_search_results)
+		{
+			gtk_widget_get_preferred_width(GTK_WIDGET(m_category_buttons), &cat_mn, &cat_nt);
+			content_w = m_layout_categories_horizontal ? std::max(content_w, (int)cat_nt) : content_w + (int)cat_nt + 12;
+		}
+		content_w += 26;
 		if (content_w > 300)
 		{
 			width = content_w;
