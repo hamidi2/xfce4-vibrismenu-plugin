@@ -409,6 +409,10 @@ int LauncherIconView::measure_item_width() const
 		return s_item_width;
 	}
 
+	// measure the labels themselves, not the size fixed after the last measure
+	gtk_cell_renderer_set_fixed_size(m_text_renderer, -1, -1);
+	gint text_w = 0, text_h = 0;
+
 	GtkCellAreaContext* context = gtk_cell_area_create_context(area);
 	GtkTreeIter iter;
 	bool any = false;
@@ -424,6 +428,11 @@ int LauncherIconView::measure_item_width() const
 			}
 			gtk_cell_area_apply_attributes(area, model, &iter, false, false);
 			gtk_cell_area_get_preferred_width(area, context, GTK_WIDGET(m_view), nullptr, nullptr);
+			gint w = 0, h = 0;
+			gtk_cell_renderer_get_preferred_width(m_text_renderer, GTK_WIDGET(m_view), nullptr, &w);
+			gtk_cell_renderer_get_preferred_height_for_width(m_text_renderer, GTK_WIDGET(m_view), w, nullptr, &h);
+			text_w = std::max(text_w, w);
+			text_h = std::max(text_h, h);
 			any = true;
 		} while (gtk_tree_model_iter_next(model, &iter));
 	}
@@ -434,6 +443,11 @@ int LauncherIconView::measure_item_width() const
 		gint minimum = 0, natural = 0;
 		gtk_cell_area_context_get_preferred_width(context, &minimum, &natural);
 		width = std::max(1, static_cast<int>(minimum));
+		// Every label is one line and no item is narrower than the widest, so
+		// the label cell gets the widest label's size. GtkIconView measures
+		// every item's text on each relayout; with a fixed size that is free
+		// — it was most of the cost of a drag step with many favorites.
+		gtk_cell_renderer_set_fixed_size(m_text_renderer, text_w, text_h);
 	}
 	g_object_unref(context);
 	return width;

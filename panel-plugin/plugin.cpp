@@ -332,9 +332,9 @@ std::string Plugin::get_button_title_default()
 
 //-----------------------------------------------------------------------------
 
-void Plugin::get_menu_position(int* x, int* y) const
+void Plugin::get_menu_position(int* x, int* y, GtkWidget* sized_as) const
 {
-	xfce_panel_plugin_position_widget(m_plugin, m_window->get_widget(), m_button, x, y);
+	xfce_panel_plugin_position_widget(m_plugin, sized_as ? sized_as : m_window->get_widget(), m_button, x, y);
 }
 
 //-----------------------------------------------------------------------------

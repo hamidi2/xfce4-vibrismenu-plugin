@@ -19,6 +19,9 @@
 
 #include <gio/gio.h>
 
+#include <map>
+#include <tuple>
+
 //-----------------------------------------------------------------------------
 
 struct _VibrisMenuIconRenderer
@@ -87,6 +90,91 @@ static void vibrismenu_icon_renderer_get_preferred_height(GtkCellRenderer* rende
 
 //-----------------------------------------------------------------------------
 
+// Rendered icons, kept for the life of the icon theme. Without this every
+// paint looked up and loaded every visible icon again, which made painting a
+// menu with many favorites slow enough to hold back dragging its edge.
+// Each key holds a reference to its GIcon, so its address cannot be reused.
+
+namespace
+{
+
+typedef std::tuple<GtkIconTheme*, GIcon*, bool, gint, gint> IconKey;
+std::map<IconKey, cairo_surface_t*> icon_cache;
+
+void icon_cache_clear()
+{
+	for (auto& entry : icon_cache)
+	{
+		g_object_unref(std::get<1>(entry.first));
+		if (entry.second)
+		{
+			cairo_surface_destroy(entry.second);
+		}
+	}
+	icon_cache.clear();
+}
+
+cairo_surface_t* load_icon(GtkIconTheme* icon_theme, GdkWindow* window, GIcon* gicon, bool launcher, gint size, gint scale)
+{
+	const GtkIconLookupFlags flags = GtkIconLookupFlags(GTK_ICON_LOOKUP_USE_BUILTIN | GTK_ICON_LOOKUP_FORCE_SIZE);
+	cairo_surface_t* surface = nullptr;
+	GtkIconInfo* icon_info = gtk_icon_theme_lookup_by_gicon_for_scale(icon_theme, gicon, size, scale, flags);
+	if (icon_info)
+	{
+		surface = gtk_icon_info_load_surface(icon_info, window, nullptr);
+		g_object_unref(icon_info);
+	}
+	if (!surface)
+	{
+		icon_info = gtk_icon_theme_lookup_icon_for_scale(icon_theme,
+				launcher ? "application-x-executable" : "applications-other",
+				size, scale, flags);
+		if (icon_info)
+		{
+			surface = gtk_icon_info_load_surface(icon_info, window, nullptr);
+			g_object_unref(icon_info);
+		}
+	}
+	return surface;
+}
+
+cairo_surface_t* icon_surface(GtkIconTheme* icon_theme, GdkWindow* window, GIcon* gicon, bool launcher, gint size, gint scale)
+{
+	static GtkIconTheme* watched = nullptr;
+	if (icon_theme != watched)
+	{
+		// a theme change (or another screen's theme) starts over
+		icon_cache_clear();
+		if (watched)
+		{
+			g_signal_handlers_disconnect_by_func(watched, reinterpret_cast<gpointer>(&icon_cache_clear), nullptr);
+			g_object_unref(watched);
+		}
+		watched = GTK_ICON_THEME(g_object_ref(icon_theme));
+		g_signal_connect_swapped(watched, "changed", G_CALLBACK(&icon_cache_clear), nullptr);
+	}
+
+	const IconKey key(icon_theme, gicon, launcher, size, scale);
+	auto found = icon_cache.find(key);
+	if (found != icon_cache.end())
+	{
+		return found->second;
+	}
+	if (icon_cache.size() >= 4096)
+	{
+		// bound the memory held for icons no longer shown (reloaded menus get new GIcons)
+		icon_cache_clear();
+	}
+	cairo_surface_t* surface = load_icon(icon_theme, window, gicon, launcher, size, scale);
+	g_object_ref(gicon);
+	icon_cache.emplace(key, surface);
+	return surface;
+}
+
+}
+
+//-----------------------------------------------------------------------------
+
 static void vibrismenu_icon_renderer_render(GtkCellRenderer* renderer, cairo_t* cr, GtkWidget* widget,
 		const GdkRectangle*, const GdkRectangle* cell_area, GtkCellRendererState)
 {
@@ -104,36 +192,9 @@ static void vibrismenu_icon_renderer_render(GtkCellRenderer* renderer, cairo_t* 
 	}
 
 	const gint scale = gtk_widget_get_scale_factor(widget);
-	GtkIconTheme* icon_theme = gtk_icon_theme_get_for_screen(gtk_widget_get_screen(widget));
-	GdkWindow* window = gtk_widget_get_window(widget);
-
-	cairo_surface_t* surface = nullptr;
-
-	GtkIconInfo* icon_info = gtk_icon_theme_lookup_by_gicon_for_scale(icon_theme,
-			icon_renderer->gicon,
-			icon_renderer->size,
-			scale,
-			GtkIconLookupFlags(GTK_ICON_LOOKUP_USE_BUILTIN | GTK_ICON_LOOKUP_FORCE_SIZE));
-	if (icon_info)
-	{
-		surface = gtk_icon_info_load_surface(icon_info, window, nullptr);
-		g_object_unref(icon_info);
-	}
-
-	if (!surface)
-	{
-		icon_info = gtk_icon_theme_lookup_icon_for_scale(icon_theme,
-				icon_renderer->launcher ? "application-x-executable" : "applications-other",
-				icon_renderer->size,
-				scale,
-				GtkIconLookupFlags(GTK_ICON_LOOKUP_USE_BUILTIN | GTK_ICON_LOOKUP_FORCE_SIZE));
-		if (icon_info)
-		{
-			surface = gtk_icon_info_load_surface(icon_info, window, nullptr);
-			g_object_unref(icon_info);
-		}
-	}
-
+	cairo_surface_t* surface = icon_surface(gtk_icon_theme_get_for_screen(gtk_widget_get_screen(widget)),
+			gtk_widget_get_window(widget), icon_renderer->gicon, icon_renderer->launcher != nullptr,
+			icon_renderer->size, scale);
 	if (!surface)
 	{
 		return;
@@ -152,8 +213,6 @@ static void vibrismenu_icon_renderer_render(GtkCellRenderer* renderer, cairo_t* 
 		cairo_rectangle(cr, draw_area.x, draw_area.y, draw_area.width, draw_area.height);
 		cairo_fill(cr);
 	}
-
-	cairo_surface_destroy(surface);
 }
 
 //-----------------------------------------------------------------------------

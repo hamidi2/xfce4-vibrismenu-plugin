@@ -458,6 +458,11 @@ VibrisMenu::Window::Window(Plugin* plugin) :
 VibrisMenu::Window::~Window()
 {
 	thaw();
+	if (m_position_sizer)
+	{
+		gtk_widget_destroy(m_position_sizer);
+		g_object_unref(m_position_sizer);
+	}
 	if (m_last_category)
 	{
 		g_object_remove_weak_pointer(G_OBJECT(m_last_category), reinterpret_cast<gpointer*>(&m_last_category));
@@ -1432,22 +1437,21 @@ bool VibrisMenu::Window::tall_supported() const
 void VibrisMenu::Window::menu_position(int* x, int* y)
 {
 	// xfce_panel_plugin_position_widget() places the window by its size
-	// request; in tall mode that is the tall window, so let it see the menu
+	// request; in tall mode that is the tall window, so let it measure a
+	// hidden stand-in of the menu's size instead. Changing the real window's
+	// request, even for a moment, queues a repaint of the whole workarea.
 	if (!m_tall)
 	{
 		m_plugin->get_menu_position(x, y);
 		return;
 	}
-	const int margin = gtk_widget_get_margin_top(m_frame);
-	const int left = gtk_widget_get_margin_start(m_frame);
-	gtk_widget_set_margin_top(m_frame, 0);
-	gtk_widget_set_margin_start(m_frame, 0);
-	gtk_widget_set_size_request(GTK_WIDGET(m_window), m_geometry.width, m_geometry.height);
-	m_plugin->get_menu_position(x, y);
-	gtk_widget_set_margin_top(m_frame, margin);
-	gtk_widget_set_margin_start(m_frame, left);
-	gtk_widget_set_size_request(GTK_WIDGET(m_window), m_tall_w > 0 ? m_tall_w : m_geometry.width,
-			m_tall_bottom > 0 ? m_tall_bottom - m_tall_top : m_geometry.height);
+	if (!m_position_sizer)
+	{
+		m_position_sizer = gtk_window_new(GTK_WINDOW_POPUP);
+		g_object_ref_sink(m_position_sizer);
+	}
+	gtk_widget_set_size_request(m_position_sizer, m_geometry.width, m_geometry.height);
+	m_plugin->get_menu_position(x, y, m_position_sizer);
 }
 
 //-----------------------------------------------------------------------------

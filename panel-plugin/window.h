@@ -157,6 +157,7 @@ private:
 	guint m_page_width_id = 0;
 	guint m_thaw_id = 0;
 	GdkRectangle m_tall_painted = {0, 0, 0, 0};
+	GtkWidget* m_position_sizer = nullptr; // hidden stand-in measured by menu_position() in tall mode
 	gulong m_thaw_alloc_id = 0;
 	bool m_frozen = false;
 	// Minimum height of the menu content (taken at drag start) — GTK refuses smaller;
