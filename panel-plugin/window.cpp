@@ -1451,6 +1451,9 @@ void VibrisMenu::Window::menu_position(int* x, int* y)
 		g_object_ref_sink(m_position_sizer);
 	}
 	gtk_widget_set_size_request(m_position_sizer, m_geometry.width, m_geometry.height);
+	// a hidden widget does not drop its cached size when its request changes,
+	// and the menu would be placed by the size it had the first time
+	gtk_widget_queue_resize(m_position_sizer);
 	m_plugin->get_menu_position(x, y, m_position_sizer);
 }
 
