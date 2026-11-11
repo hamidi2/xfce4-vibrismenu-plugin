@@ -36,6 +36,10 @@ public:
 	// the same main-loop turn as the height change, so both are painted in
 	// one frame (never the new height with the old columns or a scrollbar)
 	void relayout_if_capacity_changed();
+	bool is_relayout() const
+	{
+		return m_inplace;
+	}
 	void resync_now();
 	explicit FavoritesPage(Window* window);
 	~FavoritesPage();

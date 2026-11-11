@@ -862,15 +862,28 @@ int VibrisMenu::Window::favorites_capacity_rows() const
 	// to the first column but still two columns" (one jump, not two)
 	// frame = the menu itself (window minus the tall-mode margin)
 	const int win_alloc = gtk_widget_get_allocated_height(m_frame ? m_frame : GTK_WIDGET(m_window));
-	const int alloc_h = gtk_widget_get_allocated_height(v);
-	int avail = 0;
-	if ((win_alloc > 1) && (alloc_h > 1) && (win_alloc == m_geometry.height))
+	// The list that is shown is the one to measure: a hidden page keeps the
+	// allocation it had when it was last shown, and the rows of a search made
+	// in a menu dragged taller would still be counted for the old height.
+	// Each page has its own chrome (search results show no categories).
+	Page* active = const_cast<Window*>(this)->get_active_page();
+	const bool other = active && (active != m_favorites);
+	if (other && (active != m_chrome_page))
 	{
-		m_last_chrome = win_alloc - alloc_h;
+		m_chrome_page = active;
+		m_page_chrome = 0;
 	}
-	if (m_last_chrome > 0)
+	int& chrome = other ? m_page_chrome : m_last_chrome;
+	const int alloc_h = gtk_widget_get_allocated_height(other ? active->get_widget() : v);
+	int avail = 0;
+	if ((win_alloc > 1) && (alloc_h > 1) && (win_alloc == m_geometry.height)
+			&& (!other || gtk_widget_get_mapped(active->get_widget())))
 	{
-		avail = m_geometry.height - m_last_chrome;
+		chrome = win_alloc - alloc_h;
+	}
+	if (chrome > 0)
+	{
+		avail = m_geometry.height - chrome;
 	}
 	else if (alloc_h > 1)
 	{
@@ -1202,6 +1215,12 @@ void VibrisMenu::Window::set_items()
 	connect(m_favorites->get_view()->get_model(), "row-inserted",
 		[this](GtkTreeModel*, GtkTreePath*, GtkTreeIter*)
 		{
+			if (m_favorites->is_relayout())
+			{
+				// our own cells for a new column layout, not a favorite
+				// the user added: leave the page and the search alone
+				return;
+			}
 			show_favorites();
 		});
 }

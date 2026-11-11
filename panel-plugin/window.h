@@ -166,6 +166,8 @@ private:
 	// Real chrome of the last consistent frame (win_alloc - view_alloc) — basis of estimates
 	// (mutable: favorites_capacity_rows is const and updates it)
 	mutable int m_last_chrome = 0;
+	mutable int m_page_chrome = 0;
+	mutable Page* m_chrome_page = nullptr;
 	GdkRectangle m_monitor;
 
 	Profile* m_profile;
