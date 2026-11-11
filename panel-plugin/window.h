@@ -85,6 +85,10 @@ public:
 	void resize(int delta_x, int delta_y, int delta_width, int delta_height);
 	void apply_target_size();
 	void resize_start();
+	const GdkRectangle& get_geometry() const
+	{
+		return m_geometry;
+	}
 	void resize_end();
 	bool is_resizing() const
 	{

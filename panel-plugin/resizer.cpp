@@ -29,6 +29,7 @@ Resizer::Resizer(Edge edge, Window* window) :
 	m_cursor(nullptr),
 	m_x(0),
 	m_y(0),
+	m_start{0, 0, 0, 0},
 	m_delta_x(0),
 	m_delta_y(0),
 	m_delta_width(0),
@@ -43,6 +44,16 @@ Resizer::Resizer(Edge edge, Window* window) :
 			| GDK_ENTER_NOTIFY_MASK
 			| GDK_LEAVE_NOTIFY_MASK);
 
+	// Every motion is delivered as it arrives. GDK otherwise keeps the latest
+	// motion back until the next frame is drawn, and when no further frame
+	// came (the pointer stopped during a long step) it stayed undelivered:
+	// the menu rested a step short of the pointer until the release. Nothing
+	// is lost by this: a motion only replaces the drag target.
+	g_signal_connect(m_drawing, "realize", G_CALLBACK(+[](GtkWidget* widget, gpointer)
+		{
+			gdk_window_set_event_compression(gtk_widget_get_window(widget), FALSE);
+		}), nullptr);
+
 	connect(m_drawing, "button-press-event",
 		[this](GtkWidget*, GdkEvent* event) -> gboolean
 		{
@@ -53,10 +64,17 @@ Resizer::Resizer(Edge edge, Window* window) :
 			}
 			m_pressed = true;
 
-			m_x = event_button->x;
-			m_y = event_button->y;
+			// Screen coordinates, and the menu as it is now: every motion is
+			// then measured from this one point. Coordinates relative to the
+			// grip are relative to something that moves with each step; a
+			// motion made while a step was still being laid out was measured
+			// against the grip's old place, and the menu stopped short of
+			// the pointer until the next motion or the release.
+			m_x = event_button->x_root;
+			m_y = event_button->y_root;
 
 			m_window->resize_start();
+			m_start = m_window->get_geometry();
 
 			return GDK_EVENT_STOP;
 		});
@@ -84,11 +102,8 @@ Resizer::Resizer(Edge edge, Window* window) :
 				return GDK_EVENT_STOP;
 			}
 
-			GdkEventButton* event_button = reinterpret_cast<GdkEventButton*>(event);
-			const int delta_x = event_button->x - m_x;
-			const int delta_y = event_button->y - m_y;
-
-			m_window->resize(delta_x * m_delta_x, delta_y * m_delta_y, delta_x * m_delta_width, delta_y * m_delta_height);
+			GdkEventMotion* event_motion = reinterpret_cast<GdkEventMotion*>(event);
+			follow(event_motion->x_root, event_motion->y_root);
 
 			return GDK_EVENT_STOP;
 		});
@@ -162,6 +177,21 @@ Resizer::Resizer(Edge edge, Window* window) :
 		break;
 	}
 	m_cursor = gdk_cursor_new_from_name(gtk_widget_get_display(m_drawing), type);
+}
+
+//-----------------------------------------------------------------------------
+
+void Resizer::follow(int x_root, int y_root)
+{
+	const int delta_x = x_root - m_x;
+	const int delta_y = y_root - m_y;
+
+	// where the pointer asks the menu to be, as a change from where it is
+	const GdkRectangle& now = m_window->get_geometry();
+	m_window->resize(m_start.x + delta_x * m_delta_x - now.x,
+			m_start.y + delta_y * m_delta_y - now.y,
+			m_start.width + delta_x * m_delta_width - now.width,
+			m_start.height + delta_y * m_delta_height - now.height);
 }
 
 //-----------------------------------------------------------------------------
