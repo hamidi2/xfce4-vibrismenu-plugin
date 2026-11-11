@@ -15,7 +15,7 @@ contributor and translator of that project. Vibris Menu uses its own names
 ## Features
 - Multi-column grid on every page, columns filled top to bottom
 - Configurable number of columns; the menu width follows the widest item
-- Resize by dragging any edge of the menu
+- Resize by dragging any edge of the menu; the size can be locked
 - Searching for applications, bookmarks, and running commands
 - Startup page setting, including "last used category"
 - One spacing setting for every gap of the menu, adjusted with the menu

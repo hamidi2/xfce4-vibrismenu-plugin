@@ -1,3 +1,11 @@
+1.0.4 (2026-11-12)
+======
+- Lock the menu size: a setting that keeps the edges from being dragged
+- Dragging: the menu stops exactly at the pointer; the last movement is no
+  longer held back until the button is released
+- Without a compositor: the menu narrows again after a search, its edge
+  follows the pointer on the way down, and it stays on the panel
+
 1.0.3 (2026-11-11)
 ======
 - Spacing page in the settings: one number for every gap of the menu and
