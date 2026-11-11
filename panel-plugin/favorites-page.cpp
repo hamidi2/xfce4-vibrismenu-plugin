@@ -677,7 +677,7 @@ void FavoritesPage::view_created()
 				}, this, nullptr);
 				m_sb_shown = overflow;
 			}
-			if (get_window()->is_resizing())
+			if (get_window()->is_resizing() || get_window()->fit_after_show())
 			{
 				// Relayout only on a real capacity change — not on every drag frame. A needless
 				// rebuild emptied and refilled the model, making the items flicker

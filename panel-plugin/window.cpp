@@ -49,6 +49,30 @@ using namespace VibrisMenu;
 
 //-----------------------------------------------------------------------------
 
+// The menu's offset from the left edge of its tall window. A margin "start"
+// is the right side in a right-to-left session, where the menu then opened
+// at the far side of the screen, away from its background and its button.
+static void set_frame_left(GtkWidget* frame, int left)
+{
+	if (gtk_widget_get_direction(frame) == GTK_TEXT_DIR_RTL)
+	{
+		gtk_widget_set_margin_end(frame, left);
+	}
+	else
+	{
+		gtk_widget_set_margin_start(frame, left);
+	}
+}
+
+static int get_frame_left(GtkWidget* frame)
+{
+	return (gtk_widget_get_direction(frame) == GTK_TEXT_DIR_RTL)
+			? gtk_widget_get_margin_end(frame)
+			: gtk_widget_get_margin_start(frame);
+}
+
+//-----------------------------------------------------------------------------
+
 VibrisMenu::Window::Window(Plugin* plugin) :
 	m_plugin(plugin),
 	m_window(nullptr),
@@ -322,7 +346,7 @@ VibrisMenu::Window::Window(Plugin* plugin) :
 	gtk_box_pack_start(m_title_box, GTK_WIDGET(m_commands_box), false, false, 0);
 	// the avatar is drawn with a 2px inset (profile.cpp): 4 + 2 = 6 visible
 	gtk_widget_set_margin_start(m_profile->get_picture(), 6);
-	gtk_widget_set_margin_end(m_profile->get_picture(), 6);
+	gtk_widget_set_margin_end(m_profile->get_picture(), 0);
 	// Both margins: in an RTL session margin_start flips sides. The icon
 	// glyphs carry their own transparent border inside the button, so the
 	// margin is smaller than 6 for the visible gap to the edge to be 6px
@@ -779,12 +803,12 @@ void VibrisMenu::Window::show(const Position position)
 	GtkRequisition size;
 	if (m_tall)
 	{
-		const int left = gtk_widget_get_margin_start(m_frame);
+		const int left = get_frame_left(m_frame);
 		gtk_widget_set_margin_top(m_frame, 0);
-		gtk_widget_set_margin_start(m_frame, 0);
+		set_frame_left(m_frame, 0);
 		gtk_widget_get_preferred_size(m_frame, &size, nullptr);
 		gtk_widget_set_margin_top(m_frame, std::max(0, m_geometry.y - m_tall_top));
-		gtk_widget_set_margin_start(m_frame, left);
+		set_frame_left(m_frame, left);
 	}
 	else
 	{
@@ -813,6 +837,26 @@ void VibrisMenu::Window::show(const Position position)
 		m_geometry.y = m_max_bottom - m_geometry.height;
 		move_window();
 	}
+
+	// The capacity check above ran while the window was hidden and not yet
+	// at the size it is shown with: the first time after a start that left
+	// the favorites in one column too tall, cut off at the bottom. The
+	// favorites fit their columns once more when the menu is first laid out
+	// at its real size (fit_after_show).
+	m_fit_after_show = true;
+}
+
+//-----------------------------------------------------------------------------
+
+bool VibrisMenu::Window::fit_after_show()
+{
+	if (!m_fit_after_show || !m_frame
+			|| (gtk_widget_get_allocated_height(m_frame) != m_geometry.height))
+	{
+		return false;
+	}
+	m_fit_after_show = false;
+	return true;
 }
 
 //-----------------------------------------------------------------------------
@@ -1509,8 +1553,9 @@ void VibrisMenu::Window::tall_apply()
 	// painted in one frame — no X configure, no round trip to the WM, no
 	// frame drawn at the old size.
 	const int left = std::max(0, m_geometry.x - m_workarea.x);
-	gtk_widget_set_halign(m_frame, GTK_ALIGN_START);
-	gtk_widget_set_margin_start(m_frame, left);
+	// the visual left: in a right-to-left session START is the right side
+	gtk_widget_set_halign(m_frame, (gtk_widget_get_direction(m_frame) == GTK_TEXT_DIR_RTL) ? GTK_ALIGN_END : GTK_ALIGN_START);
+	set_frame_left(m_frame, left);
 	gtk_widget_set_size_request(m_frame, m_geometry.width, -1);
 
 	GdkWindow* win = gtk_widget_get_window(GTK_WIDGET(m_window));
@@ -1613,7 +1658,7 @@ void VibrisMenu::Window::tall_update_mode(bool at_button)
 	if (!tall)
 	{
 		gtk_widget_set_margin_top(m_frame, 0);
-		gtk_widget_set_margin_start(m_frame, 0);
+		set_frame_left(m_frame, 0);
 		gtk_widget_set_halign(m_frame, GTK_ALIGN_FILL);
 		gtk_widget_set_size_request(m_frame, -1, -1);
 		GdkWindow* win = gtk_widget_get_window(GTK_WIDGET(m_window));
@@ -1737,7 +1782,7 @@ gboolean VibrisMenu::Window::on_draw_event(GtkWidget* widget, cairo_t* cr)
 		cairo_paint(cr);
 		cairo_restore(cr);
 		const double top = gtk_widget_get_margin_top(m_frame);
-		const double left = gtk_widget_get_margin_start(m_frame);
+		const double left = get_frame_left(m_frame);
 		cairo_push_group(cr);
 		gtk_render_background(context, cr, left, top, m_geometry.width, height - top);
 		cairo_pop_group_to_source(cr);
@@ -1939,6 +1984,12 @@ bool VibrisMenu::Window::set_size(int width, int height)
 				{
 					icon_view->set_column_major(cols, rows);
 				}
+				// The scrollbar exists only when the items do not fit in every
+				// column, decided here by count. Left to GTK it is decided by
+				// pixels, a layout pass late: it showed for a frame whenever
+				// items moved between columns.
+				gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(page->get_widget()), GTK_POLICY_NEVER,
+						(n > cols * rows) ? GTK_POLICY_AUTOMATIC : GTK_POLICY_EXTERNAL);
 			}
 			gtk_widget_get_preferred_width(v, &lav_mn, &lav_nt);
 		}
@@ -1948,9 +1999,9 @@ bool VibrisMenu::Window::set_size(int width, int height)
 		if (page != m_search_results)
 		{
 			gtk_widget_get_preferred_width(GTK_WIDGET(m_category_buttons), &cat_mn, &cat_nt);
-			content_w = m_layout_categories_horizontal ? std::max(content_w, (int)cat_nt) : content_w + (int)cat_nt + wm_settings->spacing_sections + 6;
+			content_w = m_layout_categories_horizontal ? std::max(content_w, (int)cat_nt) : content_w + (int)cat_nt + wm_settings->spacing + 6;
 		}
-		content_w += 2 * wm_settings->spacing_edge + 14;
+		content_w += 2 * wm_settings->spacing + 14;
 		if (content_w > 300)
 		{
 			width = content_w;
@@ -2265,13 +2316,13 @@ void VibrisMenu::Window::update_layout()
 	if (m_layout_categories_horizontal)
 	{
 		gtk_grid_set_column_spacing(m_contents_box, 0);
-		gtk_grid_set_row_spacing(m_contents_box, wm_settings->spacing_sections);
+		gtk_grid_set_row_spacing(m_contents_box, wm_settings->spacing);
 
 		gtk_style_context_add_class(context, m_layout_categories_alternate ? "bottom" : "top");
 	}
 	else
 	{
-		gtk_grid_set_column_spacing(m_contents_box, 6);
+		gtk_grid_set_column_spacing(m_contents_box, wm_settings->spacing);
 		gtk_grid_set_row_spacing(m_contents_box, 0);
 
 		gtk_style_context_add_class(context, (m_layout_ltr == m_layout_categories_alternate) ? "left" : "right");
@@ -2441,24 +2492,22 @@ void VibrisMenu::Window::set_preview(bool preview)
 
 int VibrisMenu::Window::spacing_signature() const
 {
-	// the five settings (0..32 each) packed into one number
-	return wm_settings->spacing_edge
-			| (wm_settings->spacing_sections << 6)
-			| (wm_settings->spacing_items << 12)
-			| (wm_settings->spacing_columns << 18)
-			| (wm_settings->spacing_rows << 24);
+	// the two settings (0..32 each) packed into one number
+	return wm_settings->spacing | (wm_settings->spacing_rows << 6);
 }
 
 //-----------------------------------------------------------------------------
 
 void VibrisMenu::Window::apply_spacing()
 {
-	// Every gap of the menu, from the five spacing settings. Called
-	// whenever the menu is shown and whenever one of them changes.
-	const int edge = wm_settings->spacing_edge;
-	const int sections = wm_settings->spacing_sections;
-	const int items = wm_settings->spacing_items;
-	const int old_rows = m_spacing_applied >> 24;
+	// Every gap of the menu is the one spacing setting: around the menu,
+	// between its parts, between an icon and its label, between columns.
+	// Nothing in the menu adds a gap of its own on top of it. Only the gap
+	// between rows is separate (none by default: a compact list).
+	const int edge = wm_settings->spacing;
+	const int sections = edge;
+	const int items = edge;
+	const int old_rows = m_spacing_applied >> 6;
 	m_spacing_applied = spacing_signature();
 
 	// around the menu
@@ -2468,8 +2517,7 @@ void VibrisMenu::Window::apply_spacing()
 		gtk_widget_set_margin_start(widget, edge);
 		gtk_widget_set_margin_end(widget, edge);
 	}
-	// the avatar is drawn with a 2px inset of its own (profile.cpp)
-	gtk_widget_set_margin_start(m_profile->get_picture(), std::max(0, edge - 2));
+	gtk_widget_set_margin_start(m_profile->get_picture(), edge);
 
 	// between the header, the list, the categories and the search box
 	gtk_box_set_spacing(m_vbox, sections);
@@ -2479,7 +2527,7 @@ void VibrisMenu::Window::apply_spacing()
 
 	// between things that sit side by side in a row
 	gtk_box_set_spacing(m_title_box, items);
-	gtk_widget_set_margin_end(m_profile->get_picture(), items);
+	gtk_widget_set_margin_end(m_profile->get_picture(), 0);
 	gtk_box_set_spacing(m_commands_box, items);
 	// top edge and command buttons: their icons' own empty border counts
 	update_header_gaps();
@@ -2528,7 +2576,7 @@ void VibrisMenu::Window::apply_spacing()
 
 void VibrisMenu::Window::update_header_gaps()
 {
-	const int gap = wm_settings->spacing_edge;
+	const int gap = wm_settings->spacing;
 
 	// Visible command buttons in the title area, in visual left-to-right order
 	std::vector<GtkWidget*> buttons;
@@ -2578,8 +2626,7 @@ void VibrisMenu::Window::update_header_gaps()
 	const bool header_on_top = gtk_widget_get_visible(GTK_WIDGET(m_title_box)) && (position == 0);
 	const int top_margin = header_on_top && !buttons.empty() ? std::max(0, gap - top_inset) : (header_on_top ? 0 : gap);
 	gtk_widget_set_margin_top(GTK_WIDGET(m_vbox), top_margin);
-	// the avatar is drawn with a 2px inset (profile.cpp)
-	const int picture_top = header_on_top ? std::max(0, gap - 2 - top_margin) : 0;
+	const int picture_top = header_on_top ? std::max(0, gap - top_margin) : 0;
 	gtk_widget_set_margin_top(m_profile->get_picture(), picture_top);
 	// Center the name's visible letters (top of the ink down to the baseline;
 	// descenders ignored) on the avatar. Done with yalign, not margins: a

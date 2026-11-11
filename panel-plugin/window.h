@@ -98,6 +98,7 @@ public:
 	void sync_width();
 	void apply_spacing();
 	void set_preview(bool preview);
+	bool fit_after_show();
 	void freeze_until_resized();
 	void thaw();
 	void schedule_page_width();
@@ -205,10 +206,11 @@ private:
 	bool m_supports_alpha;
 	bool m_child_has_focus;
 	bool m_preview = false;
+	bool m_fit_after_show = false;
 	guint m_spacing_idle_id = 0;
 	int spacing_signature() const;
-	// the gaps the menu is built with: 6, 6, 6, 6, 0
-	int m_spacing_applied = 6 | (6 << 6) | (6 << 12) | (6 << 18);
+	// the gaps the menu is built with: 6, and 0 between rows
+	int m_spacing_applied = 6;
 	bool m_resizing;
 
 	// Tall mode (composited + RGBA, menu above a bottom panel): while shown,

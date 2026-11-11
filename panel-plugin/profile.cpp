@@ -166,9 +166,9 @@ void Profile::update_picture()
 	cairo_surface_set_device_scale(surface, scale, scale);
 	cairo_t* cr = cairo_create(surface);
 
-	// 2px optical inset: theme icon glyphs have a transparent border inside their box
-	// while the avatar filled it edge to edge, so it looked like it had less margin
-	const gint inset = 2;
+	// The avatar fills its box edge to edge: the gap around it is the
+	// menu's spacing alone, with no inset of its own to compensate for
+	const gint inset = 0;
 
 	if (wm_settings->profile_shape == Settings::ProfileRound)
 	{

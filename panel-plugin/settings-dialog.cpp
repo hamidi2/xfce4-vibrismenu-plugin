@@ -916,11 +916,11 @@ GtkWidget* SettingsDialog::init_spacing_tab()
 		Integer* setting;
 		int standard;
 	};
+	// One number for every gap: around the menu, between its parts, between
+	// an icon and its label, between columns. Rows are separate: they have
+	// no gap by default, for a compact list.
 	const Row rows[] = {
-		{ _("Around the _menu:"), &wm_settings->spacing_edge, 6 },
-		{ _("Between _sections:"), &wm_settings->spacing_sections, 6 },
-		{ _("Between an icon and its _label:"), &wm_settings->spacing_items, 6 },
-		{ _("Between _columns:"), &wm_settings->spacing_columns, 6 },
+		{ _("_Spacing:"), &wm_settings->spacing, 6 },
 		{ _("Between _rows:"), &wm_settings->spacing_rows, 0 }
 	};
 
