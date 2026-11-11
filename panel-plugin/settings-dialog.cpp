@@ -483,6 +483,17 @@ GtkWidget* SettingsDialog::init_general_tab()
 			wm_settings->menu_opacity = gtk_range_get_value(range);
 		});
 
+	// Add option to protect the size reached by dragging
+	GtkWidget* lock_size = gtk_check_button_new_with_mnemonic(_("Loc_k the menu size (its edges cannot be dragged)"));
+	gtk_grid_attach(page, lock_size, 0, 10, 2, 1);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(lock_size), wm_settings->lock_size);
+
+	connect(lock_size, "toggled",
+		[](GtkToggleButton* button)
+		{
+			wm_settings->lock_size = gtk_toggle_button_get_active(button);
+		});
+
 	GdkScreen* screen = gtk_widget_get_screen(m_window);
 	const bool enabled = gdk_screen_is_composited(screen);
 	gtk_widget_set_sensitive(label, enabled);

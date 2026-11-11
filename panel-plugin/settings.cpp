@@ -81,6 +81,7 @@ Settings::Settings(Plugin* plugin) :
 	position_categories_alternate("/position-categories-alternate", false),
 	position_categories_horizontal("/position-categories-horizontal", false),
 	stay_on_focus_out("/stay-on-focus-out", false),
+	lock_size("/lock-size", false),
 
 	profile_shape("/profile-shape", ProfileRound, ProfileRound, ProfileHidden),
 
@@ -253,6 +254,7 @@ void Settings::load(const gchar* file, bool is_default)
 	position_categories_alternate.load(rc, is_default);
 	position_categories_horizontal.load(rc, is_default);
 	stay_on_focus_out.load(rc, is_default);
+	lock_size.load(rc, is_default);
 
 	profile_shape.load(rc, is_default);
 
@@ -404,6 +406,7 @@ void Settings::property_changed(const gchar* property, const GValue* value)
 			|| position_categories_alternate.load(property, value)
 			|| position_categories_horizontal.load(property, value)
 			|| stay_on_focus_out.load(property, value)
+			|| lock_size.load(property, value)
 			|| profile_shape.load(property, value)
 			|| confirm_session_command.load(property, value)
 			|| menu_width.load(property, value)

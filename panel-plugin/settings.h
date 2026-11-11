@@ -334,6 +334,7 @@ public:
 	Boolean position_categories_alternate;
 	Boolean position_categories_horizontal;
 	Boolean stay_on_focus_out;
+	Boolean lock_size;
 
 	enum ProfileShape
 	{

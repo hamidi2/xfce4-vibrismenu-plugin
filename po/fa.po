@@ -605,3 +605,7 @@ msgstr "بین _ردیف‌ها:"
 #: ../panel-plugin/settings-dialog.cpp
 msgid "Reset to _Defaults"
 msgstr "بازگشت به _پیش‌فرض‌ها"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Loc_k the menu size (its edges cannot be dragged)"
+msgstr "_قفل اندازهٔ منو (لبه‌هایش کشیده نمی‌شوند)"

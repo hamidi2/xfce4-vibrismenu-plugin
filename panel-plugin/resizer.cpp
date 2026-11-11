@@ -17,6 +17,7 @@
 
 #include "resizer.h"
 
+#include "settings.h"
 #include "slot.h"
 #include "window.h"
 
@@ -58,8 +59,9 @@ Resizer::Resizer(Edge edge, Window* window) :
 		[this](GtkWidget*, GdkEvent* event) -> gboolean
 		{
 			GdkEventButton* event_button = reinterpret_cast<GdkEventButton*>(event);
-			if (event_button->button != 1)
+			if ((event_button->button != 1) || wm_settings->lock_size)
 			{
+				// locked: the size the user settled on cannot be dragged away
 				return GDK_EVENT_STOP;
 			}
 			m_pressed = true;
@@ -83,7 +85,7 @@ Resizer::Resizer(Edge edge, Window* window) :
 		[this](GtkWidget*, GdkEvent* event) -> gboolean
 		{
 			GdkEventButton* event_button = reinterpret_cast<GdkEventButton*>(event);
-			if (event_button->button != 1)
+			if ((event_button->button != 1) || !m_pressed)
 			{
 				return GDK_EVENT_STOP;
 			}
@@ -111,7 +113,8 @@ Resizer::Resizer(Edge edge, Window* window) :
 	connect(m_drawing, "enter-notify-event",
 		[this](GtkWidget* widget, GdkEvent*) -> gboolean
 		{
-			gdk_window_set_cursor(gtk_widget_get_window(widget), m_cursor);
+			// no resize cursor over an edge that cannot be dragged
+			gdk_window_set_cursor(gtk_widget_get_window(widget), wm_settings->lock_size ? nullptr : m_cursor);
 			return GDK_EVENT_PROPAGATE;
 		});
 
