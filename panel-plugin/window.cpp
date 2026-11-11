@@ -789,6 +789,24 @@ void VibrisMenu::Window::show(const Position position)
 		gtk_main_iteration_do(FALSE);
 	}
 
+	// A hidden window is not laid out again when its contents change: the
+	// first time after a start it still has the layout from before the
+	// category buttons existed, at a height that is not the menu's. Lay the
+	// menu out here at the size it will be shown with, so the room left for
+	// the list — and with it the number of rows per column — is the real one
+	// before anything is seen.
+	if (m_frame && (m_geometry.width > 1) && (m_geometry.height > 1))
+	{
+		const int top = gtk_widget_get_margin_top(m_frame);
+		const int left = get_frame_left(m_frame);
+		gtk_widget_set_margin_top(m_frame, 0);
+		set_frame_left(m_frame, 0);
+		GtkAllocation allocation = {0, 0, m_geometry.width, m_geometry.height};
+		gtk_widget_size_allocate(m_frame, &allocation);
+		gtk_widget_set_margin_top(m_frame, top);
+		set_frame_left(m_frame, left);
+	}
+
 	// Column capacity from the final allocation — still hidden; any fix here is invisible
 	m_favorites->sync_capacity();
 

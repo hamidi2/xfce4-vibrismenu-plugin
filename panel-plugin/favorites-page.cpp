@@ -115,8 +115,8 @@ void FavoritesPage::set_menu_items()
 
 	// Columns: the column count is set by the user (/favorites-columns = 1..4; default 2),
 	// and each column is filled up to its vertical capacity: an item moves to the next
-	// column only once the current one is full. Overflow past the total capacity continues
-	// in the last column with a vertical scrollbar. Width = used columns x widest item
+	// column only once the current one is full. Past the total capacity the list scrolls
+	// and the columns share the items equally. Width = used columns x widest item
 	// + margins
 	m_columns = (wm_settings->favorites_columns > 0) ? wm_settings->favorites_columns : 2;
 	m_columns = std::min(m_columns, std::max(1, n));
@@ -160,14 +160,16 @@ void FavoritesPage::set_menu_items()
 	else
 	{
 		// Column-first: fill up to capacity (capacity rows per column); an item moves to the
-		// next column only when the current one is full. If the last column overflows,
-		// the extra items continue below it (vertical scrollbar, not a new column)
+		// next column only when the current one is full. When even the last column is
+		// full, the list scrolls and every column takes an equal share: filled by
+		// capacity, the last one alone would carry all the rest below the fold.
+		m_overflow = n > m_columns * capacity;
+		const int per = m_overflow ? (n + m_columns - 1) / m_columns : capacity;
 		int rows = 0;
 		int counts[4] = {0, 0, 0, 0};
 		for (int c = 0; c < m_columns; ++c)
 		{
-			const int remaining = n - c * capacity;
-			counts[c] = (c == m_columns - 1) ? std::max(0, remaining) : std::max(0, std::min(capacity, remaining));
+			counts[c] = std::max(0, std::min(per, n - c * per));
 			rows = std::max(rows, counts[c]);
 		}
 		m_used_cols = 0;
@@ -178,12 +180,11 @@ void FavoritesPage::set_menu_items()
 				m_used_cols = c + 1;
 			}
 		}
-		m_overflow = n > m_columns * capacity;
 		for (int r = 0; r < rows; ++r)
 		{
 			for (int c = 0; c < m_used_cols; ++c)
 			{
-				const int f = c * capacity + r;
+				const int f = c * per + r;
 				m_model_slots.push_back(r < counts[c] ? f : -1);
 			}
 		}
