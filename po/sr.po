@@ -615,3 +615,27 @@ msgstr "_Наслов:"
 #: ../panel-plugin/plugin.cpp:423
 msgid "translator-credits"
 msgstr "Саша Петровић <salepetronije@gmail.com>"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "S_pacing"
+msgstr "Размаци"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "The menu stays open while this page is shown: every change is seen at once."
+msgstr "Мени остаје отворен док је ова страница приказана: свака измена се одмах види."
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "_Spacing:"
+msgstr "Размак:"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Between _rows:"
+msgstr "Између редова:"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Reset to _Defaults"
+msgstr "Врати на подразумевано"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Loc_k the menu size (its edges cannot be dragged)"
+msgstr "Закључај величину менија (ивице се не могу превлачити)"

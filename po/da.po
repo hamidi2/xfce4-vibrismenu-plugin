@@ -612,3 +612,27 @@ msgstr "_Titel:"
 #: ../panel-plugin/plugin.cpp:423
 msgid "translator-credits"
 msgstr "scootergrisen\nEpsilonDK"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "S_pacing"
+msgstr "Afstand"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "The menu stays open while this page is shown: every change is seen at once."
+msgstr "Menuen forbliver åben, mens denne side vises: enhver ændring ses med det samme."
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "_Spacing:"
+msgstr "Afstand:"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Between _rows:"
+msgstr "Mellem rækker:"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Reset to _Defaults"
+msgstr "Nulstil til standard"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Loc_k the menu size (its edges cannot be dragged)"
+msgstr "Lås menuens størrelse (kanterne kan ikke trækkes)"

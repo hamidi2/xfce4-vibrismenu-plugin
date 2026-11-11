@@ -613,3 +613,27 @@ msgstr "標題(_T)："
 #: ../panel-plugin/plugin.cpp:423
 msgid "translator-credits"
 msgstr "黃柏諺 <s8321414@yahoo.com.tw>,2014"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "S_pacing"
+msgstr "間距"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "The menu stays open while this page is shown: every change is seen at once."
+msgstr "顯示此頁面時選單會保持開啟：每次變更都會立即顯示。"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "_Spacing:"
+msgstr "間距："
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Between _rows:"
+msgstr "列間距："
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Reset to _Defaults"
+msgstr "重設為預設值"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Loc_k the menu size (its edges cannot be dragged)"
+msgstr "鎖定選單大小（無法拖曳其邊緣）"

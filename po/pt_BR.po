@@ -601,3 +601,27 @@ msgstr "_Título:"
 #: ../panel-plugin/plugin.cpp:418
 msgid "translator-credits"
 msgstr "Carlos Reis <reiscarlos1976@gmail.com>, 2017\nFábio Luciano de Góis <fabio@naoimporta.com>, 2013\nGabriel Henrique, 2017-2021\nGraeme Gott <graeme@gottcode.org>, 2013\nHolmes <holmes_holmes@live.com>, 2014\nHugo Carvalho <hugokarvalho@hotmail.com>, 2020\nJosé Vieira <jvieira33@sapo.pt>, 2016-2017\nLorhan Sohaky, 2018\nPaulo Castro, 2013\nThiago Albuquerque Soares <tasbrjob@gmail.com>, 2018"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "S_pacing"
+msgstr "Espaçamento"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "The menu stays open while this page is shown: every change is seen at once."
+msgstr "O menu permanece aberto enquanto esta página é exibida: cada alteração é vista na hora."
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "_Spacing:"
+msgstr "Espaçamento:"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Between _rows:"
+msgstr "Entre linhas:"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Reset to _Defaults"
+msgstr "Restaurar padrões"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Loc_k the menu size (its edges cannot be dragged)"
+msgstr "Travar o tamanho do menu (as bordas não podem ser arrastadas)"

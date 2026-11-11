@@ -585,3 +585,27 @@ msgstr "_Title:"
 #: ../panel-plugin/plugin.cpp:418
 msgid "translator-credits"
 msgstr "translator-credits"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "S_pacing"
+msgstr "S_pacing"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "The menu stays open while this page is shown: every change is seen at once."
+msgstr "The menu stays open while this page is shown: every change is seen at once."
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "_Spacing:"
+msgstr "_Spacing:"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Between _rows:"
+msgstr "Between _rows:"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Reset to _Defaults"
+msgstr "Reset to _Defaults"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Loc_k the menu size (its edges cannot be dragged)"
+msgstr "Loc_k the menu size (its edges cannot be dragged)"

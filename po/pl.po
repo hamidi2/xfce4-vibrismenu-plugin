@@ -625,3 +625,27 @@ msgstr "_Nazwa:"
 #: ../panel-plugin/plugin.cpp:423
 msgid "translator-credits"
 msgstr "Piotr Sokół <psokol@jabster.pl>, 2013, 2014, 2015."
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "S_pacing"
+msgstr "Odstępy"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "The menu stays open while this page is shown: every change is seen at once."
+msgstr "Menu pozostaje otwarte, gdy ta strona jest wyświetlana: każda zmiana jest widoczna od razu."
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "_Spacing:"
+msgstr "Odstęp:"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Between _rows:"
+msgstr "Między wierszami:"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Reset to _Defaults"
+msgstr "Przywróć domyślne"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Loc_k the menu size (its edges cannot be dragged)"
+msgstr "Zablokuj rozmiar menu (krawędzi nie można przeciągać)"

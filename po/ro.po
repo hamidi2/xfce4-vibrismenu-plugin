@@ -587,3 +587,27 @@ msgstr "_Titlu"
 #: ../panel-plugin/plugin.cpp:418
 msgid "translator-credits"
 msgstr "autori-traduceri"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "S_pacing"
+msgstr "Spațiere"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "The menu stays open while this page is shown: every change is seen at once."
+msgstr "Meniul rămâne deschis cât timp este afișată această pagină: fiecare modificare se vede imediat."
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "_Spacing:"
+msgstr "Spațiere:"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Between _rows:"
+msgstr "Între rânduri:"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Reset to _Defaults"
+msgstr "Restabilește valorile implicite"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Loc_k the menu size (its edges cannot be dragged)"
+msgstr "Blochează dimensiunea meniului (marginile nu pot fi trase)"

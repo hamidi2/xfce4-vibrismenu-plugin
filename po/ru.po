@@ -607,3 +607,27 @@ msgstr "За_головок:"
 #: ../panel-plugin/plugin.cpp:418
 msgid "translator-credits"
 msgstr "Артём Демаков <dearalcher@gmail.com>, 2013\nКирилл Детинов <lazy.kent@opensuse.org>, 2013—2016\nСергей Алёшин <alyoshin.s@gmail.com>, 2013, 2014, 2020\nСергей Шляпугин <shlyapugin@gmail.com>, 2013\nВладимир Пенчиков <vladi105@yandex.ru>, 2018"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "S_pacing"
+msgstr "Отступы"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "The menu stays open while this page is shown: every change is seen at once."
+msgstr "Меню остаётся открытым, пока показана эта страница: каждое изменение видно сразу."
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "_Spacing:"
+msgstr "Отступ:"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Between _rows:"
+msgstr "Между строками:"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Reset to _Defaults"
+msgstr "Сбросить к значениям по умолчанию"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Loc_k the menu size (its edges cannot be dragged)"
+msgstr "Заблокировать размер меню (края нельзя перетаскивать)"

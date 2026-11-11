@@ -614,3 +614,27 @@ msgstr "На_зва:"
 #: ../panel-plugin/plugin.cpp:423
 msgid "translator-credits"
 msgstr "Yarema aka Knedlyk <yupadmin at gmail.com>,\nZubr139"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "S_pacing"
+msgstr "Відступи"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "The menu stays open while this page is shown: every change is seen at once."
+msgstr "Меню залишається відкритим, доки показано цю сторінку: кожну зміну видно одразу."
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "_Spacing:"
+msgstr "Відступ:"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Between _rows:"
+msgstr "Між рядками:"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Reset to _Defaults"
+msgstr "Скинути до типових значень"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Loc_k the menu size (its edges cannot be dragged)"
+msgstr "Заблокувати розмір меню (краї не можна перетягувати)"

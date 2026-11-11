@@ -615,3 +615,27 @@ msgstr "_Başlık:"
 #: ../panel-plugin/plugin.cpp:423
 msgid "translator-credits"
 msgstr "Yusuf Faruk Doğan-yfdogan\nMekanın cennet olsun Yusuf Abim\n---\nDemiray Muhterem-tulliana\nErcan PEKER-Reis33\nTransifex Katkıcıları"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "S_pacing"
+msgstr "Aralıklar"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "The menu stays open while this page is shown: every change is seen at once."
+msgstr "Bu sayfa gösterildiği sürece menü açık kalır: her değişiklik anında görülür."
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "_Spacing:"
+msgstr "Aralık:"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Between _rows:"
+msgstr "Satırlar arasında:"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Reset to _Defaults"
+msgstr "Varsayılanlara sıfırla"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Loc_k the menu size (its edges cannot be dragged)"
+msgstr "Menü boyutunu kilitle (kenarları sürüklenemez)"

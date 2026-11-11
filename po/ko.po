@@ -613,3 +613,27 @@ msgstr "제목"
 #: ../panel-plugin/plugin.cpp:423
 msgid "translator-credits"
 msgstr "번역가 정보"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "S_pacing"
+msgstr "간격"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "The menu stays open while this page is shown: every change is seen at once."
+msgstr "이 페이지가 표시되는 동안 메뉴가 열린 채로 유지되며 모든 변경 사항이 바로 보입니다."
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "_Spacing:"
+msgstr "간격:"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Between _rows:"
+msgstr "행 사이:"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Reset to _Defaults"
+msgstr "기본값으로 되돌리기"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Loc_k the menu size (its edges cannot be dragged)"
+msgstr "메뉴 크기 잠금 (가장자리를 끌 수 없음)"

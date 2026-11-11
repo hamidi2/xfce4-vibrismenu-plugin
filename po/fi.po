@@ -604,3 +604,27 @@ msgstr "_Otsikko:"
 #: ../panel-plugin/plugin.cpp:418
 msgid "translator-credits"
 msgstr "Pasi Lallinaho <pasi@shimmerproject.org>"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "S_pacing"
+msgstr "Välistys"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "The menu stays open while this page is shown: every change is seen at once."
+msgstr "Valikko pysyy auki, kun tämä sivu on näkyvissä: jokainen muutos näkyy heti."
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "_Spacing:"
+msgstr "Välistys:"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Between _rows:"
+msgstr "Rivien väli:"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Reset to _Defaults"
+msgstr "Palauta oletukset"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Loc_k the menu size (its edges cannot be dragged)"
+msgstr "Lukitse valikon koko (reunoja ei voi vetää)"

@@ -620,3 +620,27 @@ msgstr "Tite_l:"
 #: ../panel-plugin/plugin.cpp:423
 msgid "translator-credits"
 msgstr "Patrik Nilsson <translation@hembas.se>\nLuna Jernberg <droidbittin@gmail.com>"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "S_pacing"
+msgstr "Avstånd"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "The menu stays open while this page is shown: every change is seen at once."
+msgstr "Menyn förblir öppen medan den här sidan visas: varje ändring syns direkt."
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "_Spacing:"
+msgstr "Avstånd:"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Between _rows:"
+msgstr "Mellan rader:"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Reset to _Defaults"
+msgstr "Återställ standardvärden"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Loc_k the menu size (its edges cannot be dragged)"
+msgstr "Lås menyns storlek (kanterna kan inte dras)"
