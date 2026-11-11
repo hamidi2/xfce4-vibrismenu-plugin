@@ -321,7 +321,7 @@ VibrisMenu::Window::Window(Plugin* plugin) :
 	gtk_box_pack_start(m_title_box, m_profile->get_username(), true, true, 0);
 	gtk_box_pack_start(m_title_box, GTK_WIDGET(m_commands_box), false, false, 0);
 	// the avatar is drawn with a 2px inset (profile.cpp): 4 + 2 = 6 visible
-	gtk_widget_set_margin_start(m_profile->get_picture(), 4);
+	gtk_widget_set_margin_start(m_profile->get_picture(), 6);
 	gtk_widget_set_margin_end(m_profile->get_picture(), 6);
 	// Both margins: in an RTL session margin_start flips sides. The icon
 	// glyphs carry their own transparent border inside the button, so the
@@ -1912,7 +1912,13 @@ bool VibrisMenu::Window::set_size(int width, int height)
 			if (GTK_IS_ICON_VIEW(v))
 			{
 				const int max_cols = (wm_settings->favorites_columns > 0) ? wm_settings->favorites_columns : 2;
+				// rows for the height being set, not the one before it: a
+				// step behind, a shorter menu kept one row too many for a
+				// frame and showed a scrollbar until the next step
+				const int old_height = m_geometry.height;
+				m_geometry.height = height;
 				const int rows = std::max(1, favorites_capacity_rows());
+				m_geometry.height = old_height;
 				// the real model: the displayed one also holds the empty cells
 				GtkTreeModel* model = page->get_view()->get_model();
 				const int n = model ? gtk_tree_model_iter_n_children(model, nullptr) : 0;

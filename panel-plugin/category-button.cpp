@@ -72,7 +72,7 @@ CategoryButton::CategoryButton(GIcon* icon, const gchar* text)
 			return GDK_EVENT_PROPAGATE;
 		});
 
-	m_box = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4));
+	m_box = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 6));
 	gtk_container_add(GTK_CONTAINER(m_button), GTK_WIDGET(m_box));
 
 	m_icon = gtk_image_new_from_gicon(icon, GTK_ICON_SIZE_BUTTON);

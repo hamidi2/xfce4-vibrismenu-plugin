@@ -61,7 +61,10 @@ LauncherIconView::LauncherIconView() :
 	// renderer GtkIconView has no text_cell, never touches wrap-width/width,
 	// and the cell area reports the label's true single-line width.
 	m_text_renderer = gtk_cell_renderer_text_new();
+	// xpad: a text renderer comes with 2px on each side, which made the gap
+	// between an icon and its label, and between two columns, 8 instead of 6
 	g_object_set(m_text_renderer,
+			"xpad", 0,
 			"xalign", 0.0,
 			"yalign", 0.5,
 			"wrap-width", -1,
