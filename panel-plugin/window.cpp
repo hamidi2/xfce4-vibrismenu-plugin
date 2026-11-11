@@ -1989,9 +1989,16 @@ bool VibrisMenu::Window::set_size(int width, int height)
 				// pixels, a layout pass late: it showed for a frame whenever
 				// items moved between columns.
 				gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(page->get_widget()), GTK_POLICY_NEVER,
-						(n > cols * rows) ? GTK_POLICY_AUTOMATIC : GTK_POLICY_EXTERNAL);
+						(n > cols * rows) ? GTK_POLICY_ALWAYS : GTK_POLICY_EXTERNAL);
 			}
 			gtk_widget_get_preferred_width(v, &lav_mn, &lav_nt);
+			if (GTK_IS_ICON_VIEW(v))
+			{
+				// as for the favorites: the scrollbar's strip is always part
+				// of the width, so the menu does not change width when the
+				// scrollbar comes or goes
+				lav_nt += m_favorites->get_scrollbar_reserve();
+			}
 		}
 		// The categories sit beside the list (plus the gap between them),
 		// or above it when horizontal; search results show no categories
