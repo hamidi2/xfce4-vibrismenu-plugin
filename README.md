@@ -18,6 +18,8 @@ contributor and translator of that project. Vibris Menu uses its own names
 - Resize by dragging any edge of the menu
 - Searching for applications, bookmarks, and running commands
 - Startup page setting, including "last used category"
+- One spacing setting for every gap of the menu, adjusted with the menu
+  itself open as a live preview
 
 ## Keyboard shortcut
 To open and close the menu from the keyboard, bind the command

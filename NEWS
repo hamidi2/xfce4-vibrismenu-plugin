@@ -1,3 +1,19 @@
+1.0.3 (2026-11-11)
+======
+- Spacing page in the settings: one number for every gap of the menu and
+  one for the gap between rows; the menu stays open beside the dialog as
+  a live preview
+- Resizing by dragging is much lighter: only what changed is painted,
+  icons are cached and labels are not measured again on every step
+- Search results and the other pages fill their columns for the height
+  the menu has while it is dragged; no scrollbar shows for a moment and
+  the menu keeps its width when the scrollbar comes or goes
+- When a list has to scroll, its columns share the items equally
+- The menu opens with its final layout the first time after a start
+- The menu stays on the panel after its height changed
+- Right-to-left desktops: the menu opens next to its button
+- Categories shown above the list no longer add to the menu width
+
 1.0.2 (2026-11-09)
 ======
 - Build with meson only (CMake build removed)

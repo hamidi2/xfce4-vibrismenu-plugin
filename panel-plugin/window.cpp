@@ -2026,6 +2026,10 @@ bool VibrisMenu::Window::set_size(int width, int height)
 			gtk_widget_get_preferred_width(GTK_WIDGET(m_category_buttons), &cat_mn, &cat_nt);
 			content_w = m_layout_categories_horizontal ? std::max(content_w, (int)cat_nt) : content_w + (int)cat_nt + wm_settings->spacing + 6;
 		}
+		// Around the content: the side margins, the frame's border (2) and what
+		// the category container adds around its buttons (12; 16 beside the
+		// list, hence the 6 above with the gap). Measured on the laid-out
+		// menu: frame = content + 26 at the default spacing in both layouts.
 		content_w += 2 * wm_settings->spacing + 14;
 		if (content_w > 300)
 		{
