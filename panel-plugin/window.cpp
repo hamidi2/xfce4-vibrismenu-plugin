@@ -1091,6 +1091,22 @@ void VibrisMenu::Window::sync_width()
 			menu_position(&x, &y);
 			m_geometry.x = x;
 		}
+		if (!m_tall)
+		{
+			// only the width changes here: keep the bottom edge where the
+			// window really is (after a drag the stored y can be a few
+			// pixels off what the window manager settled on, and the menu
+			// came off the panel by that much)
+			if (GdkWindow* win = gtk_widget_get_window(GTK_WIDGET(m_window)))
+			{
+				gint ax = 0, ay = 0;
+				gdk_window_get_position(win, &ax, &ay);
+				if (ay > -9000)
+				{
+					m_geometry.y = ay + gdk_window_get_height(win) - m_geometry.height;
+				}
+			}
+		}
 		freeze_until_resized();
 		move_window();
 	}
@@ -1245,6 +1261,11 @@ void VibrisMenu::Window::resize_end()
 	// Allow menu to hide
 	m_resizing = false;
 	m_child_has_focus = false;
+	if (!m_tall)
+	{
+		// the height is the window's minimum again (see set_size)
+		gtk_widget_set_size_request(GTK_WIDGET(m_window), m_geometry.width, m_geometry.height);
+	}
 	// nothing else: every drag step was already final
 }
 
@@ -1920,16 +1941,19 @@ void VibrisMenu::Window::move_window()
 		else if (m_resizing && win)
 		{
 			// While dragging: resize only — south-west gravity adjusts y in the same request
-			// and the bottom edge stays put pixel for pixel
-			gdk_window_resize(win, m_geometry.width, m_geometry.height);
-		}
-		else if (win)
-		{
-			gdk_window_move_resize(win, m_geometry.x, m_geometry.y,
-					m_geometry.width, m_geometry.height);
+			// and the bottom edge stays put pixel for pixel. Through GTK, so the size
+			// it remembers is this one: told nothing, it went back to the height it
+			// last knew whenever the width changed during the drag (columns moving),
+			// and the menu ended up shorter than the pointer asked, or off the panel.
+			gtk_window_resize(m_window, m_geometry.width, m_geometry.height);
 		}
 		else
 		{
+			// GTK's own calls, as in tall mode: a configure sent behind its
+			// back (gdk_window_move_resize) left GTK with the size it had
+			// last asked for, and it asked for it again at the next layout —
+			// the menu stayed as wide as the search results after the search
+			// was cleared. GTK sends both as one configure.
 			gtk_window_resize(m_window, m_geometry.width, m_geometry.height);
 			gtk_window_move(m_window, m_geometry.x, m_geometry.y);
 		}
@@ -2065,7 +2089,13 @@ bool VibrisMenu::Window::set_size(int width, int height)
 		}
 		else
 		{
-			gtk_widget_set_size_request(GTK_WIDGET(m_window), m_geometry.width, m_geometry.height);
+			// While an edge is dragged the height is not requested as a
+			// minimum: GTK passes the request to the window manager as the
+			// smallest size allowed, a layout pass later, and each step
+			// shorter than the one before was held back by it (the edge
+			// trailed the pointer by two steps on the way down).
+			gtk_widget_set_size_request(GTK_WIDGET(m_window), m_geometry.width,
+					m_resizing ? -1 : m_geometry.height);
 		}
 		resized = true;
 	}
