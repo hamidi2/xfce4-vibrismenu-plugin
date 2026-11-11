@@ -369,6 +369,42 @@ void Plugin::reload_menu()
 
 //-----------------------------------------------------------------------------
 
+void Plugin::spacing_changed()
+{
+	if (m_window)
+	{
+		m_window->apply_spacing();
+	}
+}
+
+//-----------------------------------------------------------------------------
+
+void Plugin::preview_menu(bool preview)
+{
+	// The settings dialog shows the real menu beside itself while its
+	// spacing page is open: what is adjusted is what is seen
+	if ((preview == m_previewing) || !m_window)
+	{
+		return;
+	}
+	m_previewing = preview;
+	if (preview)
+	{
+		if (!gtk_widget_get_visible(m_window->get_widget()))
+		{
+			show_menu(Window::PositionAtButton);
+		}
+		m_window->set_preview(true);
+	}
+	else
+	{
+		m_window->set_preview(false);
+		m_window->hide();
+	}
+}
+
+//-----------------------------------------------------------------------------
+
 void Plugin::set_button_style(ButtonStyle style)
 {
 	wm_settings->button_icon_visible = style & ShowIcon;

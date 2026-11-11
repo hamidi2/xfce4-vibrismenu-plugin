@@ -103,6 +103,16 @@ SettingsDialog::SettingsDialog(Plugin* plugin) :
 	gtk_notebook_append_page(notebook, init_behavior_tab(), gtk_label_new_with_mnemonic(_("_Behavior")));
 	gtk_notebook_append_page(notebook, init_commands_tab(), gtk_label_new_with_mnemonic(_("_Commands")));
 	gtk_notebook_append_page(notebook, init_search_actions_tab(), gtk_label_new_with_mnemonic(_("Search Actio_ns")));
+	GtkWidget* spacing_tab = init_spacing_tab();
+	gtk_notebook_append_page(notebook, spacing_tab, gtk_label_new_with_mnemonic(_("S_pacing")));
+
+	// The menu itself is the preview of the spacing page: it stays open
+	// beside the dialog for as long as that page is shown
+	connect(notebook, "switch-page",
+		[this, spacing_tab](GtkNotebook*, GtkWidget* page, guint)
+		{
+			m_plugin->preview_menu(page == spacing_tab);
+		});
 
 	// Add tabs to dialog
 	GtkBox* vbox = GTK_BOX(gtk_box_new(GTK_ORIENTATION_VERTICAL, 8));
@@ -119,6 +129,8 @@ SettingsDialog::SettingsDialog(Plugin* plugin) :
 
 SettingsDialog::~SettingsDialog()
 {
+	m_plugin->preview_menu(false);
+
 	for (auto command : m_commands)
 	{
 		delete command;
@@ -879,6 +891,74 @@ GtkWidget* SettingsDialog::init_commands_tab()
 		gtk_box_pack_start(page, command_edit->get_widget(), false, false, 0);
 		m_commands.push_back(command_edit);
 	}
+
+	return GTK_WIDGET(page);
+}
+
+//-----------------------------------------------------------------------------
+
+GtkWidget* SettingsDialog::init_spacing_tab()
+{
+	GtkGrid* page = GTK_GRID(gtk_grid_new());
+	gtk_container_set_border_width(GTK_CONTAINER(page), 12);
+	gtk_grid_set_column_spacing(page, 12);
+	gtk_grid_set_row_spacing(page, 6);
+
+	GtkWidget* note = gtk_label_new(_("The menu stays open while this page is shown: every change is seen at once."));
+	gtk_label_set_xalign(GTK_LABEL(note), 0.0);
+	gtk_label_set_line_wrap(GTK_LABEL(note), true);
+	gtk_label_set_max_width_chars(GTK_LABEL(note), 50);
+	gtk_grid_attach(page, note, 0, 0, 2, 1);
+
+	struct Row
+	{
+		const gchar* label;
+		Integer* setting;
+		int standard;
+	};
+	const Row rows[] = {
+		{ _("Around the _menu:"), &wm_settings->spacing_edge, 6 },
+		{ _("Between _sections:"), &wm_settings->spacing_sections, 6 },
+		{ _("Between an icon and its _label:"), &wm_settings->spacing_items, 6 },
+		{ _("Between _columns:"), &wm_settings->spacing_columns, 6 },
+		{ _("Between _rows:"), &wm_settings->spacing_rows, 0 }
+	};
+
+	GtkWidget* reset = gtk_button_new_with_mnemonic(_("Reset to _Defaults"));
+	int line = 1;
+	for (const Row& row : rows)
+	{
+		GtkWidget* label = gtk_label_new_with_mnemonic(row.label);
+		gtk_widget_set_halign(label, GTK_ALIGN_START);
+		gtk_grid_attach(page, label, 0, line, 1, 1);
+
+		GtkWidget* spin = gtk_spin_button_new_with_range(0, 32, 1);
+		gtk_widget_set_halign(spin, GTK_ALIGN_START);
+		gtk_grid_attach(page, spin, 1, line, 1, 1);
+		gtk_label_set_mnemonic_widget(GTK_LABEL(label), spin);
+		gtk_spin_button_set_value(GTK_SPIN_BUTTON(spin), *row.setting);
+		++line;
+
+		Integer* setting = row.setting;
+		connect(spin, "value-changed",
+			[this, setting](GtkSpinButton* button)
+			{
+				*setting = gtk_spin_button_get_value_as_int(button);
+				// our own change is not reported back: apply it here
+				m_plugin->spacing_changed();
+			});
+
+		const int standard = row.standard;
+		connect(reset, "clicked",
+			[spin, standard](GtkButton*)
+			{
+				gtk_spin_button_set_value(GTK_SPIN_BUTTON(spin), standard);
+			});
+	}
+
+	gtk_widget_set_halign(reset, GTK_ALIGN_START);
+	gtk_widget_set_margin_top(reset, 6);
+	gtk_grid_attach(page, reset, 0, line, 2, 1);
 
 	return GTK_WIDGET(page);
 }

@@ -367,6 +367,12 @@ public:
 	Integer menu_height;
 	Integer menu_opacity;
 
+	Integer spacing_edge;
+	Integer spacing_sections;
+	Integer spacing_items;
+	Integer spacing_columns;
+	Integer spacing_rows;
+
 	friend class Plugin;
 };
 

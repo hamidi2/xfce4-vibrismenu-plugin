@@ -101,6 +101,7 @@ private:
 	GtkCellRenderer* m_text_renderer;
 	std::string m_font_key;
 	int m_icon_size;
+	int m_spacing = -1;
 };
 
 }

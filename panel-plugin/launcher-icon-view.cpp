@@ -75,9 +75,7 @@ LauncherIconView::LauncherIconView() :
 	// Column list: icon beside the text (horizontal) instead of above it
 	gtk_icon_view_set_item_orientation(m_view, GTK_ORIENTATION_HORIZONTAL);
 	gtk_icon_view_set_columns(m_view, 2);
-	gtk_icon_view_set_row_spacing(m_view, 0);
-	gtk_icon_view_set_column_spacing(m_view, 6);
-	gtk_icon_view_set_spacing(m_view, 6);
+	// row, column and icon-to-label gaps: reload_icon_size()
 
 	reload_icon_size();
 
@@ -622,12 +620,14 @@ gboolean LauncherIconView::wrap_navigation(GdkEventKey* event)
 
 void LauncherIconView::reload_icon_size()
 {
-	// Fetch icon size
-	if (m_icon_size == wm_settings->launcher_icon_size.get_size())
+	// Fetch icon size and the gaps from the spacing settings
+	const int spacing = wm_settings->spacing_items | (wm_settings->spacing_columns << 6) | (wm_settings->spacing_rows << 12);
+	if ((m_icon_size == wm_settings->launcher_icon_size.get_size()) && (m_spacing == spacing))
 	{
 		return;
 	}
 	m_icon_size = wm_settings->launcher_icon_size.get_size();
+	m_spacing = spacing;
 
 	// Configure icon renderer
 	if (m_icon_size > 1)
@@ -641,6 +641,11 @@ void LauncherIconView::reload_icon_size()
 
 	// Reset padding to fix icon clipping
 	gtk_icon_view_set_item_padding(m_view, 0);
+
+	// Gaps from the spacing settings: icon to label, columns, rows
+	gtk_icon_view_set_spacing(m_view, wm_settings->spacing_items);
+	gtk_icon_view_set_column_spacing(m_view, wm_settings->spacing_columns);
+	gtk_icon_view_set_row_spacing(m_view, wm_settings->spacing_rows);
 
 	// Icon size changed -> the cell width must be measured again (not the stale cache;
 	// s_item_width is static and without measure(true) the menu width stays wrong)

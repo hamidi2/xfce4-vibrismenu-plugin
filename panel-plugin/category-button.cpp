@@ -101,6 +101,7 @@ void CategoryButton::reload_icon_size()
 {
 	int size = wm_settings->category_icon_size.get_size();
 	gtk_image_set_pixel_size(GTK_IMAGE(m_icon), size);
+	gtk_box_set_spacing(m_box, wm_settings->spacing_items);
 	gtk_widget_set_visible(m_icon, size > 1);
 
 	if (wm_settings->category_show_name && !wm_settings->position_categories_horizontal)

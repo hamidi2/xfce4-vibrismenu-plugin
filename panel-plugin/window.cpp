@@ -125,7 +125,7 @@ VibrisMenu::Window::Window(Plugin* plugin) :
 	connect(m_window, "focus-out-event",
 		[this](GtkWidget* widget, GdkEvent*) -> gboolean
 		{
-			if (wm_settings->stay_on_focus_out || m_child_has_focus || !gtk_widget_get_visible(widget))
+			if (wm_settings->stay_on_focus_out || m_child_has_focus || m_preview || !gtk_widget_get_visible(widget))
 			{
 				return GDK_EVENT_PROPAGATE;
 			}
@@ -458,6 +458,10 @@ VibrisMenu::Window::Window(Plugin* plugin) :
 VibrisMenu::Window::~Window()
 {
 	thaw();
+	if (m_spacing_idle_id)
+	{
+		g_source_remove(m_spacing_idle_id);
+	}
 	if (m_position_sizer)
 	{
 		gtk_widget_destroy(m_position_sizer);
@@ -741,7 +745,15 @@ void VibrisMenu::Window::show(const Position position)
 		}
 	}
 
-	update_header_gaps();
+	// gaps other than the built-in ones, set while the menu did not exist
+	if (spacing_signature() != m_spacing_applied)
+	{
+		apply_spacing();
+	}
+	else
+	{
+		update_header_gaps();
+	}
 
 	// Show window — but not before the layout reaches its final size:
 	// realize while hidden so the size-allocate cycle completes before it is seen,
@@ -1936,9 +1948,9 @@ bool VibrisMenu::Window::set_size(int width, int height)
 		if (page != m_search_results)
 		{
 			gtk_widget_get_preferred_width(GTK_WIDGET(m_category_buttons), &cat_mn, &cat_nt);
-			content_w = m_layout_categories_horizontal ? std::max(content_w, (int)cat_nt) : content_w + (int)cat_nt + 12;
+			content_w = m_layout_categories_horizontal ? std::max(content_w, (int)cat_nt) : content_w + (int)cat_nt + wm_settings->spacing_sections + 6;
 		}
-		content_w += 26;
+		content_w += 2 * wm_settings->spacing_edge + 14;
 		if (content_w > 300)
 		{
 			width = content_w;
@@ -2253,7 +2265,7 @@ void VibrisMenu::Window::update_layout()
 	if (m_layout_categories_horizontal)
 	{
 		gtk_grid_set_column_spacing(m_contents_box, 0);
-		gtk_grid_set_row_spacing(m_contents_box, 6);
+		gtk_grid_set_row_spacing(m_contents_box, wm_settings->spacing_sections);
 
 		gtk_style_context_add_class(context, m_layout_categories_alternate ? "bottom" : "top");
 	}
@@ -2411,9 +2423,112 @@ Insets command_insets(GtkWidget* button)
 
 }
 
+void VibrisMenu::Window::set_preview(bool preview)
+{
+	// As a preview beside the settings dialog the menu stays open when it
+	// loses the focus, and must not be modal: a modal window keeps every
+	// click away from the dialog, which lives in the same process
+	m_preview = preview;
+#ifdef HAVE_GTK_LAYER_SHELL
+	if (!gtk_layer_is_supported())
+#endif
+	{
+		gtk_window_set_modal(m_window, !preview);
+	}
+}
+
+//-----------------------------------------------------------------------------
+
+int VibrisMenu::Window::spacing_signature() const
+{
+	// the five settings (0..32 each) packed into one number
+	return wm_settings->spacing_edge
+			| (wm_settings->spacing_sections << 6)
+			| (wm_settings->spacing_items << 12)
+			| (wm_settings->spacing_columns << 18)
+			| (wm_settings->spacing_rows << 24);
+}
+
+//-----------------------------------------------------------------------------
+
+void VibrisMenu::Window::apply_spacing()
+{
+	// Every gap of the menu, from the five spacing settings. Called
+	// whenever the menu is shown and whenever one of them changes.
+	const int edge = wm_settings->spacing_edge;
+	const int sections = wm_settings->spacing_sections;
+	const int items = wm_settings->spacing_items;
+	const int old_rows = m_spacing_applied >> 24;
+	m_spacing_applied = spacing_signature();
+
+	// around the menu
+	gtk_widget_set_margin_bottom(GTK_WIDGET(m_vbox), edge);
+	for (GtkWidget* widget : {GTK_WIDGET(m_contents_stack), GTK_WIDGET(m_search_box)})
+	{
+		gtk_widget_set_margin_start(widget, edge);
+		gtk_widget_set_margin_end(widget, edge);
+	}
+	// the avatar is drawn with a 2px inset of its own (profile.cpp)
+	gtk_widget_set_margin_start(m_profile->get_picture(), std::max(0, edge - 2));
+
+	// between the header, the list, the categories and the search box
+	gtk_box_set_spacing(m_vbox, sections);
+	gtk_box_set_spacing(m_search_box, sections);
+	gtk_grid_set_column_spacing(m_contents_box, m_layout_categories_horizontal ? 0 : sections);
+	gtk_grid_set_row_spacing(m_contents_box, m_layout_categories_horizontal ? sections : 0);
+
+	// between things that sit side by side in a row
+	gtk_box_set_spacing(m_title_box, items);
+	gtk_widget_set_margin_end(m_profile->get_picture(), items);
+	gtk_box_set_spacing(m_commands_box, items);
+	// top edge and command buttons: their icons' own empty border counts
+	update_header_gaps();
+
+	// lists (icon to label, columns, rows) and category buttons
+	for (Page* page : {static_cast<Page*>(m_search_results), static_cast<Page*>(m_favorites),
+			static_cast<Page*>(m_recent), static_cast<Page*>(m_applications)})
+	{
+		page->get_view()->reload_icon_size();
+	}
+	m_favorites->get_button()->reload_icon_size();
+	m_recent->get_button()->reload_icon_size();
+	m_applications->reload_category_icon_size();
+
+	// what was measured with the old gaps no longer holds
+	m_last_chrome = 0;
+	m_page_chrome = 0;
+	if (FavoritesPage::s_measured_pitch > 0)
+	{
+		// a row is taller by exactly the change of the gap between rows
+		FavoritesPage::s_measured_pitch += wm_settings->spacing_rows - old_rows;
+	}
+	update_min_h();
+	if (gtk_widget_get_visible(GTK_WIDGET(m_window)))
+	{
+		m_favorites->rebuild();
+		sync_width();
+		// The room left for the list is only known once GTK has laid the
+		// menu out with the new gaps: fit the columns to it then
+		if (!m_spacing_idle_id)
+		{
+			m_spacing_idle_id = g_idle_add(+[](gpointer data) -> gboolean
+			{
+				auto window = static_cast<Window*>(data);
+				window->m_spacing_idle_id = 0;
+				window->update_min_h();
+				window->m_favorites->relayout_if_capacity_changed();
+				window->sync_width();
+				return G_SOURCE_REMOVE;
+			}, this);
+		}
+	}
+}
+
+//-----------------------------------------------------------------------------
+
 void VibrisMenu::Window::update_header_gaps()
 {
-	const int gap = 6;
+	const int gap = wm_settings->spacing_edge;
 
 	// Visible command buttons in the title area, in visual left-to-right order
 	std::vector<GtkWidget*> buttons;

@@ -96,6 +96,8 @@ public:
 	void set_loaded();
 	bool set_size(int width, int height);
 	void sync_width();
+	void apply_spacing();
+	void set_preview(bool preview);
 	void freeze_until_resized();
 	void thaw();
 	void schedule_page_width();
@@ -202,6 +204,11 @@ private:
 	int m_profile_shape;
 	bool m_supports_alpha;
 	bool m_child_has_focus;
+	bool m_preview = false;
+	guint m_spacing_idle_id = 0;
+	int spacing_signature() const;
+	// the gaps the menu is built with: 6, 6, 6, 6, 0
+	int m_spacing_applied = 6 | (6 << 6) | (6 << 12) | (6 << 18);
 	bool m_resizing;
 
 	// Tall mode (composited + RGBA, menu above a bottom panel): while shown,

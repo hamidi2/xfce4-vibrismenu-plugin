@@ -106,7 +106,12 @@ Settings::Settings(Plugin* plugin) :
 
 	menu_width("/menu-width", 450, 10, SHRT_MAX),
 	menu_height("/menu-height", 500, 10, SHRT_MAX),
-	menu_opacity("/menu-opacity", 100, 0, 100)
+	menu_opacity("/menu-opacity", 100, 0, 100),
+	spacing_edge("/spacing-edge", 6, 0, 32),
+	spacing_sections("/spacing-sections", 6, 0, 32),
+	spacing_items("/spacing-items", 6, 0, 32),
+	spacing_columns("/spacing-columns", 6, 0, 32),
+	spacing_rows("/spacing-rows", 0, 0, 32)
 {
 	command[CommandSettings] = new Command("/command-settings", "/show-command-settings",
 			"org.xfce.settings.manager", "preferences-desktop",
@@ -259,6 +264,11 @@ void Settings::load(const gchar* file, bool is_default)
 	menu_width.load(rc, is_default);
 	menu_height.load(rc, is_default);
 	menu_opacity.load(rc, is_default);
+	spacing_edge.load(rc, is_default);
+	spacing_sections.load(rc, is_default);
+	spacing_items.load(rc, is_default);
+	spacing_columns.load(rc, is_default);
+	spacing_rows.load(rc, is_default);
 
 	for (auto i : command)
 	{
@@ -415,6 +425,17 @@ void Settings::property_changed(const gchar* property, const GValue* value)
 		{
 			m_plugin->reload_menu();
 		}
+	}
+
+	else if (spacing_edge.load(property, value)
+			|| spacing_sections.load(property, value)
+			|| spacing_items.load(property, value)
+			|| spacing_columns.load(property, value)
+			|| spacing_rows.load(property, value))
+	{
+		// applied to the menu as it is, shown or not: the settings
+		// dialog keeps it open as a live preview
+		m_plugin->spacing_changed();
 	}
 
 	else

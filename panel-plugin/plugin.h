@@ -61,6 +61,8 @@ public:
 	void menu_hidden();
 	void reload_button();
 	void reload_menu();
+	void spacing_changed();
+	void preview_menu(bool preview);
 	void set_button_style(ButtonStyle style);
 	void set_button_title(const std::string& title);
 	void set_button_icon_name(const std::string& icon);
@@ -90,6 +92,7 @@ private:
 	int m_opacity;
 	bool m_file_icon;
 	bool m_autohide_blocked;
+	bool m_previewing = false;
 	gint64 m_hide_time;
 };
 
