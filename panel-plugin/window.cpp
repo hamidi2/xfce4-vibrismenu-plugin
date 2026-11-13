@@ -1091,7 +1091,9 @@ void VibrisMenu::Window::sync_width()
 			menu_position(&x, &y);
 			m_geometry.x = x;
 		}
-		if (!m_tall)
+		// a layer surface (Wayland) has no position to read: the query
+		// answers 0,0 and the menu would be sent to the top of the screen
+		if (!m_tall && !is_layer_surface())
 		{
 			// only the width changes here: keep the bottom edge where the
 			// window really is (after a drag the stored y can be a few
@@ -1205,8 +1207,10 @@ void VibrisMenu::Window::apply_target_size()
 	// panel) — without this m_geometry lags behind and every later frame is computed
 	// from a stale value = a 97px jump (seen with xtrace: a request for bottom=2160
 	// was corrected by the WM to 2063)
+	// (not on Wayland: a layer surface is where we put it, and asking for
+	// its position answers 0,0)
 	GdkWindow* win = gtk_widget_get_window(GTK_WIDGET(m_window));
-	if (win)
+	if (win && !is_layer_surface())
 	{
 		gint ax = 0, ay = 0;
 		gdk_window_get_position(win, &ax, &ay);
@@ -1219,6 +1223,17 @@ void VibrisMenu::Window::apply_target_size()
 			}
 		}
 	}
+}
+
+//-----------------------------------------------------------------------------
+
+bool VibrisMenu::Window::is_layer_surface() const
+{
+#ifdef HAVE_GTK_LAYER_SHELL
+	return gtk_layer_is_supported();
+#else
+	return false;
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -2094,8 +2109,10 @@ bool VibrisMenu::Window::set_size(int width, int height)
 			// smallest size allowed, a layout pass later, and each step
 			// shorter than the one before was held back by it (the edge
 			// trailed the pointer by two steps on the way down).
+			// (A Wayland layer surface has no window manager behind it and is
+			// exactly as large as its request: there the height always is.)
 			gtk_widget_set_size_request(GTK_WIDGET(m_window), m_geometry.width,
-					m_resizing ? -1 : m_geometry.height);
+					(m_resizing && !is_layer_surface()) ? -1 : m_geometry.height);
 		}
 		resized = true;
 	}

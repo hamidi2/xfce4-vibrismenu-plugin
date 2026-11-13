@@ -95,6 +95,7 @@ public:
 		return m_resizing;
 	}
 	void set_child_has_focus();
+	bool is_layer_surface() const;
 	void set_categories(const std::vector<CategoryButton*>& categories);
 	void set_items();
 	void set_loaded();

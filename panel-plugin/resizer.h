@@ -68,6 +68,7 @@ private:
 	double m_x;
 	double m_y;
 	GdkRectangle m_start;
+	bool m_relative = false;
 	int m_delta_x;
 	int m_delta_y;
 	int m_delta_width;

@@ -72,8 +72,11 @@ Resizer::Resizer(Edge edge, Window* window) :
 			// motion made while a step was still being laid out was measured
 			// against the grip's old place, and the menu stopped short of
 			// the pointer until the next motion or the release.
-			m_x = event_button->x_root;
-			m_y = event_button->y_root;
+			// (Wayland has no screen coordinates: there the motions are
+			// measured on the grip itself, as they come.)
+			m_relative = m_window->is_layer_surface();
+			m_x = m_relative ? event_button->x : event_button->x_root;
+			m_y = m_relative ? event_button->y : event_button->y_root;
 
 			m_window->resize_start();
 			m_start = m_window->get_geometry();
@@ -105,6 +108,14 @@ Resizer::Resizer(Edge edge, Window* window) :
 			}
 
 			GdkEventMotion* event_motion = reinterpret_cast<GdkEventMotion*>(event);
+			if (m_relative)
+			{
+				const int delta_x = event_motion->x - m_x;
+				const int delta_y = event_motion->y - m_y;
+				m_window->resize(delta_x * m_delta_x, delta_y * m_delta_y,
+						delta_x * m_delta_width, delta_y * m_delta_height);
+				return GDK_EVENT_STOP;
+			}
 			follow(event_motion->x_root, event_motion->y_root);
 
 			return GDK_EVENT_STOP;
