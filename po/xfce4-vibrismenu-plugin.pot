@@ -633,9 +633,9 @@ msgid "Loc_k the menu size (its edges cannot be dragged)"
 msgstr ""
 
 #: ../panel-plugin/settings-dialog.cpp
-msgid "Open this menu with the Super key"
+msgid "Open this menu with Super and Ctrl+Esc"
 msgstr ""
 
 #: ../panel-plugin/settings-dialog.cpp
-msgid "The Super key opens this menu"
+msgid "Super and Ctrl+Esc open this menu"
 msgstr ""

@@ -61,7 +61,6 @@ private:
 	GtkWidget* init_behavior_tab();
 	GtkWidget* init_commands_tab();
 	GtkWidget* init_search_actions_tab();
-	GtkWidget* init_spacing_tab();
 
 private:
 	Plugin* m_plugin;

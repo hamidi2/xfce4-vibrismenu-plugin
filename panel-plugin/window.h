@@ -214,7 +214,7 @@ private:
 	bool m_fit_after_show = false;
 	guint m_spacing_idle_id = 0;
 	int spacing_signature() const;
-	// the gaps the menu is built with: 6, and 0 between rows
+	// the gap the menu is built with
 	int m_spacing_applied = 6;
 	bool m_resizing;
 

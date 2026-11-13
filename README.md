@@ -18,8 +18,8 @@ contributor and translator of that project. Vibris Menu uses its own names
 - Resize by dragging any edge of the menu; the size can be locked
 - Searching for applications, bookmarks, and running commands
 - Startup page setting, including "last used category"
-- One spacing setting for every gap of the menu, adjusted with the menu
-  itself open as a live preview
+- One spacing number for every gap of the menu, adjusted with the menu
+  itself open as a live preview; icons shown without their own borders
 
 ## Keyboard shortcut
 To open and close the menu from the keyboard, bind the command
@@ -27,8 +27,9 @@ To open and close the menu from the keyboard, bind the command
 Shortcuts). Add `--pointer` to show the menu at the mouse pointer.
 
 For the Super key there is a button in the settings (Behavior): "Open this
-menu with the Super key". It is available while the key belongs to something
-else (Xubuntu ships it bound to Whisker Menu) and takes effect at once.
+menu with Super and Ctrl+Esc". It is available while those keys belong to
+something else (Xubuntu ships them bound to Whisker Menu) and takes effect
+at once.
 
 ## Installation
 **Ubuntu / Xubuntu (PPA):**

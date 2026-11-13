@@ -621,7 +621,7 @@ gboolean LauncherIconView::wrap_navigation(GdkEventKey* event)
 void LauncherIconView::reload_icon_size()
 {
 	// Fetch icon size and the gaps from the spacing settings
-	const int spacing = wm_settings->spacing | (wm_settings->spacing_rows << 6);
+	const int spacing = wm_settings->spacing;
 	if ((m_icon_size == wm_settings->launcher_icon_size.get_size()) && (m_spacing == spacing))
 	{
 		return;
@@ -657,7 +657,7 @@ void LauncherIconView::reload_icon_size()
 	gtk_icon_view_set_column_spacing(m_view, wm_settings->spacing);
 	// the list's own margin around its items
 	gtk_icon_view_set_margin(m_view, wm_settings->spacing);
-	gtk_icon_view_set_row_spacing(m_view, wm_settings->spacing_rows);
+	gtk_icon_view_set_row_spacing(m_view, wm_settings->spacing);
 
 	// Icon size changed -> the cell width must be measured again (not the stale cache;
 	// s_item_width is static and without measure(true) the menu width stays wrong)

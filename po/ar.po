@@ -614,5 +614,5 @@ msgid "Loc_k the menu size (its edges cannot be dragged)"
 msgstr "قفل حجم القائمة (لا يمكن سحب حوافها)"
 
 #: ../panel-plugin/settings-dialog.cpp
-msgid "Open this menu with the Super key"
+msgid "Open this menu with Super and Ctrl+Esc"
 msgstr "فتح القائمة بمفتاح Super"

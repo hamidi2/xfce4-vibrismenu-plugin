@@ -2059,19 +2059,22 @@ bool VibrisMenu::Window::set_size(int width, int height)
 				lav_nt += m_favorites->get_scrollbar_reserve();
 			}
 		}
-		// The categories sit beside the list (plus the gap between them),
-		// or above it when horizontal; search results show no categories
-		int content_w = (int)lav_nt;
+		// The list with the border of its scrolled window (2). The categories
+		// sit above or below it when horizontal (the wider of the two decides)
+		// or beside it: then the gap between them and what the sidebar adds
+		// around its buttons (16) come on top. Search results show no
+		// categories. Around all of it: the side margins and the frame's
+		// border (2). Every number here is measured on the laid-out menu;
+		// anything more would show as an empty strip beside the category bar.
+		int content_w = (int)lav_nt + 2;
 		if (page != m_search_results)
 		{
 			gtk_widget_get_preferred_width(GTK_WIDGET(m_category_buttons), &cat_mn, &cat_nt);
-			content_w = m_layout_categories_horizontal ? std::max(content_w, (int)cat_nt) : content_w + (int)cat_nt + wm_settings->spacing + 6;
+			content_w = m_layout_categories_horizontal
+					? std::max(content_w, (int)cat_nt)
+					: content_w + wm_settings->spacing + (int)cat_nt + 16;
 		}
-		// Around the content: the side margins, the frame's border (2) and what
-		// the category container adds around its buttons (12; 16 beside the
-		// list, hence the 6 above with the gap). Measured on the laid-out
-		// menu: frame = content + 26 at the default spacing in both layouts.
-		content_w += 2 * wm_settings->spacing + 14;
+		content_w += 2 * wm_settings->spacing + 2;
 		if (content_w > 300)
 		{
 			width = content_w;
@@ -2570,8 +2573,7 @@ void VibrisMenu::Window::set_preview(bool preview)
 
 int VibrisMenu::Window::spacing_signature() const
 {
-	// the two settings (0..32 each) packed into one number
-	return wm_settings->spacing | (wm_settings->spacing_rows << 6);
+	return wm_settings->spacing;
 }
 
 //-----------------------------------------------------------------------------
@@ -2579,13 +2581,12 @@ int VibrisMenu::Window::spacing_signature() const
 void VibrisMenu::Window::apply_spacing()
 {
 	// Every gap of the menu is the one spacing setting: around the menu,
-	// between its parts, between an icon and its label, between columns.
-	// Nothing in the menu adds a gap of its own on top of it. Only the gap
-	// between rows is separate (none by default: a compact list).
+	// between its parts, between an icon and its label, between columns and
+	// between rows. Nothing in the menu adds a gap of its own on top of it.
 	const int edge = wm_settings->spacing;
 	const int sections = edge;
 	const int items = edge;
-	const int old_rows = m_spacing_applied >> 6;
+	const int old_rows = m_spacing_applied;
 	m_spacing_applied = spacing_signature();
 
 	// around the menu
@@ -2626,7 +2627,7 @@ void VibrisMenu::Window::apply_spacing()
 	if (FavoritesPage::s_measured_pitch > 0)
 	{
 		// a row is taller by exactly the change of the gap between rows
-		FavoritesPage::s_measured_pitch += wm_settings->spacing_rows - old_rows;
+		FavoritesPage::s_measured_pitch += wm_settings->spacing - old_rows;
 	}
 	update_min_h();
 	if (gtk_widget_get_visible(GTK_WIDGET(m_window)))

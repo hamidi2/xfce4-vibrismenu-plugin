@@ -104,15 +104,12 @@ SettingsDialog::SettingsDialog(Plugin* plugin) :
 	gtk_notebook_append_page(notebook, init_behavior_tab(), gtk_label_new_with_mnemonic(_("_Behavior")));
 	gtk_notebook_append_page(notebook, init_commands_tab(), gtk_label_new_with_mnemonic(_("_Commands")));
 	gtk_notebook_append_page(notebook, init_search_actions_tab(), gtk_label_new_with_mnemonic(_("Search Actio_ns")));
-	GtkWidget* spacing_tab = init_spacing_tab();
-	gtk_notebook_append_page(notebook, spacing_tab, gtk_label_new_with_mnemonic(_("S_pacing")));
-
-	// The menu itself is the preview of the spacing page: it stays open
-	// beside the dialog for as long as that page is shown
+	// The menu is opened beside the dialog as a live preview while its
+	// spacing is being adjusted (General); any other page closes it again
 	connect(notebook, "switch-page",
-		[this, spacing_tab](GtkNotebook*, GtkWidget* page, guint)
+		[this](GtkNotebook*, GtkWidget*, guint)
 		{
-			m_plugin->preview_menu(page == spacing_tab);
+			m_plugin->preview_menu(false);
 		});
 
 	// Add tabs to dialog
@@ -484,9 +481,33 @@ GtkWidget* SettingsDialog::init_general_tab()
 			wm_settings->menu_opacity = gtk_range_get_value(range);
 		});
 
+	// Add option to change the spacing: one number for every gap of the menu
+	// (around it, between its parts, icon to label, columns, rows). The menu
+	// itself is the preview: it opens beside the dialog at the first change
+	// and follows every further one at once.
+	label = gtk_label_new_with_mnemonic(_("_Spacing:"));
+	gtk_widget_set_halign(label, GTK_ALIGN_START);
+	gtk_grid_attach(page, label, 0, 10, 1, 1);
+
+	GtkWidget* spacing = gtk_spin_button_new_with_range(0, 32, 1);
+	gtk_widget_set_halign(spacing, GTK_ALIGN_START);
+	gtk_widget_set_hexpand(spacing, false);
+	gtk_grid_attach(page, spacing, 1, 10, 1, 1);
+	gtk_label_set_mnemonic_widget(GTK_LABEL(label), spacing);
+	gtk_spin_button_set_value(GTK_SPIN_BUTTON(spacing), wm_settings->spacing);
+
+	connect(spacing, "value-changed",
+		[this](GtkSpinButton* button)
+		{
+			wm_settings->spacing = gtk_spin_button_get_value_as_int(button);
+			// our own change is not reported back: apply it here
+			m_plugin->preview_menu(true);
+			m_plugin->spacing_changed();
+		});
+
 	// Add option to protect the size reached by dragging
 	GtkWidget* lock_size = gtk_check_button_new_with_mnemonic(_("Loc_k the menu size (its edges cannot be dragged)"));
-	gtk_grid_attach(page, lock_size, 0, 10, 2, 1);
+	gtk_grid_attach(page, lock_size, 0, 11, 2, 1);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(lock_size), wm_settings->lock_size);
 
 	connect(lock_size, "toggled",
@@ -776,13 +797,17 @@ GtkWidget* SettingsDialog::init_behavior_tab()
 		auto update = +[](GtkWidget* button)
 		{
 			XfconfChannel* channel = xfconf_channel_get("xfce4-keyboard-shortcuts");
-			gchar* current = xfconf_channel_get_string(channel, "/commands/custom/Super_L", nullptr);
-			const bool ours = xfconf_channel_get_bool(channel, "/commands/custom/override", false)
-					&& current && g_str_has_prefix(current, command);
-			g_free(current);
+			// ours when all three shortcuts Xubuntu gives its menu are ours
+			bool ours = xfconf_channel_get_bool(channel, "/commands/custom/override", false);
+			for (const gchar* key : { "/commands/custom/Super_L", "/commands/custom/Super_R", "/commands/custom/<Primary>Escape" })
+			{
+				gchar* current = xfconf_channel_get_string(channel, key, nullptr);
+				ours = ours && current && g_str_has_prefix(current, command);
+				g_free(current);
+			}
 			gtk_button_set_label(GTK_BUTTON(button), ours
-					? _("The Super key opens this menu")
-					: _("Open this menu with the Super key"));
+					? _("Super and Ctrl+Esc open this menu")
+					: _("Open this menu with Super and Ctrl+Esc"));
 			gtk_widget_set_sensitive(button, !ours);
 		};
 		update(super_key);
@@ -825,15 +850,12 @@ GtkWidget* SettingsDialog::init_behavior_tab()
 					}
 					xfconf_channel_set_bool(channel, "/commands/custom/override", true);
 				}
-				xfconf_channel_set_string(channel, "/commands/custom/Super_L", command);
-				xfconf_channel_set_string(channel, "/commands/custom/Super_R", command);
-				// Ctrl+Escape goes with them where it opened Whisker Menu
-				gchar* escape = xfconf_channel_get_string(channel, "/commands/custom/<Primary>Escape", nullptr);
-				if (escape && g_str_has_prefix(escape, "xfce4-popup-whiskermenu"))
+				// the three shortcuts Xubuntu gives its menu: both Super keys
+				// and Ctrl+Escape
+				for (const gchar* key : { "/commands/custom/Super_L", "/commands/custom/Super_R", "/commands/custom/<Primary>Escape" })
 				{
-					xfconf_channel_set_string(channel, "/commands/custom/<Primary>Escape", command);
+					xfconf_channel_set_string(channel, key, command);
 				}
-				g_free(escape);
 			});
 	}
 
@@ -979,74 +1001,6 @@ GtkWidget* SettingsDialog::init_commands_tab()
 		gtk_box_pack_start(page, command_edit->get_widget(), false, false, 0);
 		m_commands.push_back(command_edit);
 	}
-
-	return GTK_WIDGET(page);
-}
-
-//-----------------------------------------------------------------------------
-
-GtkWidget* SettingsDialog::init_spacing_tab()
-{
-	GtkGrid* page = GTK_GRID(gtk_grid_new());
-	gtk_container_set_border_width(GTK_CONTAINER(page), 12);
-	gtk_grid_set_column_spacing(page, 12);
-	gtk_grid_set_row_spacing(page, 6);
-
-	GtkWidget* note = gtk_label_new(_("The menu stays open while this page is shown: every change is seen at once."));
-	gtk_label_set_xalign(GTK_LABEL(note), 0.0);
-	gtk_label_set_line_wrap(GTK_LABEL(note), true);
-	gtk_label_set_max_width_chars(GTK_LABEL(note), 50);
-	gtk_grid_attach(page, note, 0, 0, 2, 1);
-
-	struct Row
-	{
-		const gchar* label;
-		Integer* setting;
-		int standard;
-	};
-	// One number for every gap: around the menu, between its parts, between
-	// an icon and its label, between columns. Rows are separate: they have
-	// no gap by default, for a compact list.
-	const Row rows[] = {
-		{ _("_Spacing:"), &wm_settings->spacing, 6 },
-		{ _("Between _rows:"), &wm_settings->spacing_rows, 6 }
-	};
-
-	GtkWidget* reset = gtk_button_new_with_mnemonic(_("Reset to _Defaults"));
-	int line = 1;
-	for (const Row& row : rows)
-	{
-		GtkWidget* label = gtk_label_new_with_mnemonic(row.label);
-		gtk_widget_set_halign(label, GTK_ALIGN_START);
-		gtk_grid_attach(page, label, 0, line, 1, 1);
-
-		GtkWidget* spin = gtk_spin_button_new_with_range(0, 32, 1);
-		gtk_widget_set_halign(spin, GTK_ALIGN_START);
-		gtk_grid_attach(page, spin, 1, line, 1, 1);
-		gtk_label_set_mnemonic_widget(GTK_LABEL(label), spin);
-		gtk_spin_button_set_value(GTK_SPIN_BUTTON(spin), *row.setting);
-		++line;
-
-		Integer* setting = row.setting;
-		connect(spin, "value-changed",
-			[this, setting](GtkSpinButton* button)
-			{
-				*setting = gtk_spin_button_get_value_as_int(button);
-				// our own change is not reported back: apply it here
-				m_plugin->spacing_changed();
-			});
-
-		const int standard = row.standard;
-		connect(reset, "clicked",
-			[spin, standard](GtkButton*)
-			{
-				gtk_spin_button_set_value(GTK_SPIN_BUTTON(spin), standard);
-			});
-	}
-
-	gtk_widget_set_halign(reset, GTK_ALIGN_START);
-	gtk_widget_set_margin_top(reset, 6);
-	gtk_grid_attach(page, reset, 0, line, 2, 1);
 
 	return GTK_WIDGET(page);
 }

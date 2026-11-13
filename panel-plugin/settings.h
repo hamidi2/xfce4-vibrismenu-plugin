@@ -369,7 +369,6 @@ public:
 	Integer menu_opacity;
 
 	Integer spacing;
-	Integer spacing_rows;
 
 	friend class Plugin;
 };

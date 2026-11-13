@@ -611,9 +611,9 @@ msgid "Loc_k the menu size (its edges cannot be dragged)"
 msgstr "_قفل اندازهٔ منو (لبه‌هایش کشیده نمی‌شوند)"
 
 #: ../panel-plugin/settings-dialog.cpp
-msgid "Open this menu with the Super key"
-msgstr "باز کردن این منو با کلید Super"
+msgid "Open this menu with Super and Ctrl+Esc"
+msgstr "باز کردن این منو با Super و Ctrl+Esc"
 
 #: ../panel-plugin/settings-dialog.cpp
-msgid "The Super key opens this menu"
-msgstr "کلید Super این منو را باز می‌کند"
+msgid "Super and Ctrl+Esc open this menu"
+msgstr "‏Super و Ctrl+Esc این منو را باز می‌کنند"

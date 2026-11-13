@@ -651,5 +651,5 @@ msgid "Loc_k the menu size (its edges cannot be dragged)"
 msgstr "Zablokuj rozmiar menu (krawędzi nie można przeciągać)"
 
 #: ../panel-plugin/settings-dialog.cpp
-msgid "Open this menu with the Super key"
+msgid "Open this menu with Super and Ctrl+Esc"
 msgstr "Otwieraj menu klawiszem Super"

@@ -639,5 +639,5 @@ msgid "Loc_k the menu size (its edges cannot be dragged)"
 msgstr "메뉴 크기 잠금 (가장자리를 끌 수 없음)"
 
 #: ../panel-plugin/settings-dialog.cpp
-msgid "Open this menu with the Super key"
+msgid "Open this menu with Super and Ctrl+Esc"
 msgstr "Super 키로 메뉴 열기"

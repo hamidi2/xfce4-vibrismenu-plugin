@@ -1,14 +1,20 @@
 1.0.6 (2026-11-13)
 ======
+- One spacing number for everything, rows included (General); the Spacing
+  page is gone. The menu still opens beside the dialog as a live preview
+  while the number is changed
 - Icons are shown without the empty border of their artwork, in the lists,
   the categories and the command buttons: every gap around them is then the
-  spacing setting alone, whatever the icon theme
-- The gap between an icon and its label in the lists is the spacing
-  setting; it was missing (the label touched the icon at small icon sizes)
-- The gap between rows is the spacing setting by default (was none)
-- Behavior: a button to open this menu with the Super key, available while
-  the key belongs to something else (Xubuntu ships it bound to Whisker
-  Menu); it takes effect at once
+  spacing alone, whatever the icon theme
+- The gap between an icon and its label in the lists is the spacing; it was
+  missing (the label touched the icon at small icon sizes)
+- Categories shown as a bar are as wide as the list; the bar had an empty
+  strip at each end
+- Panel button: the gap around the icon is a tenth of the button, on one
+  row and on several
+- Behavior: a button to open this menu with Super and Ctrl+Esc, available
+  while those keys belong to something else (Xubuntu ships them bound to
+  Whisker Menu); it takes effect at once
 
 1.0.5 (2026-11-13)
 ======
