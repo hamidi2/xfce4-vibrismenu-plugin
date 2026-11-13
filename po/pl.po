@@ -649,3 +649,7 @@ msgstr "Przywróć domyślne"
 #: ../panel-plugin/settings-dialog.cpp
 msgid "Loc_k the menu size (its edges cannot be dragged)"
 msgstr "Zablokuj rozmiar menu (krawędzi nie można przeciągać)"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Open the menu with the S_uper key"
+msgstr "Otwieraj menu klawiszem Super"

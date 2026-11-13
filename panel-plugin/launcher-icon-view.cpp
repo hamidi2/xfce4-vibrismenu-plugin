@@ -644,6 +644,16 @@ void LauncherIconView::reload_icon_size()
 
 	// Gaps from the spacing settings: icon to label, columns, rows
 	gtk_icon_view_set_spacing(m_view, wm_settings->spacing);
+	// GtkIconView applies its "spacing" only between the two cells it makes
+	// itself; with our own renderers the icon and the label touched. Set the
+	// gap on the cell area directly.
+	if (GtkCellArea* area = gtk_cell_layout_get_area(GTK_CELL_LAYOUT(m_view)))
+	{
+		if (GTK_IS_CELL_AREA_BOX(area))
+		{
+			gtk_cell_area_box_set_spacing(GTK_CELL_AREA_BOX(area), wm_settings->spacing);
+		}
+	}
 	gtk_icon_view_set_column_spacing(m_view, wm_settings->spacing);
 	// the list's own margin around its items
 	gtk_icon_view_set_margin(m_view, wm_settings->spacing);

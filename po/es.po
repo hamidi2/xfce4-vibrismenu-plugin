@@ -650,3 +650,7 @@ msgstr "Restablecer valores predeterminados"
 #: ../panel-plugin/settings-dialog.cpp
 msgid "Loc_k the menu size (its edges cannot be dragged)"
 msgstr "Bloquear el tamaño del menú (sus bordes no se pueden arrastrar)"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Open the menu with the S_uper key"
+msgstr "Abrir el menú con la tecla Super"

@@ -644,3 +644,7 @@ msgstr "Återställ standardvärden"
 #: ../panel-plugin/settings-dialog.cpp
 msgid "Loc_k the menu size (its edges cannot be dragged)"
 msgstr "Lås menyns storlek (kanterna kan inte dras)"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Open the menu with the S_uper key"
+msgstr "Öppna menyn med Super-tangenten"

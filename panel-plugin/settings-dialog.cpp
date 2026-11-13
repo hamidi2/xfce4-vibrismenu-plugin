@@ -29,6 +29,7 @@
 
 #include <libxfce4panel/libxfce4panel.h>
 #include <libxfce4ui/libxfce4ui.h>
+#include <xfconf/xfconf.h>
 
 #if !LIBXFCE4UI_CHECK_VERSION(4, 21, 0)
 #include <exo/exo.h>
@@ -759,6 +760,49 @@ GtkWidget* SettingsDialog::init_behavior_tab()
 		{
 			wm_settings->category_hover_activate = gtk_toggle_button_get_active(button);
 		});
+
+	// Add option to open the menu with the Super key. This is Xfce's own
+	// application shortcut (Keyboard settings); the key is not taken over
+	// from another menu when that one is removed from the panel, so the
+	// user gets one place to hand it to this menu — and to give it back.
+	{
+		static const gchar* const keys[] = { "/commands/custom/Super_L", "/commands/custom/Super_R" };
+		static const gchar* const command = "xfce4-popup-vibrismenu";
+		XfconfChannel* shortcuts = xfconf_channel_get("xfce4-keyboard-shortcuts");
+		gchar* current = xfconf_channel_get_string(shortcuts, keys[0], nullptr);
+		const bool ours = current && g_str_has_prefix(current, command);
+		g_free(current);
+
+		GtkWidget* super_key = gtk_check_button_new_with_mnemonic(_("Open the menu with the S_uper key"));
+		gtk_box_pack_start(behavior_vbox, super_key, true, true, 0);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(super_key), ours);
+
+		connect(super_key, "toggled",
+			[this](GtkToggleButton* button)
+			{
+				XfconfChannel* channel = xfconf_channel_get("xfce4-keyboard-shortcuts");
+				for (int i = 0; i < 2; ++i)
+				{
+					if (gtk_toggle_button_get_active(button))
+					{
+						// remember what the key did, to give it back
+						gchar* previous = xfconf_channel_get_string(channel, keys[i], nullptr);
+						m_super_previous[i] = (previous && !g_str_has_prefix(previous, command)) ? previous : "";
+						g_free(previous);
+						xfconf_channel_set_bool(channel, "/commands/custom/override", true);
+						xfconf_channel_set_string(channel, keys[i], command);
+					}
+					else if (!m_super_previous[i].empty())
+					{
+						xfconf_channel_set_string(channel, keys[i], m_super_previous[i].c_str());
+					}
+					else
+					{
+						xfconf_channel_reset_property(channel, keys[i], false);
+					}
+				}
+			});
+	}
 
 	// Add option to stay when menu loses focus
 	m_stay_on_focus_out = gtk_check_button_new_with_mnemonic(_("Stay _visible when focus is lost"));

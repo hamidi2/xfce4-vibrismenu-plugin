@@ -639,3 +639,7 @@ msgstr "Varsayılanlara sıfırla"
 #: ../panel-plugin/settings-dialog.cpp
 msgid "Loc_k the menu size (its edges cannot be dragged)"
 msgstr "Menü boyutunu kilitle (kenarları sürüklenemez)"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Open the menu with the S_uper key"
+msgstr "Menüyü Super tuşuyla aç"

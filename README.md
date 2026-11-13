@@ -26,6 +26,10 @@ To open and close the menu from the keyboard, bind the command
 `xfce4-popup-vibrismenu` to a key in the keyboard settings (Application
 Shortcuts). Add `--pointer` to show the menu at the mouse pointer.
 
+For the Super key there is a shortcut in the settings (Behavior): "Open the
+menu with the Super key". It sets that application shortcut for you, and
+gives the key back to what it did before when switched off.
+
 ## Installation
 **Ubuntu / Xubuntu (PPA):**
 

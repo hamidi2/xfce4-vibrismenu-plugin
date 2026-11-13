@@ -637,3 +637,7 @@ msgstr "重設為預設值"
 #: ../panel-plugin/settings-dialog.cpp
 msgid "Loc_k the menu size (its edges cannot be dragged)"
 msgstr "鎖定選單大小（無法拖曳其邊緣）"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Open the menu with the S_uper key"
+msgstr "使用 Super 鍵開啟選單"

@@ -1,3 +1,10 @@
+1.0.6 (2026-11-13)
+======
+- The gap between an icon and its label in the lists is the spacing
+  setting; it was missing (the label touched the icon at small icon sizes)
+- Setting to open the menu with the Super key (Behavior); the key is given
+  back to what it did before when the setting is switched off
+
 1.0.5 (2026-11-13)
 ======
 - Wayland: fixes two faults introduced in 1.0.4 — a search sent the menu
