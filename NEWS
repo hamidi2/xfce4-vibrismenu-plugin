@@ -1,3 +1,9 @@
+1.0.5 (2026-11-13)
+======
+- Wayland: fixes two faults introduced in 1.0.4 — a search sent the menu
+  to the top of the screen, and dragging an edge shrank and misplaced it
+- The Spacing page and the size lock are translated into 34 more languages
+
 1.0.4 (2026-11-12)
 ======
 - Lock the menu size: a setting that keeps the edges from being dragged
