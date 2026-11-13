@@ -761,46 +761,79 @@ GtkWidget* SettingsDialog::init_behavior_tab()
 			wm_settings->category_hover_activate = gtk_toggle_button_get_active(button);
 		});
 
-	// Add option to open the menu with the Super key. This is Xfce's own
-	// application shortcut (Keyboard settings); the key is not taken over
-	// from another menu when that one is removed from the panel, so the
-	// user gets one place to hand it to this menu — and to give it back.
+	// The Super key. In Xfce it is an application shortcut (Keyboard settings),
+	// and Xubuntu ships it bound to "xfce4-popup-whiskermenu": removing that
+	// menu from the panel does not hand the key over. Like "make this the
+	// default browser": a button, available only while the key is not ours,
+	// that takes effect at once. Giving the key to something else later is
+	// done where that is set up, not here.
 	{
-		static const gchar* const keys[] = { "/commands/custom/Super_L", "/commands/custom/Super_R" };
-		static const gchar* const command = "xfce4-popup-vibrismenu";
-		XfconfChannel* shortcuts = xfconf_channel_get("xfce4-keyboard-shortcuts");
-		gchar* current = xfconf_channel_get_string(shortcuts, keys[0], nullptr);
-		const bool ours = current && g_str_has_prefix(current, command);
-		g_free(current);
-
-		GtkWidget* super_key = gtk_check_button_new_with_mnemonic(_("Open the menu with the S_uper key"));
+		GtkWidget* super_key = gtk_button_new();
+		gtk_widget_set_halign(super_key, GTK_ALIGN_START);
 		gtk_box_pack_start(behavior_vbox, super_key, true, true, 0);
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(super_key), ours);
 
-		connect(super_key, "toggled",
-			[this](GtkToggleButton* button)
+		static const gchar* const command = "xfce4-popup-vibrismenu";
+		auto update = +[](GtkWidget* button)
+		{
+			XfconfChannel* channel = xfconf_channel_get("xfce4-keyboard-shortcuts");
+			gchar* current = xfconf_channel_get_string(channel, "/commands/custom/Super_L", nullptr);
+			const bool ours = xfconf_channel_get_bool(channel, "/commands/custom/override", false)
+					&& current && g_str_has_prefix(current, command);
+			g_free(current);
+			gtk_button_set_label(GTK_BUTTON(button), ours
+					? _("The Super key opens this menu")
+					: _("Open this menu with the Super key"));
+			gtk_widget_set_sensitive(button, !ours);
+		};
+		update(super_key);
+
+		// always the real state, whoever changes the shortcut and wherever
+		gulong changed = g_signal_connect_swapped(xfconf_channel_get("xfce4-keyboard-shortcuts"),
+				"property-changed", G_CALLBACK(update), super_key);
+		g_object_set_data(G_OBJECT(super_key), "vibris-shortcut-handler", GSIZE_TO_POINTER(changed));
+		g_signal_connect(super_key, "destroy", G_CALLBACK(+[](GtkWidget* button, gpointer)
+			{
+				g_signal_handler_disconnect(xfconf_channel_get("xfce4-keyboard-shortcuts"),
+						GPOINTER_TO_SIZE(g_object_get_data(G_OBJECT(button), "vibris-shortcut-handler")));
+			}), nullptr);
+
+		connect(super_key, "clicked",
+			[](GtkButton*)
 			{
 				XfconfChannel* channel = xfconf_channel_get("xfce4-keyboard-shortcuts");
-				for (int i = 0; i < 2; ++i)
+				if (!xfconf_channel_get_bool(channel, "/commands/custom/override", false))
 				{
-					if (gtk_toggle_button_get_active(button))
+					// The custom set replaces the default one as a whole: start
+					// it as a copy, as the keyboard settings do, so no other
+					// shortcut is lost
+					if (GHashTable* defaults = xfconf_channel_get_properties(channel, "/commands/default"))
 					{
-						// remember what the key did, to give it back
-						gchar* previous = xfconf_channel_get_string(channel, keys[i], nullptr);
-						m_super_previous[i] = (previous && !g_str_has_prefix(previous, command)) ? previous : "";
-						g_free(previous);
-						xfconf_channel_set_bool(channel, "/commands/custom/override", true);
-						xfconf_channel_set_string(channel, keys[i], command);
+						GHashTableIter iter;
+						gpointer key = nullptr, value = nullptr;
+						g_hash_table_iter_init(&iter, defaults);
+						while (g_hash_table_iter_next(&iter, &key, &value))
+						{
+							const gchar* name = static_cast<const gchar*>(key) + strlen("/commands/default");
+							gchar* custom = g_strconcat("/commands/custom", name, nullptr);
+							if (G_VALUE_HOLDS_STRING(static_cast<GValue*>(value)) && !xfconf_channel_has_property(channel, custom))
+							{
+								xfconf_channel_set_property(channel, custom, static_cast<GValue*>(value));
+							}
+							g_free(custom);
+						}
+						g_hash_table_destroy(defaults);
 					}
-					else if (!m_super_previous[i].empty())
-					{
-						xfconf_channel_set_string(channel, keys[i], m_super_previous[i].c_str());
-					}
-					else
-					{
-						xfconf_channel_reset_property(channel, keys[i], false);
-					}
+					xfconf_channel_set_bool(channel, "/commands/custom/override", true);
 				}
+				xfconf_channel_set_string(channel, "/commands/custom/Super_L", command);
+				xfconf_channel_set_string(channel, "/commands/custom/Super_R", command);
+				// Ctrl+Escape goes with them where it opened Whisker Menu
+				gchar* escape = xfconf_channel_get_string(channel, "/commands/custom/<Primary>Escape", nullptr);
+				if (escape && g_str_has_prefix(escape, "xfce4-popup-whiskermenu"))
+				{
+					xfconf_channel_set_string(channel, "/commands/custom/<Primary>Escape", command);
+				}
+				g_free(escape);
 			});
 	}
 
@@ -976,7 +1009,7 @@ GtkWidget* SettingsDialog::init_spacing_tab()
 	// no gap by default, for a compact list.
 	const Row rows[] = {
 		{ _("_Spacing:"), &wm_settings->spacing, 6 },
-		{ _("Between _rows:"), &wm_settings->spacing_rows, 0 }
+		{ _("Between _rows:"), &wm_settings->spacing_rows, 6 }
 	};
 
 	GtkWidget* reset = gtk_button_new_with_mnemonic(_("Reset to _Defaults"));

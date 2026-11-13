@@ -60,6 +60,7 @@ private:
 	GtkRadioButton* m_button;
 	GtkBox* m_box;
 	GtkWidget* m_icon;
+	GIcon* m_gicon;
 	GtkWidget* m_label;
 };
 

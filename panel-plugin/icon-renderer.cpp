@@ -17,6 +17,8 @@
 
 #include "icon-renderer.h"
 
+#include <algorithm>
+
 #include <gio/gio.h>
 
 #include <map>
@@ -114,7 +116,89 @@ void icon_cache_clear()
 	icon_cache.clear();
 }
 
+// The box of an icon's visible pixels. Icon artwork leaves an empty border
+// of its own, different for every icon and theme; shown as it is, that
+// border adds to every gap around the icon and makes equal gaps look unequal.
+bool ink_box(cairo_surface_t* surface, int& x0, int& y0, int& x1, int& y1)
+{
+	if (cairo_surface_get_type(surface) != CAIRO_SURFACE_TYPE_IMAGE
+			|| cairo_image_surface_get_format(surface) != CAIRO_FORMAT_ARGB32)
+	{
+		return false;
+	}
+	cairo_surface_flush(surface);
+	const int width = cairo_image_surface_get_width(surface);
+	const int height = cairo_image_surface_get_height(surface);
+	const int stride = cairo_image_surface_get_stride(surface);
+	const unsigned char* data = cairo_image_surface_get_data(surface);
+	x0 = width; y0 = height; x1 = -1; y1 = -1;
+	for (int y = 0; y < height; ++y)
+	{
+		const guint32* row = reinterpret_cast<const guint32*>(data + y * stride);
+		for (int x = 0; x < width; ++x)
+		{
+			if ((row[x] >> 24) > 24)
+			{
+				x0 = std::min(x0, x); x1 = std::max(x1, x);
+				y0 = std::min(y0, y); y1 = std::max(y1, y);
+			}
+		}
+	}
+	return x1 >= x0;
+}
+
+cairo_surface_t* load_icon_as_is(GtkIconTheme* icon_theme, GdkWindow* window, GIcon* gicon, bool launcher, gint size, gint scale);
+
+// The icon with its empty border removed: its visible part fills the box of
+// "size". Loaded larger by as much as the border takes, so nothing is
+// scaled up, then cut to its visible part and fitted to the box.
 cairo_surface_t* load_icon(GtkIconTheme* icon_theme, GdkWindow* window, GIcon* gicon, bool launcher, gint size, gint scale)
+{
+	cairo_surface_t* surface = load_icon_as_is(icon_theme, window, gicon, launcher, size, scale);
+	int x0 = 0, y0 = 0, x1 = 0, y1 = 0;
+	if (!surface || !ink_box(surface, x0, y0, x1, y1))
+	{
+		return surface;
+	}
+	const int box = size * scale;
+	int ink = std::max(x1 - x0 + 1, y1 - y0 + 1);
+	if (ink >= box - 1)
+	{
+		return surface; // no border worth removing
+	}
+	const gint larger = std::min(size * 4, static_cast<gint>((size * static_cast<double>(box)) / ink + 1));
+	if (cairo_surface_t* bigger = load_icon_as_is(icon_theme, window, gicon, launcher, larger, scale))
+	{
+		int bx0 = 0, by0 = 0, bx1 = 0, by1 = 0;
+		if (ink_box(bigger, bx0, by0, bx1, by1))
+		{
+			cairo_surface_destroy(surface);
+			surface = bigger;
+			x0 = bx0; y0 = by0; x1 = bx1; y1 = by1;
+		}
+		else
+		{
+			cairo_surface_destroy(bigger);
+		}
+	}
+	const int ink_w = x1 - x0 + 1;
+	const int ink_h = y1 - y0 + 1;
+	const double fit = std::min(box / static_cast<double>(ink_w), box / static_cast<double>(ink_h));
+	cairo_surface_t* trimmed = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, box, box);
+	cairo_t* cr = cairo_create(trimmed);
+	cairo_translate(cr, (box - ink_w * fit) / 2.0, (box - ink_h * fit) / 2.0);
+	cairo_scale(cr, fit, fit);
+	cairo_surface_set_device_scale(surface, 1.0, 1.0);
+	cairo_set_source_surface(cr, surface, -x0, -y0);
+	cairo_pattern_set_filter(cairo_get_source(cr), CAIRO_FILTER_BEST);
+	cairo_paint(cr);
+	cairo_destroy(cr);
+	cairo_surface_destroy(surface);
+	cairo_surface_set_device_scale(trimmed, scale, scale);
+	return trimmed;
+}
+
+cairo_surface_t* load_icon_as_is(GtkIconTheme* icon_theme, GdkWindow* window, GIcon* gicon, bool launcher, gint size, gint scale)
 {
 	const GtkIconLookupFlags flags = GtkIconLookupFlags(GTK_ICON_LOOKUP_USE_BUILTIN | GTK_ICON_LOOKUP_FORCE_SIZE);
 	cairo_surface_t* surface = nullptr;
@@ -171,6 +255,18 @@ cairo_surface_t* icon_surface(GtkIconTheme* icon_theme, GdkWindow* window, GIcon
 	return surface;
 }
 
+}
+
+//-----------------------------------------------------------------------------
+
+cairo_surface_t* vibrismenu_icon_surface(GtkWidget* widget, GIcon* gicon, gint size)
+{
+	if (!gicon || (size < 1))
+	{
+		return nullptr;
+	}
+	return icon_surface(gtk_icon_theme_get_for_screen(gtk_widget_get_screen(widget)),
+			gtk_widget_get_window(widget), gicon, false, size, gtk_widget_get_scale_factor(widget));
 }
 
 //-----------------------------------------------------------------------------

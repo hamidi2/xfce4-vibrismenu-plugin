@@ -17,6 +17,8 @@
 
 #include "window.h"
 
+#include "icon-renderer.h"
+
 #include "applications-page.h"
 #include "category-button.h"
 #include "command.h"
@@ -2653,6 +2655,28 @@ void VibrisMenu::Window::apply_spacing()
 void VibrisMenu::Window::update_header_gaps()
 {
 	const int gap = wm_settings->spacing;
+
+	// Command icons without the empty border of their artwork, as in the
+	// lists: the gaps between the buttons are then the spacing alone
+	for (GtkWidget* button : m_commands_button)
+	{
+		GtkWidget* image = gtk_bin_get_child(GTK_BIN(button));
+		if (GTK_IS_IMAGE(image) && (gtk_image_get_storage_type(GTK_IMAGE(image)) == GTK_IMAGE_ICON_NAME))
+		{
+			const gchar* name = nullptr;
+			gtk_image_get_icon_name(GTK_IMAGE(image), &name, nullptr);
+			const int size = gtk_image_get_pixel_size(GTK_IMAGE(image));
+			GIcon* gicon = name ? g_themed_icon_new(name) : nullptr;
+			if (cairo_surface_t* surface = vibrismenu_icon_surface(image, gicon, size))
+			{
+				gtk_image_set_from_surface(GTK_IMAGE(image), surface);
+			}
+			if (gicon)
+			{
+				g_object_unref(gicon);
+			}
+		}
+	}
 
 	// Visible command buttons in the title area, in visual left-to-right order
 	std::vector<GtkWidget*> buttons;

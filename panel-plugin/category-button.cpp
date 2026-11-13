@@ -17,6 +17,8 @@
 
 #include "category-button.h"
 
+#include "icon-renderer.h"
+
 #include "settings.h"
 #include "favorites-page.h"
 #include "slot.h"
@@ -75,6 +77,7 @@ CategoryButton::CategoryButton(GIcon* icon, const gchar* text)
 	m_box = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 6));
 	gtk_container_add(GTK_CONTAINER(m_button), GTK_WIDGET(m_box));
 
+	m_gicon = icon ? G_ICON(g_object_ref(icon)) : nullptr;
 	m_icon = gtk_image_new_from_gicon(icon, GTK_ICON_SIZE_BUTTON);
 	gtk_box_pack_start(m_box, m_icon, false, false, 0);
 
@@ -92,6 +95,10 @@ CategoryButton::CategoryButton(GIcon* icon, const gchar* text)
 
 CategoryButton::~CategoryButton()
 {
+	if (m_gicon)
+	{
+		g_object_unref(m_gicon);
+	}
 	gtk_widget_destroy(GTK_WIDGET(m_button));
 }
 
@@ -101,6 +108,11 @@ void CategoryButton::reload_icon_size()
 {
 	int size = wm_settings->category_icon_size.get_size();
 	gtk_image_set_pixel_size(GTK_IMAGE(m_icon), size);
+	// without the empty border of the icon's artwork, as in the lists
+	if (cairo_surface_t* surface = vibrismenu_icon_surface(m_icon, m_gicon, size))
+	{
+		gtk_image_set_from_surface(GTK_IMAGE(m_icon), surface);
+	}
 	gtk_box_set_spacing(m_box, wm_settings->spacing);
 	gtk_widget_set_visible(m_icon, size > 1);
 

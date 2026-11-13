@@ -96,7 +96,6 @@ private:
 	// Behavior
 	GtkWidget* m_hover_switch_category;
 	GtkWidget* m_stay_on_focus_out;
-	std::string m_super_previous[2];
 	GtkWidget* m_sort_categories;
 
 	// Default Display

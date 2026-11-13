@@ -22,4 +22,8 @@
 
 GtkCellRenderer* vibrismenu_icon_renderer_new();
 
+// The icon as the lists show it: without the empty border of its artwork,
+// its visible part filling a box of "size". Owned by the icon cache.
+cairo_surface_t* vibrismenu_icon_surface(GtkWidget* widget, GIcon* gicon, gint size);
+
 #endif

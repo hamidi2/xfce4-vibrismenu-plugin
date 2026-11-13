@@ -109,7 +109,7 @@ Settings::Settings(Plugin* plugin) :
 	menu_height("/menu-height", 500, 10, SHRT_MAX),
 	menu_opacity("/menu-opacity", 100, 0, 100),
 	spacing("/spacing", 6, 0, 32),
-	spacing_rows("/spacing-rows", 0, 0, 32)
+	spacing_rows("/spacing-rows", 6, 0, 32)
 {
 	command[CommandSettings] = new Command("/command-settings", "/show-command-settings",
 			"org.xfce.settings.manager", "preferences-desktop",

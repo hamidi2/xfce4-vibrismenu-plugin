@@ -1,9 +1,14 @@
 1.0.6 (2026-11-13)
 ======
+- Icons are shown without the empty border of their artwork, in the lists,
+  the categories and the command buttons: every gap around them is then the
+  spacing setting alone, whatever the icon theme
 - The gap between an icon and its label in the lists is the spacing
   setting; it was missing (the label touched the icon at small icon sizes)
-- Setting to open the menu with the Super key (Behavior); the key is given
-  back to what it did before when the setting is switched off
+- The gap between rows is the spacing setting by default (was none)
+- Behavior: a button to open this menu with the Super key, available while
+  the key belongs to something else (Xubuntu ships it bound to Whisker
+  Menu); it takes effect at once
 
 1.0.5 (2026-11-13)
 ======
