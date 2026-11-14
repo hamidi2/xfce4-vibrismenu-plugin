@@ -2,7 +2,7 @@ project(
   'xfce4-vibrismenu-plugin',
   'c',
   'cpp',
-version : '1.0.6',
+version : '1.0.7',
   license : 'GPL-2.0-or-later',
   meson_version : '>= 0.54.0',
   default_options : ['c_std=gnu11', 'cpp_std=gnu++11', 'buildtype=debugoptimized', 'warning_level=2']

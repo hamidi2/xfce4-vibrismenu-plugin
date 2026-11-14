@@ -22,7 +22,7 @@ Vcs-Git: https://github.com/hamidi2/xfce4-vibrismenu-plugin.git
 
 Package: xfce4-vibrismenu-plugin
 Architecture: any
-Depends: ${misc:Depends}, ${shlibs:Depends}
+Depends: ${misc:Depends}, ${shlibs:Depends}, procps
 Enhances: xfce4-panel
 Description: multi-column application menu for the Xfce panel
  Vibris Menu is an alternate application launcher for the Xfce panel. It

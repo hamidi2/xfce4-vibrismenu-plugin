@@ -1,0 +1,22 @@
+#!/bin/sh
+set -e
+
+# A newer version takes effect at once: every panel that shows the menu loads
+# it again. Nothing is done on a first install, when no panel has it yet.
+if [ "$1" = "configure" ] && [ -n "$2" ]; then
+	# X11: the plugin is a process of its own, and the panel starts it again
+	# when it ends
+	pkill -f 'wrapper-2\.0 .*/libvibrismenu\.so ' || true
+
+	# Wayland: the plugin lives inside the panel, so that panel restarts
+	# itself, asked as its own user over its own session bus
+	for pid in $(pgrep -x xfce4-panel || true); do
+		grep -qs 'libvibrismenu' "/proc/$pid/maps" || continue
+		user=$(stat -c %U "/proc/$pid" 2>/dev/null) || continue
+		grep -zE '^(DBUS_SESSION_BUS_ADDRESS|XDG_RUNTIME_DIR|WAYLAND_DISPLAY|DISPLAY|XDG_CONFIG_HOME|HOME|PATH|LANG)=' "/proc/$pid/environ" 2>/dev/null \
+			| xargs -0 sh -c 'exec timeout 10 runuser -u "$0" -- env -i "$@" xfce4-panel -r' "$user" \
+			>/dev/null 2>&1 || true
+	done
+fi
+
+#DEBHELPER#

@@ -113,7 +113,7 @@ void CategoryButton::reload_icon_size()
 	{
 		gtk_image_set_from_surface(GTK_IMAGE(m_icon), surface);
 	}
-	gtk_box_set_spacing(m_box, wm_settings->spacing);
+	gtk_box_set_spacing(m_box, wm_settings->spacing_px());
 	gtk_widget_set_visible(m_icon, size > 1);
 
 	if (wm_settings->category_show_name && !wm_settings->position_categories_horizontal)

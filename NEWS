@@ -1,3 +1,14 @@
+1.0.7 (2026-11-14)
+======
+- The spacing follows the screen's resolution, as text does: the number is
+  given for 96 dots per inch and grows on a denser screen, so the same
+  number looks the same everywhere. The default is now 3 (it was 6, which
+  is what 3 gives at 192 dpi); a number chosen by hand on a dense screen
+  has to be halved once
+- The resize grip follows the resolution too
+- Debian package: an upgrade takes effect at once. The plugin is started
+  again on X11, and a panel that holds it restarts on Wayland
+
 1.0.6 (2026-11-14)
 ======
 - One spacing number for everything, rows included (General); the Spacing

@@ -804,6 +804,13 @@ void VibrisMenu::Window::show(const Position position)
 	}
 
 	// gaps other than the built-in ones, set while the menu did not exist
+	for (Resizer* resizer : m_resize)
+	{
+		if (resizer)
+		{
+			resizer->update_size();
+		}
+	}
 	if (spacing_signature() != m_spacing_applied)
 	{
 		apply_spacing();
@@ -2108,9 +2115,9 @@ bool VibrisMenu::Window::set_size(int width, int height)
 			gtk_widget_get_preferred_width(GTK_WIDGET(m_category_buttons), &cat_mn, &cat_nt);
 			content_w = m_layout_categories_horizontal
 					? std::max(content_w, (int)cat_nt)
-					: content_w + wm_settings->spacing + (int)cat_nt + 16;
+					: content_w + wm_settings->spacing_px() + (int)cat_nt + 16;
 		}
-		content_w += 2 * wm_settings->spacing + 2;
+		content_w += 2 * wm_settings->spacing_px() + 2;
 		if (content_w > 300)
 		{
 			width = content_w;
@@ -2433,13 +2440,13 @@ void VibrisMenu::Window::update_layout()
 	if (m_layout_categories_horizontal)
 	{
 		gtk_grid_set_column_spacing(m_contents_box, 0);
-		gtk_grid_set_row_spacing(m_contents_box, wm_settings->spacing);
+		gtk_grid_set_row_spacing(m_contents_box, wm_settings->spacing_px());
 
 		gtk_style_context_add_class(context, m_layout_categories_alternate ? "bottom" : "top");
 	}
 	else
 	{
-		gtk_grid_set_column_spacing(m_contents_box, wm_settings->spacing);
+		gtk_grid_set_column_spacing(m_contents_box, wm_settings->spacing_px());
 		gtk_grid_set_row_spacing(m_contents_box, 0);
 
 		gtk_style_context_add_class(context, (m_layout_ltr == m_layout_categories_alternate) ? "left" : "right");
@@ -2609,7 +2616,7 @@ void VibrisMenu::Window::set_preview(bool preview)
 
 int VibrisMenu::Window::spacing_signature() const
 {
-	return wm_settings->spacing;
+	return wm_settings->spacing_px();
 }
 
 //-----------------------------------------------------------------------------
@@ -2619,7 +2626,7 @@ void VibrisMenu::Window::apply_spacing()
 	// Every gap of the menu is the one spacing setting: around the menu,
 	// between its parts, between an icon and its label, between columns and
 	// between rows. Nothing in the menu adds a gap of its own on top of it.
-	const int edge = wm_settings->spacing;
+	const int edge = wm_settings->spacing_px();
 	const int sections = edge;
 	const int items = edge;
 	const int old_rows = m_spacing_applied;
@@ -2663,7 +2670,7 @@ void VibrisMenu::Window::apply_spacing()
 	if (FavoritesPage::s_measured_pitch > 0)
 	{
 		// a row is taller by exactly the change of the gap between rows
-		FavoritesPage::s_measured_pitch += wm_settings->spacing - old_rows;
+		FavoritesPage::s_measured_pitch += wm_settings->spacing_px() - old_rows;
 	}
 	update_min_h();
 	if (gtk_widget_get_visible(GTK_WIDGET(m_window)))
@@ -2691,7 +2698,7 @@ void VibrisMenu::Window::apply_spacing()
 
 void VibrisMenu::Window::update_header_gaps()
 {
-	const int gap = wm_settings->spacing;
+	const int gap = wm_settings->spacing_px();
 
 	// Command icons without the empty border of their artwork, as in the
 	// lists: the gaps between the buttons are then the spacing alone

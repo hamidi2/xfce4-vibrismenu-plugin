@@ -370,6 +370,15 @@ public:
 
 	Integer spacing;
 
+	// The spacing is given for text at 96 dots per inch and grows with the
+	// screen's resolution, as the text itself does: the same number then
+	// looks the same on an ordinary screen and on a dense one.
+	static int scaled(int px);
+	int spacing_px() const
+	{
+		return scaled(spacing);
+	}
+
 	friend class Plugin;
 };
 

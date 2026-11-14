@@ -21,6 +21,8 @@
 #include "slot.h"
 #include "window.h"
 
+#include <algorithm>
+
 using namespace VibrisMenu;
 
 //-----------------------------------------------------------------------------
@@ -38,7 +40,7 @@ Resizer::Resizer(Edge edge, Window* window) :
 	m_pressed(false)
 {
 	m_drawing = gtk_drawing_area_new();
-	gtk_widget_set_size_request(m_drawing, 6, 6);
+	update_size();
 	gtk_widget_add_events(m_drawing, GDK_BUTTON_PRESS_MASK
 			| GDK_BUTTON_RELEASE_MASK
 			| GDK_POINTER_MOTION_MASK
@@ -191,6 +193,14 @@ Resizer::Resizer(Edge edge, Window* window) :
 		break;
 	}
 	m_cursor = gdk_cursor_new_from_name(gtk_widget_get_display(m_drawing), type);
+}
+
+//-----------------------------------------------------------------------------
+
+void Resizer::update_size()
+{
+	const int size = std::max(4, Settings::scaled(3));
+	gtk_widget_set_size_request(m_drawing, size, size);
 }
 
 //-----------------------------------------------------------------------------

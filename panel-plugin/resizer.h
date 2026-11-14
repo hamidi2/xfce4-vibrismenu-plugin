@@ -48,6 +48,9 @@ public:
 	Resizer& operator=(const Resizer&) = delete;
 	Resizer& operator=(Resizer&&) = delete;
 
+	// as thick as the screen's resolution asks (never too thin to catch)
+	void update_size();
+
 	GtkWidget* get_widget() const
 	{
 		return m_drawing;

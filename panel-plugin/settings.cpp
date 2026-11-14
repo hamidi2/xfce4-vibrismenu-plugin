@@ -30,6 +30,19 @@ using namespace VibrisMenu;
 
 //-----------------------------------------------------------------------------
 
+int Settings::scaled(int px)
+{
+	GdkScreen* screen = gdk_screen_get_default();
+	gdouble dpi = screen ? gdk_screen_get_resolution(screen) : -1;
+	if (dpi <= 0)
+	{
+		dpi = 96;
+	}
+	return static_cast<int>((px * dpi / 96.0) + 0.5);
+}
+
+//-----------------------------------------------------------------------------
+
 Settings* VibrisMenu::wm_settings = nullptr;
 
 //-----------------------------------------------------------------------------
@@ -108,7 +121,7 @@ Settings::Settings(Plugin* plugin) :
 	menu_width("/menu-width", 450, 10, SHRT_MAX),
 	menu_height("/menu-height", 500, 10, SHRT_MAX),
 	menu_opacity("/menu-opacity", 100, 0, 100),
-	spacing("/spacing", 6, 0, 32)
+	spacing("/spacing", 3, 0, 32)
 {
 	command[CommandSettings] = new Command("/command-settings", "/show-command-settings",
 			"org.xfce.settings.manager", "preferences-desktop",

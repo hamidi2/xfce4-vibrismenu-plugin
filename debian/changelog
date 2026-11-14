@@ -1,3 +1,11 @@
+xfce4-vibrismenu-plugin (1.0.7-1) unstable; urgency=medium
+
+  * New upstream release.
+  * Apply an upgrade at once: restart the plugin (X11) or the panel that
+    holds it (Wayland).
+
+ -- hamidi <hamidi@gmail.com>  Sat, 14 Nov 2026 06:00:00 +0330
+
 xfce4-vibrismenu-plugin (1.0.6-1) unstable; urgency=medium
 
   * New upstream release.
