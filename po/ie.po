@@ -585,3 +585,19 @@ msgstr "_Titul:"
 #: ../panel-plugin/plugin.cpp:418
 msgid "translator-credits"
 msgstr "OIS <mistresssilvara@hotmail.com>, 2019"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "_Spacing:"
+msgstr "Spacie:"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Loc_k the menu size (its edges cannot be dragged)"
+msgstr "Serrar li dimension del menú (su borders ne posse esser tirat)"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Open this menu with Super and Ctrl+Esc"
+msgstr "Aperter ti-ci menú con Super e Ctrl+Esc"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Super and Ctrl+Esc open this menu"
+msgstr "Super e Ctrl+Esc aperte ti-ci menú"

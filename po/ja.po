@@ -586,24 +586,8 @@ msgid "translator-credits"
 msgstr "Masato HASHIMOTO <cabezon.hashimoto@gmail.com>, 2013-2018."
 
 #: ../panel-plugin/settings-dialog.cpp
-msgid "S_pacing"
-msgstr "間隔"
-
-#: ../panel-plugin/settings-dialog.cpp
-msgid "The menu stays open while this page is shown: every change is seen at once."
-msgstr "このページを表示している間はメニューが開いたままになり、変更がすぐに反映されます。"
-
-#: ../panel-plugin/settings-dialog.cpp
 msgid "_Spacing:"
 msgstr "間隔:"
-
-#: ../panel-plugin/settings-dialog.cpp
-msgid "Between _rows:"
-msgstr "行の間:"
-
-#: ../panel-plugin/settings-dialog.cpp
-msgid "Reset to _Defaults"
-msgstr "既定値に戻す"
 
 #: ../panel-plugin/settings-dialog.cpp
 msgid "Loc_k the menu size (its edges cannot be dragged)"
@@ -611,4 +595,8 @@ msgstr "メニューのサイズを固定する (端をドラッグできなく�
 
 #: ../panel-plugin/settings-dialog.cpp
 msgid "Open this menu with Super and Ctrl+Esc"
-msgstr "Super キーでメニューを開く"
+msgstr "Super キーと Ctrl+Esc でこのメニューを開く"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Super and Ctrl+Esc open this menu"
+msgstr "Super キーと Ctrl+Esc でこのメニューが開きます"

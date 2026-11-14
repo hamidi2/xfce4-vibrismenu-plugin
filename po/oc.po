@@ -610,3 +610,19 @@ msgstr "_Títol :"
 #: ../panel-plugin/plugin.cpp:423
 msgid "translator-credits"
 msgstr "Quentin PAGÈS"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "_Spacing:"
+msgstr "Espaçament :"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Loc_k the menu size (its edges cannot be dragged)"
+msgstr "Verrolhar la talha del menú (sos bòrds se pòdon pas lisar)"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Open this menu with Super and Ctrl+Esc"
+msgstr "Dobrir aqueste menú amb Super e Ctrl+Esc"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Super and Ctrl+Esc open this menu"
+msgstr "Super e Ctrl+Esc dobrisson aqueste menú"

@@ -611,3 +611,19 @@ msgstr "_หัวข้อ:"
 #: ../panel-plugin/plugin.cpp:423
 msgid "translator-credits"
 msgstr "Warut Bunprasert <warut.b@disroot.org>"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "_Spacing:"
+msgstr "ระยะห่าง:"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Loc_k the menu size (its edges cannot be dragged)"
+msgstr "ล็อกขนาดเมนู (ลากขอบไม่ได้)"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Open this menu with Super and Ctrl+Esc"
+msgstr "เปิดเมนูนี้ด้วย Super และ Ctrl+Esc"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Super and Ctrl+Esc open this menu"
+msgstr "Super และ Ctrl+Esc เปิดเมนูนี้"

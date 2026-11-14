@@ -621,25 +621,17 @@ msgid "translator-credits"
 msgstr "Γιώργος Βλαχάβας <vlahavas~at~gmail~dot~com>"
 
 #: ../panel-plugin/settings-dialog.cpp
-msgid "S_pacing"
-msgstr "Αποστάσεις"
-
-#: ../panel-plugin/settings-dialog.cpp
-msgid "The menu stays open while this page is shown: every change is seen at once."
-msgstr "Το μενού παραμένει ανοιχτό όσο εμφανίζεται αυτή η σελίδα: κάθε αλλαγή φαίνεται αμέσως."
-
-#: ../panel-plugin/settings-dialog.cpp
 msgid "_Spacing:"
 msgstr "Απόσταση:"
 
 #: ../panel-plugin/settings-dialog.cpp
-msgid "Between _rows:"
-msgstr "Μεταξύ γραμμών:"
-
-#: ../panel-plugin/settings-dialog.cpp
-msgid "Reset to _Defaults"
-msgstr "Επαναφορά προεπιλογών"
-
-#: ../panel-plugin/settings-dialog.cpp
 msgid "Loc_k the menu size (its edges cannot be dragged)"
 msgstr "Κλείδωμα μεγέθους μενού (οι άκρες δεν μπορούν να συρθούν)"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Open this menu with Super and Ctrl+Esc"
+msgstr "Άνοιγμα αυτού του μενού με Super και Ctrl+Esc"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Super and Ctrl+Esc open this menu"
+msgstr "Τα Super και Ctrl+Esc ανοίγουν αυτό το μενού"

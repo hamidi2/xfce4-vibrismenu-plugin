@@ -585,3 +585,19 @@ msgstr "शीर्षक:"
 #: ../panel-plugin/plugin.cpp:418
 msgid "translator-credits"
 msgstr "अनुवादक-आभार "
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "_Spacing:"
+msgstr "अन्तर:"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Loc_k the menu size (its edges cannot be dragged)"
+msgstr "मेनुको आकार लक गर्नुहोस् (यसका किनारा तान्न सकिँदैन)"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Open this menu with Super and Ctrl+Esc"
+msgstr "यो मेनु Super र Ctrl+Esc ले खोल्नुहोस्"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Super and Ctrl+Esc open this menu"
+msgstr "Super र Ctrl+Esc ले यो मेनु खोल्छन्"

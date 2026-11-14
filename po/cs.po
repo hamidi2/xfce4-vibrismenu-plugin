@@ -619,25 +619,17 @@ msgid "translator-credits"
 msgstr "Přeložili halfark, Michal Várady <miko.vaji@gmail.com> a Pavel Borecki "
 
 #: ../panel-plugin/settings-dialog.cpp
-msgid "S_pacing"
-msgstr "Rozestupy"
-
-#: ../panel-plugin/settings-dialog.cpp
-msgid "The menu stays open while this page is shown: every change is seen at once."
-msgstr "Nabídka zůstává otevřená, dokud je zobrazena tato stránka: každá změna je ihned vidět."
-
-#: ../panel-plugin/settings-dialog.cpp
 msgid "_Spacing:"
 msgstr "Rozestup:"
 
 #: ../panel-plugin/settings-dialog.cpp
-msgid "Between _rows:"
-msgstr "Mezi řádky:"
-
-#: ../panel-plugin/settings-dialog.cpp
-msgid "Reset to _Defaults"
-msgstr "Obnovit výchozí"
-
-#: ../panel-plugin/settings-dialog.cpp
 msgid "Loc_k the menu size (its edges cannot be dragged)"
 msgstr "Uzamknout velikost nabídky (okraje nelze táhnout)"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Open this menu with Super and Ctrl+Esc"
+msgstr "Otevírat tuto nabídku klávesami Super a Ctrl+Esc"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Super and Ctrl+Esc open this menu"
+msgstr "Super a Ctrl+Esc otevírají tuto nabídku"

@@ -589,25 +589,17 @@ msgid "translator-credits"
 msgstr "Zasluge za prijevod"
 
 #: ../panel-plugin/settings-dialog.cpp
-msgid "S_pacing"
-msgstr "Razmaci"
-
-#: ../panel-plugin/settings-dialog.cpp
-msgid "The menu stays open while this page is shown: every change is seen at once."
-msgstr "Izbornik ostaje otvoren dok je ova stranica prikazana: svaka promjena vidi se odmah."
-
-#: ../panel-plugin/settings-dialog.cpp
 msgid "_Spacing:"
 msgstr "Razmak:"
 
 #: ../panel-plugin/settings-dialog.cpp
-msgid "Between _rows:"
-msgstr "Između redaka:"
-
-#: ../panel-plugin/settings-dialog.cpp
-msgid "Reset to _Defaults"
-msgstr "Vrati na zadano"
-
-#: ../panel-plugin/settings-dialog.cpp
 msgid "Loc_k the menu size (its edges cannot be dragged)"
 msgstr "Zaključaj veličinu izbornika (rubovi se ne mogu povlačiti)"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Open this menu with Super and Ctrl+Esc"
+msgstr "Otvori ovaj izbornik tipkama Super i Ctrl+Esc"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Super and Ctrl+Esc open this menu"
+msgstr "Super i Ctrl+Esc otvaraju ovaj izbornik"

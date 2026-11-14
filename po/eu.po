@@ -600,3 +600,19 @@ msgstr "_Izenburua:"
 #: ../panel-plugin/plugin.cpp:418
 msgid "translator-credits"
 msgstr "itzultzailearen-kredituak"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "_Spacing:"
+msgstr "Tartea:"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Loc_k the menu size (its edges cannot be dragged)"
+msgstr "Blokeatu menuaren tamaina (ertzak ezin dira arrastatu)"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Open this menu with Super and Ctrl+Esc"
+msgstr "Ireki menu hau Super eta Ctrl+Esc teklekin"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Super and Ctrl+Esc open this menu"
+msgstr "Super eta Ctrl+Esc teklek menu hau irekitzen dute"

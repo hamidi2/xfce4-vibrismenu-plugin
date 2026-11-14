@@ -590,3 +590,19 @@ msgstr "_Naslov:"
 #: ../panel-plugin/plugin.cpp:418
 msgid "translator-credits"
 msgstr "zasluge -prevodioca"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "_Spacing:"
+msgstr "Razmak:"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Loc_k the menu size (its edges cannot be dragged)"
+msgstr "Zaključaj veličinu izbornika (ivice se ne mogu prevlačiti)"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Open this menu with Super and Ctrl+Esc"
+msgstr "Otvori ovaj izbornik tasterima Super i Ctrl+Esc"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Super and Ctrl+Esc open this menu"
+msgstr "Super i Ctrl+Esc otvaraju ovaj izbornik"

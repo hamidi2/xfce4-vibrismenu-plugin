@@ -584,3 +584,19 @@ msgstr "_አርእስት: "
 #: ../panel-plugin/plugin.cpp:418
 msgid "translator-credits"
 msgstr "ምስጋና-ለ ተርጓሚዎች"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "_Spacing:"
+msgstr "ክፍተት፦"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Loc_k the menu size (its edges cannot be dragged)"
+msgstr "የምናሌውን መጠን ቆልፍ (ጠርዞቹ አይጎተቱም)"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Open this menu with Super and Ctrl+Esc"
+msgstr "ይህን ምናሌ በSuper እና Ctrl+Esc ክፈት"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Super and Ctrl+Esc open this menu"
+msgstr "Super እና Ctrl+Esc ይህን ምናሌ ይከፍታሉ"

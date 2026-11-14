@@ -621,25 +621,17 @@ msgid "translator-credits"
 msgstr "Adolfo Jayme Barrientos <fitojb@ubuntu.com>, 2013-2021\nRobert Antoni Buj Gelonch <rbuj@fedoraproject.org>, 2016-2018\nDavid Medina <opensusecatala@gmail.com>, 2017-2018\nOriol Fernandez, 2013\nMarc Riera <marcriera@softcatala.org>, 2020"
 
 #: ../panel-plugin/settings-dialog.cpp
-msgid "S_pacing"
-msgstr "Espaiat"
-
-#: ../panel-plugin/settings-dialog.cpp
-msgid "The menu stays open while this page is shown: every change is seen at once."
-msgstr "El menú roman obert mentre es mostra aquesta pàgina: cada canvi es veu a l'instant."
-
-#: ../panel-plugin/settings-dialog.cpp
 msgid "_Spacing:"
 msgstr "Espaiat:"
 
 #: ../panel-plugin/settings-dialog.cpp
-msgid "Between _rows:"
-msgstr "Entre files:"
-
-#: ../panel-plugin/settings-dialog.cpp
-msgid "Reset to _Defaults"
-msgstr "Restableix els valors per defecte"
-
-#: ../panel-plugin/settings-dialog.cpp
 msgid "Loc_k the menu size (its edges cannot be dragged)"
 msgstr "Bloca la mida del menú (les vores no es poden arrossegar)"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Open this menu with Super and Ctrl+Esc"
+msgstr "Obre aquest menú amb Súper i Ctrl+Esc"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Super and Ctrl+Esc open this menu"
+msgstr "Súper i Ctrl+Esc obren aquest menú"

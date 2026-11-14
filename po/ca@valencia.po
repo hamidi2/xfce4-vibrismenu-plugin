@@ -585,3 +585,19 @@ msgstr "_Títol:"
 #: ../panel-plugin/plugin.cpp:418
 msgid "translator-credits"
 msgstr "Adolfo Jayme Barrientos <fitojb@ubuntu.com>, 2013–2016\nRobert Antoni Buj Gelonch <rbuj@fedoraproject.org>, 2016\nOriol Fernandez, 2013"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "_Spacing:"
+msgstr "Espaiat:"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Loc_k the menu size (its edges cannot be dragged)"
+msgstr "Bloqueja la mida del menú (les vores no es poden arrossegar)"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Open this menu with Super and Ctrl+Esc"
+msgstr "Obri este menú amb Súper i Ctrl+Esc"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Super and Ctrl+Esc open this menu"
+msgstr "Súper i Ctrl+Esc obrin este menú"

@@ -616,24 +616,8 @@ msgid "translator-credits"
 msgstr "Yarema aka Knedlyk <yupadmin at gmail.com>,\nZubr139"
 
 #: ../panel-plugin/settings-dialog.cpp
-msgid "S_pacing"
-msgstr "Відступи"
-
-#: ../panel-plugin/settings-dialog.cpp
-msgid "The menu stays open while this page is shown: every change is seen at once."
-msgstr "Меню залишається відкритим, доки показано цю сторінку: кожну зміну видно одразу."
-
-#: ../panel-plugin/settings-dialog.cpp
 msgid "_Spacing:"
 msgstr "Відступ:"
-
-#: ../panel-plugin/settings-dialog.cpp
-msgid "Between _rows:"
-msgstr "Між рядками:"
-
-#: ../panel-plugin/settings-dialog.cpp
-msgid "Reset to _Defaults"
-msgstr "Скинути до типових значень"
 
 #: ../panel-plugin/settings-dialog.cpp
 msgid "Loc_k the menu size (its edges cannot be dragged)"
@@ -641,4 +625,8 @@ msgstr "Заблокувати розмір меню (краї не можна �
 
 #: ../panel-plugin/settings-dialog.cpp
 msgid "Open this menu with Super and Ctrl+Esc"
-msgstr "Відкривати меню клавішею Super"
+msgstr "Відкривати це меню клавішами Super і Ctrl+Esc"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Super and Ctrl+Esc open this menu"
+msgstr "Super і Ctrl+Esc відкривають це меню"

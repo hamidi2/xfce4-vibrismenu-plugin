@@ -586,3 +586,19 @@ msgstr "_Sarlavha"
 #: ../panel-plugin/plugin.cpp:418
 msgid "translator-credits"
 msgstr "Umid Almasov <u.almasov@gmail.com>, 2014"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "_Spacing:"
+msgstr "Oraliq:"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Loc_k the menu size (its edges cannot be dragged)"
+msgstr "Menyu oʻlchamini qulflash (chetlarini tortib boʻlmaydi)"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Open this menu with Super and Ctrl+Esc"
+msgstr "Bu menyuni Super va Ctrl+Esc bilan ochish"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Super and Ctrl+Esc open this menu"
+msgstr "Super va Ctrl+Esc shu menyuni ochadi"

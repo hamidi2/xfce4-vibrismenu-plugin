@@ -584,3 +584,19 @@ msgstr "_Загаловак:"
 #: ../panel-plugin/plugin.cpp:418
 msgid "translator-credits"
 msgstr "Zmicer Turok <zmicerturok@gmail.com>"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "_Spacing:"
+msgstr "Водступ:"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Loc_k the menu size (its edges cannot be dragged)"
+msgstr "Заблакаваць памер меню (яго краі нельга перацягваць)"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Open this menu with Super and Ctrl+Esc"
+msgstr "Адкрываць гэтае меню клавішамі Super і Ctrl+Esc"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Super and Ctrl+Esc open this menu"
+msgstr "Super і Ctrl+Esc адкрываюць гэтае меню"

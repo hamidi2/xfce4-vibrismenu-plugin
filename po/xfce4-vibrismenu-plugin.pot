@@ -609,23 +609,7 @@ msgid "translator-credits"
 msgstr ""
 
 #: ../panel-plugin/settings-dialog.cpp
-msgid "S_pacing"
-msgstr ""
-
-#: ../panel-plugin/settings-dialog.cpp
-msgid "The menu stays open while this page is shown: every change is seen at once."
-msgstr ""
-
-#: ../panel-plugin/settings-dialog.cpp
 msgid "_Spacing:"
-msgstr ""
-
-#: ../panel-plugin/settings-dialog.cpp
-msgid "Between _rows:"
-msgstr ""
-
-#: ../panel-plugin/settings-dialog.cpp
-msgid "Reset to _Defaults"
 msgstr ""
 
 #: ../panel-plugin/settings-dialog.cpp

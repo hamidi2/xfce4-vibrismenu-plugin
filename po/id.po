@@ -606,25 +606,17 @@ msgid "translator-credits"
 msgstr "kredit-penerjemah"
 
 #: ../panel-plugin/settings-dialog.cpp
-msgid "S_pacing"
-msgstr "Jarak"
-
-#: ../panel-plugin/settings-dialog.cpp
-msgid "The menu stays open while this page is shown: every change is seen at once."
-msgstr "Menu tetap terbuka selama halaman ini ditampilkan: setiap perubahan langsung terlihat."
-
-#: ../panel-plugin/settings-dialog.cpp
 msgid "_Spacing:"
 msgstr "Jarak:"
 
 #: ../panel-plugin/settings-dialog.cpp
-msgid "Between _rows:"
-msgstr "Antar baris:"
-
-#: ../panel-plugin/settings-dialog.cpp
-msgid "Reset to _Defaults"
-msgstr "Atur ulang ke bawaan"
-
-#: ../panel-plugin/settings-dialog.cpp
 msgid "Loc_k the menu size (its edges cannot be dragged)"
 msgstr "Kunci ukuran menu (tepinya tidak dapat diseret)"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Open this menu with Super and Ctrl+Esc"
+msgstr "Buka menu ini dengan Super dan Ctrl+Esc"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Super and Ctrl+Esc open this menu"
+msgstr "Super dan Ctrl+Esc membuka menu ini"

@@ -1,4 +1,4 @@
-1.0.6 (2026-11-13)
+1.0.6 (2026-11-14)
 ======
 - One spacing number for everything, rows included (General); the Spacing
   page is gone. The menu still opens beside the dialog as a live preview
@@ -15,6 +15,11 @@
 - Behavior: a button to open this menu with Super and Ctrl+Esc, available
   while those keys belong to something else (Xubuntu ships them bound to
   Whisker Menu); it takes effect at once
+- Dragging the top edge down past the smallest height keeps the menu on the
+  panel; a step that crossed the minimum lifted its bottom edge (seen on
+  Wayland)
+- Category and command icons follow a change of icon theme at once
+- The new settings are translated into all 56 languages
 
 1.0.5 (2026-11-13)
 ======

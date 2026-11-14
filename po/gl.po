@@ -599,3 +599,19 @@ msgstr "_Título:"
 #: ../panel-plugin/plugin.cpp:418
 msgid "translator-credits"
 msgstr "damufo <dani@damufo.com>"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "_Spacing:"
+msgstr "Espazamento:"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Loc_k the menu size (its edges cannot be dragged)"
+msgstr "Bloquear o tamaño do menú (os bordos non se poden arrastrar)"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Open this menu with Super and Ctrl+Esc"
+msgstr "Abrir este menú con Super e Ctrl+Esc"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Super and Ctrl+Esc open this menu"
+msgstr "Super e Ctrl+Esc abren este menú"

@@ -614,3 +614,19 @@ msgstr "_Titolo:"
 #: ../panel-plugin/plugin.cpp:423
 msgid "translator-credits"
 msgstr "Warut BUNPRASERT <warut.b@disroot.org>"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "_Spacing:"
+msgstr "Interspaco:"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Loc_k the menu size (its edges cannot be dragged)"
+msgstr "Ŝlosi la grandon de la menuo (ĝiaj randoj ne treneblas)"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Open this menu with Super and Ctrl+Esc"
+msgstr "Malfermi ĉi tiun menuon per Super kaj Ctrl+Esc"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Super and Ctrl+Esc open this menu"
+msgstr "Super kaj Ctrl+Esc malfermas ĉi tiun menuon"

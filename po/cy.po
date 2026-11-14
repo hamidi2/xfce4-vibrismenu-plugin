@@ -584,3 +584,19 @@ msgstr "Teitl:"
 #: ../panel-plugin/plugin.cpp:418
 msgid "translator-credits"
 msgstr "Cyfieithwyd gan ."
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "_Spacing:"
+msgstr "Bylchu:"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Loc_k the menu size (its edges cannot be dragged)"
+msgstr "Cloi maint y ddewislen (ni ellir llusgo ei hymylon)"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Open this menu with Super and Ctrl+Esc"
+msgstr "Agor y ddewislen hon gyda Super a Ctrl+Esc"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Super and Ctrl+Esc open this menu"
+msgstr "Mae Super a Ctrl+Esc yn agor y ddewislen hon"

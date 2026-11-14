@@ -619,24 +619,8 @@ msgid "translator-credits"
 msgstr "Hugo Carvalho <hugokarvalho@hotmail.com>\nSérgio Marques <smarquespt@gmail.com>"
 
 #: ../panel-plugin/settings-dialog.cpp
-msgid "S_pacing"
-msgstr "Espaçamento"
-
-#: ../panel-plugin/settings-dialog.cpp
-msgid "The menu stays open while this page is shown: every change is seen at once."
-msgstr "O menu permanece aberto enquanto esta página é mostrada: cada alteração é vista de imediato."
-
-#: ../panel-plugin/settings-dialog.cpp
 msgid "_Spacing:"
 msgstr "Espaçamento:"
-
-#: ../panel-plugin/settings-dialog.cpp
-msgid "Between _rows:"
-msgstr "Entre linhas:"
-
-#: ../panel-plugin/settings-dialog.cpp
-msgid "Reset to _Defaults"
-msgstr "Repor predefinições"
 
 #: ../panel-plugin/settings-dialog.cpp
 msgid "Loc_k the menu size (its edges cannot be dragged)"
@@ -644,4 +628,8 @@ msgstr "Bloquear o tamanho do menu (as margens não podem ser arrastadas)"
 
 #: ../panel-plugin/settings-dialog.cpp
 msgid "Open this menu with Super and Ctrl+Esc"
-msgstr "Abrir o menu com a tecla Super"
+msgstr "Abrir este menu com Super e Ctrl+Esc"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Super and Ctrl+Esc open this menu"
+msgstr "Super e Ctrl+Esc abrem este menu"

@@ -628,24 +628,8 @@ msgid "translator-credits"
 msgstr "Toni Estevez <toni.estevez@gmail.com>, 2021\nAdolfo Jayme Barrientos <fitojb@ubuntu.com>, 2013-2023\nPablo Roberto Francisco Lezaeta Reyes <prflr88@gmail.com>, 2014, 2025"
 
 #: ../panel-plugin/settings-dialog.cpp
-msgid "S_pacing"
-msgstr "Espaciado"
-
-#: ../panel-plugin/settings-dialog.cpp
-msgid "The menu stays open while this page is shown: every change is seen at once."
-msgstr "El menú permanece abierto mientras se muestra esta página: cada cambio se ve al instante."
-
-#: ../panel-plugin/settings-dialog.cpp
 msgid "_Spacing:"
 msgstr "Espaciado:"
-
-#: ../panel-plugin/settings-dialog.cpp
-msgid "Between _rows:"
-msgstr "Entre filas:"
-
-#: ../panel-plugin/settings-dialog.cpp
-msgid "Reset to _Defaults"
-msgstr "Restablecer valores predeterminados"
 
 #: ../panel-plugin/settings-dialog.cpp
 msgid "Loc_k the menu size (its edges cannot be dragged)"
@@ -653,4 +637,8 @@ msgstr "Bloquear el tamaño del menú (sus bordes no se pueden arrastrar)"
 
 #: ../panel-plugin/settings-dialog.cpp
 msgid "Open this menu with Super and Ctrl+Esc"
-msgstr "Abrir el menú con la tecla Super"
+msgstr "Abrir este menú con Super y Ctrl+Esc"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Super and Ctrl+Esc open this menu"
+msgstr "Super y Ctrl+Esc abren este menú"

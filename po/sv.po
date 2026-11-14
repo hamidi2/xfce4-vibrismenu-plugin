@@ -622,24 +622,8 @@ msgid "translator-credits"
 msgstr "Patrik Nilsson <translation@hembas.se>\nLuna Jernberg <droidbittin@gmail.com>"
 
 #: ../panel-plugin/settings-dialog.cpp
-msgid "S_pacing"
-msgstr "Avstånd"
-
-#: ../panel-plugin/settings-dialog.cpp
-msgid "The menu stays open while this page is shown: every change is seen at once."
-msgstr "Menyn förblir öppen medan den här sidan visas: varje ändring syns direkt."
-
-#: ../panel-plugin/settings-dialog.cpp
 msgid "_Spacing:"
 msgstr "Avstånd:"
-
-#: ../panel-plugin/settings-dialog.cpp
-msgid "Between _rows:"
-msgstr "Mellan rader:"
-
-#: ../panel-plugin/settings-dialog.cpp
-msgid "Reset to _Defaults"
-msgstr "Återställ standardvärden"
 
 #: ../panel-plugin/settings-dialog.cpp
 msgid "Loc_k the menu size (its edges cannot be dragged)"
@@ -647,4 +631,8 @@ msgstr "Lås menyns storlek (kanterna kan inte dras)"
 
 #: ../panel-plugin/settings-dialog.cpp
 msgid "Open this menu with Super and Ctrl+Esc"
-msgstr "Öppna menyn med Super-tangenten"
+msgstr "Öppna den här menyn med Super och Ctrl+Esc"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Super and Ctrl+Esc open this menu"
+msgstr "Super och Ctrl+Esc öppnar den här menyn"

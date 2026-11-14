@@ -619,24 +619,8 @@ msgid "translator-credits"
 msgstr "L’équipe de traduction francophone du Menu Vibris"
 
 #: ../panel-plugin/settings-dialog.cpp
-msgid "S_pacing"
-msgstr "Espacement"
-
-#: ../panel-plugin/settings-dialog.cpp
-msgid "The menu stays open while this page is shown: every change is seen at once."
-msgstr "Le menu reste ouvert tant que cette page est affichée : chaque modification est visible immédiatement."
-
-#: ../panel-plugin/settings-dialog.cpp
 msgid "_Spacing:"
 msgstr "Espacement :"
-
-#: ../panel-plugin/settings-dialog.cpp
-msgid "Between _rows:"
-msgstr "Entre les lignes :"
-
-#: ../panel-plugin/settings-dialog.cpp
-msgid "Reset to _Defaults"
-msgstr "Rétablir les valeurs par défaut"
 
 #: ../panel-plugin/settings-dialog.cpp
 msgid "Loc_k the menu size (its edges cannot be dragged)"
@@ -644,4 +628,8 @@ msgstr "Verrouiller la taille du menu (ses bords ne peuvent pas être déplacés
 
 #: ../panel-plugin/settings-dialog.cpp
 msgid "Open this menu with Super and Ctrl+Esc"
-msgstr "Ouvrir le menu avec la touche Super"
+msgstr "Ouvrir ce menu avec Super et Ctrl+Échap"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Super and Ctrl+Esc open this menu"
+msgstr "Super et Ctrl+Échap ouvrent ce menu"

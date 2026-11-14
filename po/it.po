@@ -590,24 +590,8 @@ msgid "translator-credits"
 msgstr "attribuzione traduzioni"
 
 #: ../panel-plugin/settings-dialog.cpp
-msgid "S_pacing"
-msgstr "Spaziatura"
-
-#: ../panel-plugin/settings-dialog.cpp
-msgid "The menu stays open while this page is shown: every change is seen at once."
-msgstr "Il menu resta aperto finché questa pagina è visibile: ogni modifica si vede subito."
-
-#: ../panel-plugin/settings-dialog.cpp
 msgid "_Spacing:"
 msgstr "Spaziatura:"
-
-#: ../panel-plugin/settings-dialog.cpp
-msgid "Between _rows:"
-msgstr "Tra le righe:"
-
-#: ../panel-plugin/settings-dialog.cpp
-msgid "Reset to _Defaults"
-msgstr "Ripristina valori predefiniti"
 
 #: ../panel-plugin/settings-dialog.cpp
 msgid "Loc_k the menu size (its edges cannot be dragged)"
@@ -615,4 +599,8 @@ msgstr "Blocca la dimensione del menu (i bordi non possono essere trascinati)"
 
 #: ../panel-plugin/settings-dialog.cpp
 msgid "Open this menu with Super and Ctrl+Esc"
-msgstr "Apri il menu con il tasto Super"
+msgstr "Apri questo menu con Super e Ctrl+Esc"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Super and Ctrl+Esc open this menu"
+msgstr "Super e Ctrl+Esc aprono questo menu"

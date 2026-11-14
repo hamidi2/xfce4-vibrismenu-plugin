@@ -587,24 +587,8 @@ msgid "translator-credits"
 msgstr "ترجمه کننده‌ها"
 
 #: ../panel-plugin/settings-dialog.cpp
-msgid "S_pacing"
-msgstr "_فاصله‌ها"
-
-#: ../panel-plugin/settings-dialog.cpp
-msgid "The menu stays open while this page is shown: every change is seen at once."
-msgstr "تا وقتی این صفحه باز است منو باز می‌ماند و هر تغییر همان لحظه دیده می‌شود."
-
-#: ../panel-plugin/settings-dialog.cpp
 msgid "_Spacing:"
 msgstr "_فاصله:"
-
-#: ../panel-plugin/settings-dialog.cpp
-msgid "Between _rows:"
-msgstr "بین _ردیف‌ها:"
-
-#: ../panel-plugin/settings-dialog.cpp
-msgid "Reset to _Defaults"
-msgstr "بازگشت به _پیش‌فرض‌ها"
 
 #: ../panel-plugin/settings-dialog.cpp
 msgid "Loc_k the menu size (its edges cannot be dragged)"

@@ -585,3 +585,19 @@ msgstr "_Titill:"
 #: ../panel-plugin/plugin.cpp:418
 msgid "translator-credits"
 msgstr "Kristján Magnússon, 2016-2017. Sveinn í Felli (sv1@fellsnet.is), 2019."
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "_Spacing:"
+msgstr "Bil:"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Loc_k the menu size (its edges cannot be dragged)"
+msgstr "Læsa stærð valmyndarinnar (ekki er hægt að draga jaðra hennar)"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Open this menu with Super and Ctrl+Esc"
+msgstr "Opna þessa valmynd með Super og Ctrl+Esc"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Super and Ctrl+Esc open this menu"
+msgstr "Super og Ctrl+Esc opna þessa valmynd"

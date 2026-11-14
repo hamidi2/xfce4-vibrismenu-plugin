@@ -590,24 +590,8 @@ msgid "translator-credits"
 msgstr "قائمة-المترجمين"
 
 #: ../panel-plugin/settings-dialog.cpp
-msgid "S_pacing"
-msgstr "المسافات"
-
-#: ../panel-plugin/settings-dialog.cpp
-msgid "The menu stays open while this page is shown: every change is seen at once."
-msgstr "تبقى القائمة مفتوحة ما دامت هذه الصفحة معروضة: يظهر كل تغيير فورًا."
-
-#: ../panel-plugin/settings-dialog.cpp
 msgid "_Spacing:"
 msgstr "المسافة:"
-
-#: ../panel-plugin/settings-dialog.cpp
-msgid "Between _rows:"
-msgstr "بين الصفوف:"
-
-#: ../panel-plugin/settings-dialog.cpp
-msgid "Reset to _Defaults"
-msgstr "إعادة الضبط إلى الافتراضي"
 
 #: ../panel-plugin/settings-dialog.cpp
 msgid "Loc_k the menu size (its edges cannot be dragged)"
@@ -615,4 +599,8 @@ msgstr "قفل حجم القائمة (لا يمكن سحب حوافها)"
 
 #: ../panel-plugin/settings-dialog.cpp
 msgid "Open this menu with Super and Ctrl+Esc"
-msgstr "فتح القائمة بمفتاح Super"
+msgstr "فتح هذه القائمة بمفتاح Super و Ctrl+Esc"
+
+#: ../panel-plugin/settings-dialog.cpp
+msgid "Super and Ctrl+Esc open this menu"
+msgstr "مفتاح Super و Ctrl+Esc يفتحان هذه القائمة"
