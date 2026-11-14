@@ -163,6 +163,8 @@ private:
 	int m_target_h = 0;
 	guint m_size_idle_id = 0;
 	guint m_page_width_id = 0;
+	guint m_icons_idle_id = 0;
+	gulong m_icon_theme_id = 0;
 	guint m_thaw_id = 0;
 	GdkRectangle m_tall_painted = {0, 0, 0, 0};
 	GtkWidget* m_position_sizer = nullptr; // hidden stand-in measured by menu_position() in tall mode

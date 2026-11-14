@@ -148,6 +148,30 @@ VibrisMenu::Window::Window(Plugin* plugin) :
 			return GDK_EVENT_PROPAGATE;
 		});
 
+	// A new icon theme: the category and command icons are pictures made from
+	// the theme (cut to their visible part), so they are made again. In an
+	// idle, after the cache of the old theme's pictures has been dropped.
+	m_icon_theme_id = g_signal_connect(gtk_icon_theme_get_default(), "changed",
+		G_CALLBACK(+[](GtkIconTheme*, gpointer user_data)
+		{
+			Window* window = static_cast<Window*>(user_data);
+			if (window->m_icons_idle_id)
+			{
+				return;
+			}
+			window->m_icons_idle_id = g_idle_add(+[](gpointer data) -> gboolean
+				{
+					Window* self = static_cast<Window*>(data);
+					self->m_icons_idle_id = 0;
+					self->m_favorites->get_button()->reload_icon_size();
+					self->m_recent->get_button()->reload_icon_size();
+					self->m_applications->get_button()->reload_icon_size();
+					self->m_applications->reload_category_icon_size();
+					self->update_header_gaps();
+					return G_SOURCE_REMOVE;
+				}, window);
+		}), this);
+
 	connect(m_window, "focus-out-event",
 		[this](GtkWidget* widget, GdkEvent*) -> gboolean
 		{
@@ -500,6 +524,14 @@ VibrisMenu::Window::~Window()
 	if (m_page_width_id)
 	{
 		g_source_remove(m_page_width_id);
+	}
+	if (m_icons_idle_id)
+	{
+		g_source_remove(m_icons_idle_id);
+	}
+	if (m_icon_theme_id)
+	{
+		g_signal_handler_disconnect(gtk_icon_theme_get_default(), m_icon_theme_id);
 	}
 
 	for (int i = 0; i < 9; ++i)
@@ -1001,10 +1033,14 @@ void VibrisMenu::Window::resize(int delta_x, int delta_y, int delta_width, int d
 	}
 	if (target_h < m_min_h)
 	{
-		// Height floor: the height stays at the minimum — y must stay put too
-		// (otherwise the whole window slides and the bottom edge moves = flicker)
+		// Height floor: the height stops at the minimum and the edge that is
+		// not being dragged stays where it is. For the top edge that is the
+		// bottom one: a step that crossed the minimum used to keep y instead,
+		// and the menu came off the panel by the part of the step that was cut.
+		target_y = ((delta_y != 0) && (delta_height != 0))
+				? (m_geometry.y + m_geometry.height - m_min_h)
+				: m_geometry.y;
 		target_h = m_min_h;
-		target_y = m_geometry.y;
 	}
 	if ((m_max_bottom > 0) && (target_y + target_h > m_max_bottom))
 	{
@@ -2662,10 +2698,24 @@ void VibrisMenu::Window::update_header_gaps()
 	for (GtkWidget* button : m_commands_button)
 	{
 		GtkWidget* image = gtk_bin_get_child(GTK_BIN(button));
-		if (GTK_IS_IMAGE(image) && (gtk_image_get_storage_type(GTK_IMAGE(image)) == GTK_IMAGE_ICON_NAME))
+		if (!GTK_IS_IMAGE(image))
 		{
-			const gchar* name = nullptr;
-			gtk_image_get_icon_name(GTK_IMAGE(image), &name, nullptr);
+			continue;
+		}
+		// the name is kept with the picture that replaces it, to make the
+		// picture again from another theme; a name set anew takes its place
+		if (gtk_image_get_storage_type(GTK_IMAGE(image)) == GTK_IMAGE_ICON_NAME)
+		{
+			const gchar* set = nullptr;
+			gtk_image_get_icon_name(GTK_IMAGE(image), &set, nullptr);
+			g_object_set_data_full(G_OBJECT(image), "vibrismenu-icon-name", g_strdup(set), g_free);
+		}
+		else if (gtk_image_get_storage_type(GTK_IMAGE(image)) != GTK_IMAGE_SURFACE)
+		{
+			continue;
+		}
+		{
+			const gchar* name = static_cast<const gchar*>(g_object_get_data(G_OBJECT(image), "vibrismenu-icon-name"));
 			const int size = gtk_image_get_pixel_size(GTK_IMAGE(image));
 			GIcon* gicon = name ? g_themed_icon_new(name) : nullptr;
 			if (cairo_surface_t* surface = vibrismenu_icon_surface(image, gicon, size))
